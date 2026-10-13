@@ -1,30 +1,40 @@
 import type {
-  CardModel,
   Collection,
+  FileEntry,
   HomeData,
   LibraryFolder,
   MediaItem,
-  MediaKind,
   PlaybackSource,
   Settings
 } from './types'
 
 /**
  * The single contract between the UI and everything behind it.
- * Phase 1 ships a mock implementation; later phases implement it over IPC.
+ * The mock implements it today; the library engine implements it over IPC in Phase 2.
  * Screens never import anything but this interface.
  */
 export interface LanternApi {
   getHome(): Promise<HomeData>
-  getLibrary(kind: MediaKind): Promise<MediaItem[]>
   getItem(id: string): Promise<MediaItem | null>
-  getContinueWatching(): Promise<CardModel[]>
+  getGenre(name: string): Promise<MediaItem[]>
+  getFavorites(): Promise<MediaItem[]>
   getMoreLikeThis(id: string): Promise<MediaItem[]>
   getCollections(): Promise<Collection[]>
-  getFolders(): Promise<LibraryFolder[]>
   search(query: string): Promise<MediaItem[]>
 
+  // Files
+  getFiles(): Promise<FileEntry[]>
+  getFolders(): Promise<LibraryFolder[]>
+  addFolder(path: string): Promise<LibraryFolder[]>
+  removeFolder(path: string): Promise<LibraryFolder[]>
+  addFiles(files: { path: string; url: string; size?: number }[]): Promise<FileEntry[]>
+  removeFiles(ids: string[]): Promise<void>
+  setFilesStarred(ids: string[], starred: boolean): Promise<void>
+  setFilesWatched(ids: string[], watched: boolean): Promise<void>
+
+  // Playback
   getPlayback(itemId: string, episodeId?: string): Promise<PlaybackSource>
+  getFilePlayback(fileId: string): Promise<PlaybackSource>
   saveProgress(itemId: string, episodeId: string | undefined, position: number, duration: number): Promise<void>
   setWatched(itemId: string, watched: boolean): Promise<MediaItem | null>
   toggleFavorite(itemId: string): Promise<MediaItem | null>

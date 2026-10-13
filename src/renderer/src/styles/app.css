@@ -80,26 +80,21 @@
   flex-direction: column;
   overflow: hidden;
 }
-.sb-profile {
+.sb-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 4px 18px;
+  padding: 6px 4px 22px;
   min-height: 68px;
   white-space: nowrap;
 }
-.sb-avatar {
+.sb-mark {
   flex: none;
   width: 44px;
   height: 44px;
-  border-radius: 50%;
   display: grid;
   place-items: center;
-  font-weight: 650;
-  font-size: 18px;
-  color: #1a0f04;
-  background: radial-gradient(circle at 35% 30%, #ffe2ac, #ffb547 55%, #e07818);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.14), 0 6px 22px rgba(255, 160, 60, 0.32);
+  filter: drop-shadow(0 4px 14px rgba(255, 160, 60, 0.35));
 }
 .sb-who {
   opacity: 0;
@@ -108,6 +103,7 @@
 .sb-name {
   font-weight: 600;
   font-size: 15px;
+  letter-spacing: 0.01em;
 }
 .sb-clock {
   font-size: 13px;
@@ -166,19 +162,17 @@
 }
 .sb-foot {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px 4px;
+  justify-content: center;
+  padding: 10px 0 6px;
   font-size: 12px;
-  color: var(--text-4);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-3);
   white-space: nowrap;
+  transition: opacity 0.25s ease;
 }
-.sb-foot span {
+.sidebar.is-open .sb-foot {
   opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.sidebar.is-open .sb-foot span {
-  opacity: 1;
 }
 
 /* ---------- Buttons ---------- */
@@ -544,4 +538,9 @@
 }
 .lantern {
   overflow: visible;
+}
+.pop-divider {
+  height: 1px;
+  margin: 6px 10px;
+  background: rgba(255, 255, 255, 0.1);
 }

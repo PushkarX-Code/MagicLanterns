@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type Section = 'search' | 'home' | 'movies' | 'shows' | 'continue' | 'collections' | 'folders' | 'settings'
+export type Section = 'home' | 'favorites' | 'files' | 'settings'
 
 /** Where a card was on screen when it was opened, so the detail page can grow out of it. */
 export interface Origin {
@@ -11,9 +11,10 @@ export interface Origin {
 
 export type Route =
   | { name: Section }
-  | { name: 'collection'; id: string }
+  | { name: 'genre'; genre: string }
+  | { name: 'search' }
   | { name: 'detail'; id: string; origin?: Origin }
-  | { name: 'player'; itemId: string; episodeId?: string; fresh?: boolean }
+  | { name: 'player'; itemId?: string; episodeId?: string; fileId?: string; url?: string; title?: string; fresh?: boolean }
 
 export interface Entry {
   key: number
@@ -44,5 +45,4 @@ export const useNav = create<NavState>((set, get) => ({
   back: () => set((s) => (s.stack.length > 1 ? { stack: s.stack.slice(0, -1) } : s))
 }))
 
-export const isSection = (r: Route): r is { name: Section } =>
-  ['search', 'home', 'movies', 'shows', 'continue', 'collections', 'folders', 'settings'].includes(r.name)
+export const isSection = (r: Route): r is { name: Section } => ['home', 'favorites', 'files', 'settings'].includes(r.name)

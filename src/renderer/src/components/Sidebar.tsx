@@ -1,19 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
-import { Clapperboard, Film, FolderOpen, History, House, Layers, Search, Settings, Tv, type LucideIcon } from 'lucide-react'
+import { FolderOpen, House, Settings, Star, type LucideIcon } from 'lucide-react'
 import { Clock } from './Clock'
+import { Lantern } from './Lantern'
 import { FocusContext, setFocus, useFocus } from '../focus/focus'
 import { useNav, type Section } from '../state/nav'
 import { useSettings } from '../state/settings'
 import { gsap, d, EASE } from '../design/motion'
 
 const ITEMS: { id: Section; label: string; icon: LucideIcon }[] = [
-  { id: 'search', label: 'Search', icon: Search },
   { id: 'home', label: 'Home', icon: House },
-  { id: 'movies', label: 'Movies', icon: Film },
-  { id: 'shows', label: 'TV Shows', icon: Tv },
-  { id: 'continue', label: 'Continue Watching', icon: History },
-  { id: 'collections', label: 'Collections', icon: Layers },
-  { id: 'folders', label: 'Library Folders', icon: FolderOpen },
+  { id: 'favorites', label: 'Favorites', icon: Star },
+  { id: 'files', label: 'Files', icon: FolderOpen },
   { id: 'settings', label: 'Settings', icon: Settings }
 ]
 
@@ -40,7 +37,7 @@ function Item({ id, label, icon: Icon, selected, disabled, onSelect }: { id: Sec
 export function Sidebar({ hidden }: { hidden: boolean }) {
   const section = useNav((s) => s.section)
   const go = useNav((s) => s.go)
-  const name = useSettings((s) => s.settings?.profileName ?? '')
+  const showClock = useSettings((s) => s.settings?.showClock ?? true)
   const [hover, setHover] = useState(false)
   const panel = useRef<HTMLElement>(null)
 
@@ -81,11 +78,13 @@ export function Sidebar({ hidden }: { hidden: boolean }) {
       <div ref={ref} className={`sidebar-wrap ${open ? 'is-open' : ''}`}>
         <div className="sidebar-dim" />
         <nav ref={panel} className="sidebar glass" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-          <div className="sb-profile">
-            <div className="sb-avatar">{name.slice(0, 1).toUpperCase() || 'M'}</div>
+          <div className="sb-brand">
+            <div className="sb-mark">
+              <Lantern size={30} />
+            </div>
             <div className="sb-who">
-              <div className="sb-name">{name || 'Magic Lanterns'}</div>
-              <Clock className="sb-clock" />
+              <div className="sb-name">Magic Lanterns</div>
+              {showClock && <Clock className="sb-clock" />}
             </div>
           </div>
           <div className="sb-items">
@@ -93,10 +92,11 @@ export function Sidebar({ hidden }: { hidden: boolean }) {
               <Item key={it.id} {...it} selected={section === it.id} disabled={hidden} onSelect={select} />
             ))}
           </div>
-          <div className="sb-foot">
-            <Clapperboard size={14} strokeWidth={1.6} />
-            <span>Magic Lanterns</span>
-          </div>
+          {showClock && (
+            <div className="sb-foot">
+              <Clock />
+            </div>
+          )}
         </nav>
       </div>
     </FocusContext.Provider>

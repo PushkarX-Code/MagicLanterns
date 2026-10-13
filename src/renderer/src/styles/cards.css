@@ -308,3 +308,77 @@
   inset: 0;
   background: radial-gradient(circle at 30% 40%, rgba(255, 181, 71, 0.16), transparent 60%);
 }
+
+/* Untitled first row (Recents) sits right under the hero */
+.row-untitled .row-title {
+  display: none;
+}
+
+/* ---------- Genre tiles ---------- */
+.genre {
+  width: 300px;
+  flex: none;
+  cursor: pointer;
+}
+.genre-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-card);
+  overflow: hidden;
+  box-shadow: var(--rest);
+  will-change: transform;
+  transition: box-shadow 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.genre.is-focused .genre-frame {
+  box-shadow: var(--lift), 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+.genre-slide {
+  position: absolute;
+  top: 14%;
+  width: 58%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+.genre-slide.s0 {
+  right: 6%;
+  z-index: 3;
+  transform: rotate(4deg);
+}
+.genre-slide.s1 {
+  right: 20%;
+  z-index: 2;
+  transform: rotate(-2deg) translateY(-8%);
+  filter: brightness(0.7);
+}
+.genre-slide.s2 {
+  right: 34%;
+  z-index: 1;
+  transform: rotate(-7deg) translateY(-14%);
+  filter: brightness(0.5);
+}
+.genre-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: linear-gradient(20deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.35) 45%, transparent 75%);
+}
+.genre-name {
+  position: absolute;
+  z-index: 5;
+  left: 18px;
+  bottom: 34px;
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.genre-count {
+  position: absolute;
+  z-index: 5;
+  left: 18px;
+  bottom: 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-3);
+}

@@ -10,6 +10,8 @@ export interface PopoverOption {
   hint?: string
   /** Keep the popover open after selecting (multi-select lists). */
   keepOpen?: boolean
+  /** Draw a hairline above this option to start a new group. */
+  divider?: boolean
   onSelect: () => void
 }
 
@@ -90,7 +92,10 @@ export function Popover({
       >
         {title && <div className="pop-title">{title}</div>}
         {options.map((o) => (
-          <Option key={o.label} opt={o} onClose={close} />
+          <div key={o.label} className="pop-group">
+            {o.divider && <div className="pop-divider" />}
+            <Option opt={o} onClose={close} />
+          </div>
         ))}
       </div>
     </FocusContext.Provider>

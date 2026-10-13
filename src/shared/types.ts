@@ -101,6 +101,7 @@ export interface MediaItem {
   addedAt: number
   favorite: boolean
   inList: boolean
+  playCount: number
   // Movies
   file?: FileInfo
   progress?: Progress
@@ -121,10 +122,20 @@ export interface CardModel {
   color: string
 }
 
+export interface GenreTile {
+  name: string
+  count: number
+  images: string[] // up to three backdrops, fanned like glass slides
+  color: string
+}
+
 export interface HomeRow {
   id: string
+  /** Empty for the untitled Recents row directly under the hero. */
   title: string
+  kind: 'cards' | 'genres'
   cards: CardModel[]
+  genres?: GenreTile[]
 }
 
 export interface HomeData {
@@ -146,9 +157,38 @@ export interface LibraryFolder {
   lastScan: number
 }
 
+/** One physical file as the Files screen shows it: a movie, an episode, or a file not yet matched. */
+export interface FileEntry {
+  id: string
+  itemId: string | null // null until metadata matches it
+  episodeId?: string
+  title: string
+  subtitle: string // "S2, E3 · Who Is Alive?" or "2024 · Science Fiction"
+  fileName: string
+  folder: string
+  path: string
+  /** Direct playable URL for files added by hand (ml-file:// or blob:). */
+  url?: string
+  size: number
+  duration: number
+  width: number
+  height: number
+  hdr: HdrFormat
+  addedAt: number
+  lastPlayed?: number
+  image: string | null // 16:9 still or backdrop
+  poster: string | null
+  color: string
+  progress?: number // 0–1
+  watched: boolean
+  starred: boolean
+}
+
+export type FileSort = 'added' | 'name' | 'size' | 'duration' | 'played'
+
 export interface PlaybackSource {
   url: string
-  itemId: string
+  itemId: string | null
   episodeId?: string
   title: string
   logo: string | null
@@ -160,21 +200,9 @@ export interface PlaybackSource {
   resumeFraction: number
   /** Extra candidate URLs to try if `url` fails to load. */
   alternates?: string[]
-  file: FileInfo
+  file: FileInfo | null
   intro?: { start: number; end: number }
   next?: { itemId: string; episodeId: string; title: string; label: string; still: string | null }
 }
 
-export interface Settings {
-  profileName: string
-  tmdbKey: string
-  omdbKey: string
-  metadataLanguage: string
-  reduceMotion: boolean
-  subtitleSize: 'small' | 'medium' | 'large'
-  subtitleStyle: 'shadow' | 'glass' | 'outline'
-  subtitleLanguage: string
-  audioLanguage: string
-  autoplayNext: boolean
-  heroPreviews: boolean
-}
+export type { Settings } from './settings'
