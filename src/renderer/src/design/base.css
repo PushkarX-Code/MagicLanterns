@@ -1,0 +1,137 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  cursor: default;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+input {
+  font: inherit;
+  color: inherit;
+  outline: none;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* ---------- Type scale ---------- */
+.t-display {
+  font-size: clamp(44px, 4.6vw, 76px);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+}
+.t-title {
+  font-size: 30px;
+  font-weight: 620;
+  letter-spacing: -0.015em;
+}
+.t-row {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.t-body {
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.t-meta {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-2);
+  letter-spacing: 0.005em;
+}
+.t-caption {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+/* ---------- Glass ---------- */
+.glass {
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-edge), var(--glass-highlight), var(--glass-shadow);
+}
+.glass-strong {
+  background: var(--glass-fill-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-edge), var(--glass-highlight), var(--glass-shadow);
+}
+
+/* ---------- Skeleton ---------- */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.045);
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.06) 50%, transparent 80%);
+  animation: ml-shimmer 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes ml-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+.reduce-motion .skeleton::after {
+  animation: none;
+  opacity: 0;
+}
+
+/* Titlebar drag strip (Windows caption buttons sit in the top right overlay) */
+.drag-strip {
+  position: fixed;
+  top: 0;
+  left: calc(var(--rail) + 32px);
+  right: 0;
+  height: var(--titlebar);
+  -webkit-app-region: drag;
+  z-index: 900;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}

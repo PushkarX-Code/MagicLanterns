@@ -1,0 +1,1515 @@
+[
+ {
+  "tmdbId": 693134,
+  "kind": "movie",
+  "title": "Dune: Part Two",
+  "year": 2024,
+  "certification": "PG-13",
+  "genres": [
+   "Science Fiction",
+   "Adventure"
+  ],
+  "runtime": 167,
+  "tmdbScore": 8.1,
+  "tagline": "Long live the fighters.",
+  "overview": "Follow the mythic journey of Paul Atreides as he unites with Chani and the Fremen while on a path of revenge against the conspirators who destroyed his family. Facing a choice between the love of his life and the fate of the known universe, Paul endeavors to prevent a terrible future only he can foresee.",
+  "poster": "/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg",
+  "backdrop": "/eZ239CUp1d6OryZEBPnO2n87gMG.jpg",
+  "logo": "/eYvF1LhPKuoBxOAmWjFTAK7EPWl.png",
+  "trailerKey": "U2Qp5pL3ovA",
+  "cast": [
+   {
+    "name": "Timothée Chalamet",
+    "character": "Paul Atreides",
+    "profile": "/dFxpwRpmzpVfP1zjluH68DeQhyj.jpg"
+   },
+   {
+    "name": "Zendaya",
+    "character": "Chani",
+    "profile": "/qGkBlyn1AwQpuFnRARMRwj0iHZp.jpg"
+   },
+   {
+    "name": "Rebecca Ferguson",
+    "character": "Jessica",
+    "profile": "/ra53cM1aNmdH0aFhj8yBqPOj2fb.jpg"
+   },
+   {
+    "name": "Javier Bardem",
+    "character": "Stilgar",
+    "profile": "/zfRID0jx8DKBluPGU9xtk9sZWUt.jpg"
+   },
+   {
+    "name": "Josh Brolin",
+    "character": "Gurney Halleck",
+    "profile": "/sX2etBbIkxRaCsATyw5ZpOVMPTD.jpg"
+   },
+   {
+    "name": "Austin Butler",
+    "character": "Feyd-Rautha",
+    "profile": "/atdAs4pFGjUQ4m2W8kJYly7N6cC.jpg"
+   },
+   {
+    "name": "Florence Pugh",
+    "character": "Princess Irulan",
+    "profile": "/2URrZb95t3kY6pLroKny3Enmabp.jpg"
+   },
+   {
+    "name": "Dave Bautista",
+    "character": "Beast Rabban",
+    "profile": "/snk6JiXOOoRjPtHU5VMoy6qbd32.jpg"
+   },
+   {
+    "name": "Christopher Walken",
+    "character": "Emperor",
+    "profile": "/ApgDL7nudR9T2GpjCG4vESgymO2.jpg"
+   }
+  ],
+  "director": "Denis Villeneuve"
+ },
+ {
+  "tmdbId": 95396,
+  "kind": "show",
+  "title": "Severance",
+  "year": 2022,
+  "certification": "TV-MA",
+  "genres": [
+   "Drama",
+   "Mystery",
+   "Sci-Fi & Fantasy"
+  ],
+  "runtime": null,
+  "tmdbScore": 8.4,
+  "tagline": "There's more to work than life.",
+  "overview": "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives. When a mysterious colleague appears outside of work, it begins a journey to discover the truth about their jobs.",
+  "poster": "/pPHpeI2X1qEd1CS1SeyrdhZ4qnT.jpg",
+  "backdrop": "/ixgFmf1X59PUZam2qbAfskx2gQr.jpg",
+  "logo": "/yyS1tALk7t3YdTNMOvR5gsnXINA.png",
+  "trailerKey": "xEQP4VVuyrY",
+  "cast": [
+   {
+    "name": "Adam Scott",
+    "character": "Mark Scout",
+    "profile": "/b82C29R6fGiPoqIglQ4lzS6q2YX.jpg"
+   },
+   {
+    "name": "Britt Lower",
+    "character": "Helly Riggs",
+    "profile": "/5XIcTMDSyj7hRICQAcnY9U83ujF.jpg"
+   },
+   {
+    "name": "Tramell Tillman",
+    "character": "Seth Milchick",
+    "profile": "/bEA15zMnkcXlRroYjKrFUWiiK7y.jpg"
+   },
+   {
+    "name": "Zach Cherry",
+    "character": "Dylan George",
+    "profile": "/fT3Wv8ef0Vn0daHWAObCp2Bd4Y.jpg"
+   },
+   {
+    "name": "Patricia Arquette",
+    "character": "Harmony Cobel",
+    "profile": "/jeThSouMatiuRiLkjDvSBLHpmq0.jpg"
+   },
+   {
+    "name": "Jen Tullock",
+    "character": "Devon Scout-Hale",
+    "profile": "/91vck8hZ1VZGV6PTcwFWEEdzGE0.jpg"
+   },
+   {
+    "name": "Dichen Lachman",
+    "character": "Ms. Casey",
+    "profile": "/yLrpMHBNtuUAu3M9EjaYHnn5EEY.jpg"
+   },
+   {
+    "name": "John Turturro",
+    "character": "Irving Bailiff",
+    "profile": "/6O9W9cJW0kCqMzYeLupV9oH0ftn.jpg"
+   },
+   {
+    "name": "Christopher Walken",
+    "character": "Burt Goodman",
+    "profile": "/ApgDL7nudR9T2GpjCG4vESgymO2.jpg"
+   }
+  ],
+  "creator": "Dan Erickson",
+  "seasons": [
+   {
+    "number": 1,
+    "episodes": [
+     {
+      "number": 1,
+      "title": "Good News About Hell",
+      "overview": "Mark is promoted to lead a team who've had their memories surgically divided between their work and personal lives.",
+      "still": "/sP3GZe9j7BY3CAyZGFuZxxnGpN1.jpg",
+      "runtime": 59
+     },
+     {
+      "number": 2,
+      "title": "Half Loop",
+      "overview": "The team train new hire Helly on macrodata refinement. Mark takes a day off to meet with a mysterious former colleague.",
+      "still": "/wIQP0P2tyE7VRIN3xR8Efq7UgKt.jpg",
+      "runtime": 57
+     },
+     {
+      "number": 3,
+      "title": "In Perpetuity",
+      "overview": "Mark takes the team on a field trip, but Helly continues to rebel. A deteriorating Petey struggles to tell Mark about Lumon’s misdeeds.",
+      "still": "/yezUFOqLt0U3haSYc5gIBzfsPvo.jpg",
+      "runtime": null
+     },
+     {
+      "number": 4,
+      "title": "The You You Are",
+      "overview": "Irving finds an intriguing book at work. Helly aggressively pursues a meeting with her Outie. Mark attends a funeral with Ms. Selvig.",
+      "still": "/dzQJeDznS0I4spAqTImiLH9p252.jpg",
+      "runtime": 50
+     },
+     {
+      "number": 5,
+      "title": "The Grim Barbarity of Optics and Design",
+      "overview": "Irving and Dylan confront Burt about his lies. Mark and Helly discover a strange new department.",
+      "still": "/oy4BZotFbNX5YoPkWuWF3kcdMVw.jpg",
+      "runtime": 47
+     },
+     {
+      "number": 6,
+      "title": "Hide and Seek",
+      "overview": "The team angers Cobel by forming an alliance.",
+      "still": "/3fQp0pUtgDkqqyEbXY8KKCZPMU7.jpg",
+      "runtime": 44
+     },
+     {
+      "number": 7,
+      "title": "Defiant Jazz",
+      "overview": "Mark and the team encounter new security measures from Cobel.",
+      "still": "/gHoKlbC2esqq3SXm0ZCcl3bzpFZ.jpg",
+      "runtime": 53
+     },
+     {
+      "number": 8,
+      "title": "What's for Dinner?",
+      "overview": "The team prepares a plan. Mark attends Devon and Ricken’s party.",
+      "still": "/8Gv9ELume0jo7gz7R2h4tPmVLsD.jpg",
+      "runtime": 50
+     },
+     {
+      "number": 9,
+      "title": "The We We Are",
+      "overview": "The team discovers troubling revelations.",
+      "still": "/dzx8D2B0ELncXuCNwtPCags43Q.jpg",
+      "runtime": 44
+     }
+    ]
+   },
+   {
+    "number": 2,
+    "episodes": [
+     {
+      "number": 1,
+      "title": "Hello, Ms. Cobel",
+      "overview": "Mark returns to work under different circumstances. Secrets from the Outie world come to light.",
+      "still": "/a97vNY8Knu45FLQib0uQZ2VReLy.jpg",
+      "runtime": 54
+     },
+     {
+      "number": 2,
+      "title": "Goodbye, Mrs. Selvig",
+      "overview": "Mark contemplates the meaning of a message.",
+      "still": "/wjlSkqMoLngSO6fv2Ajt2CIeCSi.jpg",
+      "runtime": 49
+     },
+     {
+      "number": 3,
+      "title": "Who Is Alive?",
+      "overview": "Mark, Helly, Irving, and Dylan search for answers.",
+      "still": "/j4AUAq1XJOBmfXsLphZzsCz6pZs.jpg",
+      "runtime": 57
+     },
+     {
+      "number": 4,
+      "title": "Woe's Hollow",
+      "overview": "The team participates in a group activity.",
+      "still": "/mioOOhTaShLd1MPKsmfirbe9AwI.jpg",
+      "runtime": 54
+     },
+     {
+      "number": 5,
+      "title": "Trojan's Horse",
+      "overview": "Tensions emerge after the team suffers a loss.",
+      "still": "/7Gw2DWAbhsBREKFbM2S0h5sD0tL.jpg",
+      "runtime": 50
+     },
+     {
+      "number": 6,
+      "title": "Attila",
+      "overview": "Bonds are tested. Mark continues on his path of discovery.",
+      "still": "/l9CC3onLMDBDKxs6Ie0yIWI8VmC.jpg",
+      "runtime": 52
+     },
+     {
+      "number": 7,
+      "title": "Chikhai Bardo",
+      "overview": "An old romance intersects with a deadly present threat.",
+      "still": "/dmzBzYcEtjOYJO46p7kyRmYrHZu.jpg",
+      "runtime": 53
+     },
+     {
+      "number": 8,
+      "title": "Sweet Vitriol",
+      "overview": "Discoveries are made.",
+      "still": "/piWjCKARsSkmr9kMKHZ5ynengj3.jpg",
+      "runtime": 41
+     },
+     {
+      "number": 9,
+      "title": "The After Hours",
+      "overview": "Mark and Devon team with an ally. Helly investigates further.",
+      "still": "/2RJaWjY4dD5s7jpdo2aGeSLmtI3.jpg",
+      "runtime": 48
+     },
+     {
+      "number": 10,
+      "title": "Cold Harbor",
+      "overview": "Mark forms a shaky alliance in an all-or-nothing play, while the team makes a dangerous last stand.",
+      "still": "/gXUvGwpZxrpqMRouxM7yI28lgNa.jpg",
+      "runtime": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "tmdbId": 335984,
+  "kind": "movie",
+  "title": "Blade Runner 2049",
+  "year": 2017,
+  "certification": "R",
+  "genres": [
+   "Science Fiction",
+   "Drama"
+  ],
+  "runtime": 164,
+  "tmdbScore": 7.6,
+  "tagline": "The key to the future is finally unearthed.",
+  "overview": "Thirty years after the events of the first film, a new blade runner, LAPD Officer K, unearths a long-buried secret that has the potential to plunge what's left of society into chaos. K's discovery leads him on a quest to find Rick Deckard, a former LAPD blade runner who has been missing for 30 years.",
+  "poster": "/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg",
+  "backdrop": "/gNdLJU9TxrpGx4dkZidjys3fyy0.jpg",
+  "logo": "/gUoDt6GggEFXVzdyDTyF8ggrEm8.png",
+  "trailerKey": "geFtxCSz8xI",
+  "cast": [
+   {
+    "name": "Ryan Gosling",
+    "character": "'K'",
+    "profile": "/lyUyVARQKhGxaxy0FbPJCQRpiaW.jpg"
+   },
+   {
+    "name": "Harrison Ford",
+    "character": "Rick Deckard",
+    "profile": "/pjBMJVPpcZK23Vt1nzr1zEBTWrP.jpg"
+   },
+   {
+    "name": "Ana de Armas",
+    "character": "Joi",
+    "profile": "/ngHnBOofQzCO3AvMyuW3UMRWg1B.jpg"
+   },
+   {
+    "name": "Dave Bautista",
+    "character": "Sapper Morton",
+    "profile": "/snk6JiXOOoRjPtHU5VMoy6qbd32.jpg"
+   },
+   {
+    "name": "Robin Wright",
+    "character": "Lieutenant Joshi",
+    "profile": "/d3rIv0y2p0jMsQ7ViR7O1606NZa.jpg"
+   },
+   {
+    "name": "Sylvia Hoeks",
+    "character": "Luv",
+    "profile": "/wKC9LgqgJRCXuzs1kUKaK7Uicv.jpg"
+   },
+   {
+    "name": "Mackenzie Davis",
+    "character": "Mariette",
+    "profile": "/ekQbEIKh26jbz17P0wwLbo6uNs9.jpg"
+   },
+   {
+    "name": "Jared Leto",
+    "character": "Niander Wallace",
+    "profile": "/ca3x0OfIKbJppZh8S1Alx3GfUZO.jpg"
+   },
+   {
+    "name": "Carla Juri",
+    "character": "Dr. Ana Stelline",
+    "profile": "/7Tu9PCmTyLD1wWP8PGCzZpuImre.jpg"
+   }
+  ],
+  "director": "Denis Villeneuve"
+ },
+ {
+  "tmdbId": 872585,
+  "kind": "movie",
+  "title": "Oppenheimer",
+  "year": 2023,
+  "certification": "R",
+  "genres": [
+   "Drama",
+   "History"
+  ],
+  "runtime": 181,
+  "tmdbScore": 8.0,
+  "tagline": "The world forever changes.",
+  "overview": "The story of J. Robert Oppenheimer's role in the development of the atomic bomb during World War II.",
+  "poster": "/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
+  "backdrop": "/neeNHeXjMF5fXoCJRsOmkNGC7q.jpg",
+  "logo": "/b07VisHvZb0WzUpA8VB77wfMXwg.png",
+  "trailerKey": "qiuSBWVdgLI",
+  "cast": [
+   {
+    "name": "Cillian Murphy",
+    "character": "J. Robert Oppenheimer",
+    "profile": "/2lKs67r7FI4bPu0AXxMUJZxmUXn.jpg"
+   },
+   {
+    "name": "Emily Blunt",
+    "character": "Kitty Oppenheimer",
+    "profile": "/5nCSG5TL1bP1geD8aaBfaLnLLCD.jpg"
+   },
+   {
+    "name": "Matt Damon",
+    "character": "Leslie Groves",
+    "profile": "/aCvBXTAR9B1qRjIRzMBYhhbm1fR.jpg"
+   },
+   {
+    "name": "Robert Downey Jr.",
+    "character": "Lewis Strauss",
+    "profile": "/5qHNjhtjMD4YWH3UP0rm4tKwxCL.jpg"
+   },
+   {
+    "name": "Florence Pugh",
+    "character": "Jean Tatlock",
+    "profile": "/2URrZb95t3kY6pLroKny3Enmabp.jpg"
+   },
+   {
+    "name": "Josh Hartnett",
+    "character": "Ernest Lawrence",
+    "profile": "/5eMo8D7h1XrSu6ZN4UXhPcS6YNG.jpg"
+   },
+   {
+    "name": "Casey Affleck",
+    "character": "Boris Pash",
+    "profile": "/304ilSygaCRWykoBWAL67TOw8g9.jpg"
+   },
+   {
+    "name": "Rami Malek",
+    "character": "David Hill",
+    "profile": "/drLMI978uj3Rpc1TcIJarKf3Jfi.jpg"
+   },
+   {
+    "name": "Kenneth Branagh",
+    "character": "Niels Bohr",
+    "profile": "/AbCqqFxNi5w3nDUFdQt0DGMFh5H.jpg"
+   }
+  ],
+  "director": "Christopher Nolan"
+ },
+ {
+  "tmdbId": 126308,
+  "kind": "show",
+  "title": "Shōgun",
+  "year": 2024,
+  "certification": "TV-MA",
+  "genres": [
+   "Drama",
+   "War & Politics"
+  ],
+  "runtime": null,
+  "tmdbScore": 8.4,
+  "tagline": "An epic saga of war, passion, and power set in Feudal Japan.",
+  "overview": "In Japan in the year 1600, at the dawn of a century-defining civil war, Lord Yoshii Toranaga is fighting for his life as his enemies on the Council of Regents unite against him, when a mysterious European ship is found marooned in a nearby fishing village.",
+  "poster": "/7O4iVfOMQmdCSxhOg1WnzG1AgYT.jpg",
+  "backdrop": "/bwSmgmd90hCWwqOKQYTEraeOZhJ.jpg",
+  "logo": "/eqWtUYYsmW7cPkXzxAF8idOPEX8.png",
+  "trailerKey": "HIs9x49DK7I",
+  "cast": [
+   {
+    "name": "Hiroyuki Sanada",
+    "character": "Yoshii Toranaga",
+    "profile": "/SOwDxhGnRccP2lAtssQ7TxCzOe.jpg"
+   },
+   {
+    "name": "Cosmo Jarvis",
+    "character": "John Blackthorne",
+    "profile": "/1kgghZ558CxZCJip5ufO6BAqUGp.jpg"
+   },
+   {
+    "name": "Anna Sawai",
+    "character": "Toda Mariko",
+    "profile": "/6uFaCOupDTPRnTiedveTUvjOikC.jpg"
+   },
+   {
+    "name": "Tadanobu Asano",
+    "character": "Kashigi Yabushige",
+    "profile": "/3CBpfGRcPq1jEeYr51TiOiNbZzT.jpg"
+   },
+   {
+    "name": "Takehiro Hira",
+    "character": "Ishido Kazunari",
+    "profile": "/f8UK7xqwkfpIZiECcDgc0AErkj6.jpg"
+   },
+   {
+    "name": "Tommy Bastow",
+    "character": "Father Martin Alvito",
+    "profile": "/dIQcrDm9dZqc98Ca6Em67x5ivba.jpg"
+   },
+   {
+    "name": "Fumi Nikaido",
+    "character": "Ochiba No Kata / Ruri",
+    "profile": "/tqxgrZdOpx2FuTJYlhago4fttI3.jpg"
+   },
+   {
+    "name": "Yuki Kedoin",
+    "character": "Takemaru",
+    "profile": "/ireujt2ysSmgFxaSHfKaTdUE9xh.jpg"
+   },
+   {
+    "name": "Akiko Kobayashi",
+    "character": "Setsu / Noh Performer 'Ochiba', Setsu",
+    "profile": "/fvCXXrLSMggck0cy5b7hY5zCoYx.jpg"
+   }
+  ],
+  "creator": "Rachel Kondo",
+  "seasons": [
+   {
+    "number": 1,
+    "episodes": [
+     {
+      "number": 1,
+      "title": "Anjin",
+      "overview": "Destinies converge in Japan after a barbarian ship washes ashore in a poor fishing village. Meanwhile, in Osaka, Lord Toranaga finds himself outplayed by his enemies.",
+      "still": "/8uib4EWHrAnhUg08pFLAnoo50rf.jpg",
+      "runtime": null
+     },
+     {
+      "number": 2,
+      "title": "Servants of Two Masters",
+      "overview": "Blackthorne's arrival in Osaka stirs up a hornet's nest of rivalries. Mariko is trapped between her cause and her faith when she must translate for the barbarian in Lord Toranaga's custody.",
+      "still": "/gUglbYu9EjhpVoxzBWHsXVQYpQX.jpg",
+      "runtime": null
+     },
+     {
+      "number": 3,
+      "title": "Tomorrow Is Tomorrow",
+      "overview": "After Blackthorne survives a brazen assassination attempt, Toranaga realizes he must ferry his allies out of Osaka or risk certain defeat.",
+      "still": "/uXMdeoIltO85372VLX85abAC109.jpg",
+      "runtime": 54
+     },
+     {
+      "number": 4,
+      "title": "The Eightfold Fence",
+      "overview": "Blackthorne and Mariko test their new alliance as they train Toranaga's gun regiment for war. Yabushige must navigate his past promises to Ishido when an old friend comes to the village.",
+      "still": "/kF8DfadGNPJi3fMZEZgiFRaoRH9.jpg",
+      "runtime": 58
+     },
+     {
+      "number": 5,
+      "title": "Broken to the Fist",
+      "overview": "Blackthorne and Mariko struggle to contain the secret that could get them both killed. Yabushige searches for the spy who has betrayed his intentions to Lord Toranaga.",
+      "still": "/5N5isVZvgdYeGsASiUgQJzHW6Ll.jpg",
+      "runtime": 58
+     },
+     {
+      "number": 6,
+      "title": "Ladies of the Willow World",
+      "overview": "Lady Ochiba returns to Osaka in order to accelerate the Regents' campaign against Toranaga. In Ajiro, Toranaga tests Mariko's loyalty to his cause.",
+      "still": "/15qoHmtC3zKQtZulccXs2GAMnKq.jpg",
+      "runtime": 58
+     },
+     {
+      "number": 7,
+      "title": "A Stick of Time",
+      "overview": "Outplayed by new alliances in Osaka, Toranaga is forced to carve out a new deal with a long lost family member.",
+      "still": "/s5yGuWq058n3urFKDIwjyNOzgCD.jpg",
+      "runtime": 56
+     },
+     {
+      "number": 8,
+      "title": "The Abyss of Life",
+      "overview": "Toranaga's defeated clan moves to Edo and awaits their fate. Blackthorne must decide who he fights for - the lord who has turned his back on him, or the ambition that brought him to Japan in the first place.",
+      "still": "/jX99BvnOAF2bNjQvNHtMmCxmUOa.jpg",
+      "runtime": 59
+     },
+     {
+      "number": 9,
+      "title": "Crimson Sky",
+      "overview": "Mariko arrives in Osaka for the fight of her life. Blackthorne and Yabushige scramble to save their own heads as their options dwindle.",
+      "still": "/tAoNG2uBLRYJZKJOq9k9Xvb0voT.jpg",
+      "runtime": null
+     },
+     {
+      "number": 10,
+      "title": "A Dream of a Dream",
+      "overview": "In the wake of a tragic death, Blackthorne finally considers the true nature of Toranaga's plan.",
+      "still": "/dIXtG4MafmmjzNhU7ANJZByGmvr.jpg",
+      "runtime": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "tmdbId": 157336,
+  "kind": "movie",
+  "title": "Interstellar",
+  "year": 2014,
+  "certification": "PG-13",
+  "genres": [
+   "Adventure",
+   "Drama",
+   "Science Fiction"
+  ],
+  "runtime": 169,
+  "tmdbScore": 8.5,
+  "tagline": "Mankind was born on Earth. It was never meant to die here.",
+  "overview": "The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.",
+  "poster": "/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg",
+  "backdrop": "/8sNiAPPYU14PUepFNeSNGUTiHW.jpg",
+  "logo": "/4Hu4w5p0mwL2Wvyk3gqu2JRDGHl.png",
+  "trailerKey": "LY19rHKAaAg",
+  "cast": [
+   {
+    "name": "Matthew McConaughey",
+    "character": "Cooper",
+    "profile": "/lCySuYjhXix3FzQdS4oceDDrXKI.jpg"
+   },
+   {
+    "name": "Anne Hathaway",
+    "character": "Brand",
+    "profile": "/nbccV2pMoyLTCeg5DQip24Eq0Jp.jpg"
+   },
+   {
+    "name": "Michael Caine",
+    "character": "Professor Brand",
+    "profile": "/bVZRMlpjTAO2pJK6v90buFgVbSW.jpg"
+   },
+   {
+    "name": "Jessica Chastain",
+    "character": "Murph",
+    "profile": "/eQKnihReJeB9vQEa5gySzAlKfZt.jpg"
+   },
+   {
+    "name": "Casey Affleck",
+    "character": "Tom",
+    "profile": "/304ilSygaCRWykoBWAL67TOw8g9.jpg"
+   },
+   {
+    "name": "Wes Bentley",
+    "character": "Doyle",
+    "profile": "/voD93lzFZrr9xfAggwFcPRBi84i.jpg"
+   },
+   {
+    "name": "Topher Grace",
+    "character": "Getty",
+    "profile": "/89sF57Br5lq8nrepS7HLzJ41QD1.jpg"
+   },
+   {
+    "name": "Mackenzie Foy",
+    "character": "Murph (10 Yrs.)",
+    "profile": "/wzH60SrqWp2XMkBfLgdBhx5EJ82.jpg"
+   },
+   {
+    "name": "Ellen Burstyn",
+    "character": "Murph (older)",
+    "profile": "/zGihSIVRzwmCqilnA4PmNM4C2RT.jpg"
+   }
+  ],
+  "director": "Christopher Nolan"
+ },
+ {
+  "tmdbId": 414906,
+  "kind": "movie",
+  "title": "The Batman",
+  "year": 2022,
+  "certification": "PG-13",
+  "genres": [
+   "Crime",
+   "Mystery",
+   "Thriller"
+  ],
+  "runtime": 177,
+  "tmdbScore": 7.7,
+  "tagline": "Unmask the truth.",
+  "overview": "In his second year of fighting crime, Batman uncovers corruption in Gotham City that connects to his own family while facing a serial killer known as the Riddler.",
+  "poster": "/74xTEgt7R36Fpooo50r9T25onhq.jpg",
+  "backdrop": "/rvtdN5XkWAfGX6xDuPL6yYS2seK.jpg",
+  "logo": "/haibnO2TycgulXD1Fj7b94L9m9E.png",
+  "trailerKey": "vc7_mH2PWHs",
+  "cast": [
+   {
+    "name": "Robert Pattinson",
+    "character": "Bruce Wayne / The Batman",
+    "profile": "/3qZ09UE7lN6AtorfXFRYpEtSY93.jpg"
+   },
+   {
+    "name": "Zoë Kravitz",
+    "character": "Selina Kyle",
+    "profile": "/n0mhAgmY6eJQmA7kaugsTZEJgHo.jpg"
+   },
+   {
+    "name": "Jeffrey Wright",
+    "character": "Lt. James Gordon",
+    "profile": "/yGcuHGW4glqRpOPxgiCvjcren7F.jpg"
+   },
+   {
+    "name": "Colin Farrell",
+    "character": "Oz / The Penguin",
+    "profile": "/5FdalJbrbZ5UCsED5rFrXpvbqJa.jpg"
+   },
+   {
+    "name": "Paul Dano",
+    "character": "The Riddler",
+    "profile": "/gOD5bO0hKnzzJm7sJeGeEJjfBBw.jpg"
+   },
+   {
+    "name": "John Turturro",
+    "character": "Carmine Falcone",
+    "profile": "/6O9W9cJW0kCqMzYeLupV9oH0ftn.jpg"
+   },
+   {
+    "name": "Andy Serkis",
+    "character": "Alfred",
+    "profile": "/eNGqhebQ4cDssjVeNFrKtUvweV5.jpg"
+   },
+   {
+    "name": "Peter Sarsgaard",
+    "character": "District Attorney Gil Colson",
+    "profile": "/5UANyM4co2nwYPgSEmGeNlZRm7V.jpg"
+   },
+   {
+    "name": "Barry Keoghan",
+    "character": "Unseen Arkham Prisoner",
+    "profile": "/ngoitknM6hw8fffLywyvjzy6Iti.jpg"
+   }
+  ],
+  "director": "Matt Reeves"
+ },
+ {
+  "tmdbId": 136315,
+  "kind": "show",
+  "title": "The Bear",
+  "year": 2022,
+  "certification": "TV-MA",
+  "genres": [
+   "Drama",
+   "Comedy"
+  ],
+  "runtime": null,
+  "tmdbScore": 8.2,
+  "tagline": "Back for seconds.",
+  "overview": "Carmy, a young fine-dining chef, comes home to Chicago to run his family sandwich shop. As he fights to transform the shop and himself, he works alongside a rough-around-the-edges crew that ultimately reveal themselves as his chosen family.",
+  "poster": "/eKfVzzEazSIjJMrw9ADa2x8ksLz.jpg",
+  "backdrop": "/aJtG4txtmiRHwAAqENQHZvBs6kY.jpg",
+  "logo": "/8ZTz2Wj0lE5WoSOqRG8GarhhnY4.png",
+  "trailerKey": "WBlIUsFEnsw",
+  "cast": [
+   {
+    "name": "Jeremy Allen White",
+    "character": "Carmen 'Carmy' Berzatto",
+    "profile": "/pXRADDRhprgaQ4Bri44NH3bYeu6.jpg"
+   },
+   {
+    "name": "Ebon Moss-Bachrach",
+    "character": "Richard 'Richie' Jerimovich",
+    "profile": "/xD8GVNayMpiTZxLfahy2DseYcQq.jpg"
+   },
+   {
+    "name": "Ayo Edebiri",
+    "character": "Sydney Adamu",
+    "profile": "/wrqYWaAmVPM2yueEEQUtMo6kCp2.jpg"
+   },
+   {
+    "name": "Lionel Boyce",
+    "character": "Marcus Brooks",
+    "profile": "/hpIxX5nkfA3pWCW8rYkEUCSBVyS.jpg"
+   },
+   {
+    "name": "Abby Elliott",
+    "character": "Natalie 'Sugar' Berzatto",
+    "profile": "/v7h08EsTce2pLHkZiaFe1QRuYbU.jpg"
+   },
+   {
+    "name": "Liza Colón-Zayas",
+    "character": "Bettina 'Tina' Marrero",
+    "profile": "/q2gHcef0wckji0AS8ZEO6cYx065.jpg"
+   },
+   {
+    "name": "Matty Matheson",
+    "character": "Neil Fak",
+    "profile": "/p1H19bBP5ePOxNpfOXIYpMgRfS7.jpg"
+   },
+   {
+    "name": "Edwin Lee Gibson",
+    "character": "Ebraheim",
+    "profile": "/wyDPu35soTnBi4VClpS8fv2atkE.jpg"
+   },
+   {
+    "name": "Corey Hendrix",
+    "character": "Gary 'Sweeps' Woods",
+    "profile": "/jurlf1Ot0mofDsoFTqIBrezx68t.jpg"
+   }
+  ],
+  "creator": "Christopher Storer",
+  "seasons": [
+   {
+    "number": 1,
+    "episodes": [
+     {
+      "number": 1,
+      "title": "System",
+      "overview": "Carmy attempts to retrain the employees of The Original Beef of Chicagoland, but is faced with resistance; in need of back-up, he brings on a talented young chef to help.",
+      "still": "/dLZ1TQH5fQsWZFw1E6ku7C7nyJR.jpg",
+      "runtime": 28
+     },
+     {
+      "number": 2,
+      "title": "Hands",
+      "overview": "A surprise health inspection reveals the cracks in the restaurant's foundation. Carmy goes head-to-head with Richie.",
+      "still": "/3Z0ML8dU4BMuwZIv6aSUsckBGJr.jpg",
+      "runtime": 32
+     },
+     {
+      "number": 3,
+      "title": "Brigade",
+      "overview": "Carmy attends Al-Anon. Sydney struggles to gain the respect of the staff.",
+      "still": "/fSopyZWB9cfVkN5ZElm4HyNboU9.jpg",
+      "runtime": 30
+     },
+     {
+      "number": 4,
+      "title": "Dogs",
+      "overview": "Carmy and Richie cater a kid's birthday party. Tina and Sydney work together while Marcus makes donuts.",
+      "still": "/i9UekfTojvrbEgtfNNRG7I9SJZZ.jpg",
+      "runtime": 31
+     },
+     {
+      "number": 5,
+      "title": "Sheridan",
+      "overview": "Things go wrong in the kitchen. Sydney finds solutions.",
+      "still": "/5WL2XOyj0qApQtKPbMCGJHfk0Xq.jpg",
+      "runtime": 26
+     },
+     {
+      "number": 6,
+      "title": "Ceres",
+      "overview": "Richie notices the neighborhood is changing. Sugar and Carmy clean up the office.",
+      "still": "/zwjxMrViyKE1BztLFwWm5YDgbCK.jpg",
+      "runtime": 31
+     },
+     {
+      "number": 7,
+      "title": "Review",
+      "overview": "A bad day in the kitchen causes tensions to rise.",
+      "still": "/74UV7WHDPoHW20GfF2fgoVZvbJn.jpg",
+      "runtime": 21
+     },
+     {
+      "number": 8,
+      "title": "Braciole",
+      "overview": "Things get out of control. Carmy is faced with a decision.",
+      "still": "/yU4KuhaRqwTRqEl2GrQULGPBJCN.jpg",
+      "runtime": 48
+     }
+    ]
+   },
+   {
+    "number": 2,
+    "episodes": [
+     {
+      "number": 1,
+      "title": "Beef",
+      "overview": "Faced with the reality of opening a new restaurant, the crew must make a plan.",
+      "still": "/bV51sdguQRlPyXGnvYXrQ6vqfeL.jpg",
+      "runtime": 30
+     },
+     {
+      "number": 2,
+      "title": "Pasta",
+      "overview": "The crew splits up to work towards their new vision.",
+      "still": "/qolqC6exsNzIWEXKxdtzJUP6fTa.jpg",
+      "runtime": 31
+     },
+     {
+      "number": 3,
+      "title": "Sundae",
+      "overview": "Sydney searches Chicago for culinary inspiration.",
+      "still": "/nX3Ss4VHQzI9VkjgbcrCMpu9Q1.jpg",
+      "runtime": 27
+     },
+     {
+      "number": 4,
+      "title": "Honeydew",
+      "overview": "Marcus challenges himself.",
+      "still": "/iLEWUEG5nOZQeNeUY6dKPjuxdOn.jpg",
+      "runtime": 30
+     },
+     {
+      "number": 5,
+      "title": "Pop",
+      "overview": "The renovation gets off track.",
+      "still": "/gohsyAFvncNUy04R4KAH51BVxHm.jpg",
+      "runtime": 34
+     },
+     {
+      "number": 6,
+      "title": "Fishes",
+      "overview": "Feast of the Seven Fishes.",
+      "still": "/50p0dmUPIW1apDiirprhS0YvNch.jpg",
+      "runtime": null
+     },
+     {
+      "number": 7,
+      "title": "Forks",
+      "overview": "Richie stages.",
+      "still": "/6RGWaBn8dMmPDGToFoVBzsLoE3C.jpg",
+      "runtime": 36
+     },
+     {
+      "number": 8,
+      "title": "Bolognese",
+      "overview": "The crew awaits a do-or-die fire suppression test.",
+      "still": "/nrvMFbf0IOkFP553zVv0eXAlc6d.jpg",
+      "runtime": 33
+     },
+     {
+      "number": 9,
+      "title": "Omelette",
+      "overview": "Final preparations are made for The Bear's first service.",
+      "still": "/1YfjQ6wSrVtstkEfRlebfr9ioYr.jpg",
+      "runtime": 40
+     },
+     {
+      "number": 10,
+      "title": "The Bear",
+      "overview": "Friends & Family night at The Bear.",
+      "still": "/zIx4VN6SyupkpEVXA5dQsGsysNa.jpg",
+      "runtime": 41
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "tmdbId": 76341,
+  "kind": "movie",
+  "title": "Mad Max: Fury Road",
+  "year": 2015,
+  "certification": "R",
+  "genres": [
+   "Action",
+   "Adventure",
+   "Science Fiction"
+  ],
+  "runtime": 121,
+  "tmdbScore": 7.6,
+  "tagline": "The future belongs to the mad.",
+  "overview": "An apocalyptic story set in the furthest reaches of our planet, in a stark desert landscape where humanity is broken, and most everyone is crazed fighting for the necessities of life. Within this world exist two rebels on the run who just might be able to restore order.",
+  "poster": "/ulcAi4dKpAjHwYGS08vNyx9H6I9.jpg",
+  "backdrop": "/gqrnQA6Xppdl8vIb2eJc58VC1tW.jpg",
+  "logo": "/cBAO0i9fZCux5SqJnizRECS8qfU.png",
+  "trailerKey": "MonFNCgK4WE",
+  "cast": [
+   {
+    "name": "Tom Hardy",
+    "character": "Max Rockatansky",
+    "profile": "/d81K0RH8UX7tZj49tZaQhZ9ewH.jpg"
+   },
+   {
+    "name": "Charlize Theron",
+    "character": "Imperator Furiosa",
+    "profile": "/gd7ShD0yt4bsR2STeQ19KQ6hvXL.jpg"
+   },
+   {
+    "name": "Nicholas Hoult",
+    "character": "Nux",
+    "profile": "/pXm8GWTm9eIA8pUGOjvmYjlxamu.jpg"
+   },
+   {
+    "name": "Hugh Keays-Byrne",
+    "character": "Immortan Joe",
+    "profile": "/7XSPjKNwmyEPMnmoVSQ42ykMz6M.jpg"
+   },
+   {
+    "name": "Josh Helman",
+    "character": "Slit",
+    "profile": "/1thwLjrgvFv7ifjyVtTKQh23OCh.jpg"
+   },
+   {
+    "name": "Nathan Jones",
+    "character": "Rictus Erectus",
+    "profile": "/hlu4qYy9JGPxGn0wT8Ea6mTWR8R.jpg"
+   },
+   {
+    "name": "Zoë Kravitz",
+    "character": "Toast the Knowing",
+    "profile": "/n0mhAgmY6eJQmA7kaugsTZEJgHo.jpg"
+   },
+   {
+    "name": "Rosie Huntington-Whiteley",
+    "character": "The Splendid Angharad",
+    "profile": "/oq5iX2VoLGF41P5DmNDNJcczESR.jpg"
+   },
+   {
+    "name": "Riley Keough",
+    "character": "Capable",
+    "profile": "/du1FYr5dTQL6gCMX6ISnQBOxz2F.jpg"
+   }
+  ],
+  "director": "George Miller"
+ },
+ {
+  "tmdbId": 329865,
+  "kind": "movie",
+  "title": "Arrival",
+  "year": 2016,
+  "certification": "PG-13",
+  "genres": [
+   "Drama",
+   "Science Fiction",
+   "Mystery"
+  ],
+  "runtime": 116,
+  "tmdbScore": 7.6,
+  "tagline": "Why are they here?",
+  "overview": "Taking place after alien crafts land around the world, an expert linguist is recruited by the military to determine whether they come in peace or are a threat.",
+  "poster": "/pEzNVQfdzYDzVK0XqxERIw2x2se.jpg",
+  "backdrop": "/8MUZz7oPXQftFTslZpRP3CVMOoq.jpg",
+  "logo": "/rcPtxYkZ2mXmKdD0NKLzjsHxL3V.png",
+  "trailerKey": "7W1m5ER3I1Y",
+  "cast": [
+   {
+    "name": "Amy Adams",
+    "character": "Louise Banks",
+    "profile": "/gn0K6c6d1L6qQrRc86iL8uyIqiF.jpg"
+   },
+   {
+    "name": "Jeremy Renner",
+    "character": "Ian Donnelly",
+    "profile": "/yB84D1neTYXfWBaV0QOE9RF2VCu.jpg"
+   },
+   {
+    "name": "Forest Whitaker",
+    "character": "Colonel Weber",
+    "profile": "/4w7l5JUwnwFNBy7J93ZwYN1nihm.jpg"
+   },
+   {
+    "name": "Michael Stuhlbarg",
+    "character": "Agent Halpern",
+    "profile": "/aYB3SQm3h6ZyAdlbGyiNfakjx56.jpg"
+   },
+   {
+    "name": "Mark O'Brien",
+    "character": "Captain Marks",
+    "profile": "/8ckgltvlife4BBJcBpHEQWXfQ9p.jpg"
+   },
+   {
+    "name": "Tzi Ma",
+    "character": "General Shang",
+    "profile": "/x4fz0LCIiBNGdil3nBYO22W7QJ0.jpg"
+   },
+   {
+    "name": "Abigail Pniowsky",
+    "character": "8-Year-Old Hannah",
+    "profile": "/eFjFSNghr04PT6eBHzqLCvCUiXm.jpg"
+   },
+   {
+    "name": "Julia Scarlett Dan",
+    "character": "12-Year-Old Hannah",
+    "profile": "/5keIOToJhdil2uaTOXq5JX4e3OR.jpg"
+   },
+   {
+    "name": "Jadyn Malone",
+    "character": "6-Year-Old Hannah",
+    "profile": "/pVcseEB0gNjmkGRbvmnV8XAsPae.jpg"
+   }
+  ],
+  "director": "Denis Villeneuve"
+ },
+ {
+  "tmdbId": 94605,
+  "kind": "show",
+  "title": "Arcane",
+  "year": 2021,
+  "certification": "TV-14",
+  "genres": [
+   "Animation",
+   "Action & Adventure",
+   "Sci-Fi & Fantasy"
+  ],
+  "runtime": null,
+  "tmdbScore": 8.7,
+  "tagline": "The hunt is on.",
+  "overview": "Amid the stark discord of twin cities Piltover and Zaun, two sisters fight on rival sides of a war between magic technologies and clashing convictions.",
+  "poster": "/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
+  "backdrop": "/5cvnxEHT3e39DvT6ARw4GNCFrB0.jpg",
+  "logo": "/jXLNOzeEA8AoJy92dJTUUZXTMxK.png",
+  "trailerKey": "W4gLFBNGgiY",
+  "cast": [
+   {
+    "name": "Hailee Steinfeld",
+    "character": "Vi (voice)",
+    "profile": "/qDInsG0cxWNxS1X4t59TBZ5S6x5.jpg"
+   },
+   {
+    "name": "Ella Purnell",
+    "character": "Jinx (voice)",
+    "profile": "/jqrYg35GHuMGwGqEVUthqTLQnay.jpg"
+   },
+   {
+    "name": "Kevin Alejandro",
+    "character": "Jayce (voice)",
+    "profile": "/bh4aQqP7kJzL2Ls9tj5OmhsBlqi.jpg"
+   },
+   {
+    "name": "Toks Olagundoye",
+    "character": "Mel Medarda (voice)",
+    "profile": "/2tKnfTA0gh6QnTcHb18hj8o70uG.jpg"
+   },
+   {
+    "name": "Harry Lloyd",
+    "character": "Viktor (voice)",
+    "profile": "/qZSf6OzRpDaZdOCX6pynSRp6jVV.jpg"
+   },
+   {
+    "name": "Katie Leung",
+    "character": "Caitlyn (voice)",
+    "profile": "/9gztOAk27dpZVspSJpb27ek7LlT.jpg"
+   },
+   {
+    "name": "Jason Spisak",
+    "character": "Silco (voice), Pim (voice)",
+    "profile": "/yWxJDXNcocccr1LkEuVXapVdcXS.jpg"
+   },
+   {
+    "name": "JB Blanc",
+    "character": "Bolbok (voice), Vander (voice), Bolbok / Vander (voice), Vander / Warwick (voice) and 1 more...",
+    "profile": "/fHLyXboPlBDo1aoAl085YqaPjO8.jpg"
+   },
+   {
+    "name": "Brett Tucker",
+    "character": "Singed (voice), Singed / Sergeant Billingsworth (voice)",
+    "profile": "/6IUQyy2pA8PRXX1MEx088JH6pcu.jpg"
+   }
+  ],
+  "creator": "Christian Linke",
+  "seasons": [
+   {
+    "number": 1,
+    "episodes": [
+     {
+      "number": 1,
+      "title": "Welcome to the Playground",
+      "overview": "Orphaned sisters Vi and Powder bring trouble to Zaun's underground streets in the wake of a heist in posh Piltover.",
+      "still": "/g7dMkFJvJECDYoL0TRzGQCfF3xD.jpg",
+      "runtime": 44
+     },
+     {
+      "number": 2,
+      "title": "Some Mysteries Are Better Left Unsolved",
+      "overview": "Idealistic inventor Jayce attempts to harness magic through science—despite his mentor's warnings. Criminal kingpin Silco tests a powerful substance.",
+      "still": "/1uubdoW7nPtpYS6T59COLEKDB7A.jpg",
+      "runtime": 41
+     },
+     {
+      "number": 3,
+      "title": "The Base Violence Necessary for Change",
+      "overview": "An epic showdown between old rivals results in a fateful moment for Zaun. Jayce and Viktor risk it all for their research.",
+      "still": "/zCc7AEH53aH8r61F5f9DkIQGeZC.jpg",
+      "runtime": 45
+     },
+     {
+      "number": 4,
+      "title": "Happy Progress Day!",
+      "overview": "With Piltover prospering from their tech, Jayce and Viktor weigh their next move. A familiar face re-emerges from Zaun to wreak havoc.",
+      "still": "/b0EGdWDOFxbhaGwlJ11vO2h0az6.jpg",
+      "runtime": 41
+     },
+     {
+      "number": 5,
+      "title": "Everybody Wants to Be My Enemy",
+      "overview": "Rogue enforcer Caitlyn tours the undercity to track down Silco. Jayce puts a target on his back trying to root out Piltover corruption.",
+      "still": "/72Ti7nTKEAPgx4VSggb1ksl31rm.jpg",
+      "runtime": 41
+     },
+     {
+      "number": 6,
+      "title": "When These Walls Come Tumbling Down",
+      "overview": "An eager protégé undermines his mentor on the council as a magical tech rapidly evolves. With authorities in pursuit, Jinx must face her past.",
+      "still": "/sPpQYLgoSZ8UXai20CSEABG9rFz.jpg",
+      "runtime": 43
+     },
+     {
+      "number": 7,
+      "title": "The Boy Savior",
+      "overview": "Caitlyn and Vi meet an ally in Zaun’s streets and head into a frenzied battle with a common foe. Viktor makes a dire decision.",
+      "still": "/ieYvkXKqOuIYcBps7COg8w6rJyN.jpg",
+      "runtime": 41
+     },
+     {
+      "number": 8,
+      "title": "Oil and Water",
+      "overview": "Disowned heir Mel and her visiting mother trade combat tactics. Caitlyn and Vi forge an unlikely alliance. Jinx undergoes a startling change.",
+      "still": "/vYIBscxveNMkxFNTcPZ6YoF6fdU.jpg",
+      "runtime": 41
+     },
+     {
+      "number": 9,
+      "title": "The Monster You Created",
+      "overview": "Perilously close to war, the leaders of Piltover and Zaun reach an ultimatum. But a fateful standoff changes both cities forever.",
+      "still": "/3mSWRynTvvE2IYJ6sI47m8V77Jq.jpg",
+      "runtime": 42
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "tmdbId": 569094,
+  "kind": "movie",
+  "title": "Spider-Man: Across the Spider-Verse",
+  "year": 2023,
+  "certification": "PG",
+  "genres": [
+   "Animation",
+   "Action",
+   "Adventure",
+   "Science Fiction"
+  ],
+  "runtime": 140,
+  "tmdbScore": 8.4,
+  "tagline": "It's how you wear the mask that matters.",
+  "overview": "After reuniting with Gwen Stacy, Brooklyn’s full-time, friendly neighborhood Spider-Man is catapulted across the Multiverse, where he encounters the Spider Society, a team of Spider-People charged with protecting the Multiverse's very existence. But when the heroes clash on how to handle a new threat, Miles finds himself pitted against the other Spiders and must set out on his own to save those he loves most.",
+  "poster": "/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg",
+  "backdrop": "/kVd3a9YeLGkoeR50jGEXM6EqseS.jpg",
+  "logo": "/cmE0j3mQQe6xrzLryxGF9rF2KC8.png",
+  "trailerKey": "yFrxzaBLDQM",
+  "cast": [
+   {
+    "name": "Shameik Moore",
+    "character": "Miles Morales (voice)",
+    "profile": "/ovUKfVOwJ7CadEHaG3NDsfA5xRq.jpg"
+   },
+   {
+    "name": "Hailee Steinfeld",
+    "character": "Gwen Stacy (voice)",
+    "profile": "/qDInsG0cxWNxS1X4t59TBZ5S6x5.jpg"
+   },
+   {
+    "name": "Brian Tyree Henry",
+    "character": "Jeff Morales (voice)",
+    "profile": "/2MsJh0bpyzwvOUnXOltHp3j85Pb.jpg"
+   },
+   {
+    "name": "Luna Lauren Vélez",
+    "character": "Rio Morales (voice)",
+    "profile": "/98BvmTJCZHx0jPv0oNcv04Jkmfb.jpg"
+   },
+   {
+    "name": "Jake Johnson",
+    "character": "Peter B. Parker (voice)",
+    "profile": "/3UNfW2qZgRkW81neNVfQvaRC92K.jpg"
+   },
+   {
+    "name": "Oscar Isaac",
+    "character": "Miguel O'Hara (voice)",
+    "profile": "/dW5U5yrIIPmMjRThR9KT2xH6nTz.jpg"
+   },
+   {
+    "name": "Jason Schwartzman",
+    "character": "Spot (voice)",
+    "profile": "/gCjMdmW1DiPAClHVl4zHEIffIsE.jpg"
+   },
+   {
+    "name": "Issa Rae",
+    "character": "Jessica Drew (voice)",
+    "profile": "/uFjimuDgBv8kckApr19t8DykxPH.jpg"
+   },
+   {
+    "name": "Daniel Kaluuya",
+    "character": "Hobie Brown (voice)",
+    "profile": "/jj2kZqJobjom36wlhlYhc38nTwN.jpg"
+   }
+  ],
+  "director": "Justin K. Thompson"
+ },
+ {
+  "tmdbId": 361743,
+  "kind": "movie",
+  "title": "Top Gun: Maverick",
+  "year": 2022,
+  "certification": "PG-13",
+  "genres": [
+   "Action",
+   "Drama"
+  ],
+  "runtime": 131,
+  "tmdbScore": 8.2,
+  "tagline": "Feel the need... The need for speed.",
+  "overview": "After more than thirty years of service as one of the Navy’s top aviators, and dodging the advancement in rank that would ground him, Pete “Maverick” Mitchell finds himself training a detachment of TOP GUN graduates for a specialized mission the likes of which no living pilot has ever seen.",
+  "poster": "/n0YuM4f5lvGAP6MAW2kBIzugXnc.jpg",
+  "backdrop": "/AaV1YIdWKnjAIAOe8UUKBFm327v.jpg",
+  "logo": "/xGumNgL4pw3bdXDlhzAG2X4eo2I.png",
+  "trailerKey": "Klc__shdj88",
+  "cast": [
+   {
+    "name": "Tom Cruise",
+    "character": "Capt. Pete 'Maverick' Mitchell",
+    "profile": "/maf8PhSvDCdEwjEMbYfGpojR5RP.jpg"
+   },
+   {
+    "name": "Miles Teller",
+    "character": "Lt. Bradley 'Rooster' Bradshaw",
+    "profile": "/kDf3sW3USjEBDQ3Ua7lbwOfwty6.jpg"
+   },
+   {
+    "name": "Jennifer Connelly",
+    "character": "Penny Benjamin",
+    "profile": "/wdmcJagSRJ65AuJ4IUCzuHAdvgy.jpg"
+   },
+   {
+    "name": "Bashir Salahuddin",
+    "character": "Wo-1. Bernie 'Hondo' Coleman",
+    "profile": "/ZL5MRzjd6kWkvQXqh5mgPY1CKP.jpg"
+   },
+   {
+    "name": "Jon Hamm",
+    "character": "Adm. Beau 'Cyclone' Simpson",
+    "profile": "/mrXE5fZbEDPc7BEE5G21J6qrwzi.jpg"
+   },
+   {
+    "name": "Charles Parnell",
+    "character": "Adm. Solomon 'Warlock' Bates",
+    "profile": "/wLywO5xtR97YKtkYb57hXEFpL7j.jpg"
+   },
+   {
+    "name": "Monica Barbaro",
+    "character": "Lt. Natasha 'Phoenix' Trace",
+    "profile": "/nxkFcvDIC4tC3st1K1BJXJm1F2h.jpg"
+   },
+   {
+    "name": "Lewis Pullman",
+    "character": "Lt. Robert 'Bob' Floyd",
+    "profile": "/i2wJQ2eaVuTPaA84jzxNtxs54mO.jpg"
+   },
+   {
+    "name": "Jay Ellis",
+    "character": "Lt. Reuben 'Payback' Fitch",
+    "profile": "/78JH7CfMrWrI3Vx2XLbx0GW4c2X.jpg"
+   }
+  ],
+  "director": "Joseph Kosinski"
+ },
+ {
+  "tmdbId": 313369,
+  "kind": "movie",
+  "title": "La La Land",
+  "year": 2016,
+  "certification": "PG-13",
+  "genres": [
+   "Comedy",
+   "Drama",
+   "Romance"
+  ],
+  "runtime": 129,
+  "tmdbScore": 7.9,
+  "tagline": "Here's to the fools who dream.",
+  "overview": "Mia, an aspiring actress, serves lattes to movie stars in between auditions and Sebastian, a jazz musician, scrapes by playing cocktail party gigs in dingy bars, but as success mounts they are faced with decisions that begin to fray the fragile fabric of their love affair, and the dreams they worked so hard to maintain in each other threaten to rip them apart.",
+  "poster": "/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg",
+  "backdrop": "/nlPCdZlHtRNcF6C9hzUH4ebmV1w.jpg",
+  "logo": "/97DYpdDmiOpfn9l9I2dGxDH01t1.svg",
+  "trailerKey": "_oBwwSXdO_E",
+  "cast": [
+   {
+    "name": "Ryan Gosling",
+    "character": "Sebastian",
+    "profile": "/lyUyVARQKhGxaxy0FbPJCQRpiaW.jpg"
+   },
+   {
+    "name": "Emma Stone",
+    "character": "Mia",
+    "profile": "/mstXxlDqhoK0s0molsNpskJ1wLH.jpg"
+   },
+   {
+    "name": "John Legend",
+    "character": "Keith",
+    "profile": "/cCv0YBy2YFFWp9h3kvNPmwWwrCD.jpg"
+   },
+   {
+    "name": "Rosemarie DeWitt",
+    "character": "Laura",
+    "profile": "/44sxIdGtYN24R14OmnZbCpcd8J8.jpg"
+   },
+   {
+    "name": "Finn Wittrock",
+    "character": "Greg",
+    "profile": "/gwGMGTmli0uBF7eAhhXePWhYNFJ.jpg"
+   },
+   {
+    "name": "Callie Hernandez",
+    "character": "Tracy",
+    "profile": "/doMXlhTAYCy8gH43yYA6m9ymxhd.jpg"
+   },
+   {
+    "name": "Sonoya Mizuno",
+    "character": "Caitlin",
+    "profile": "/WVROOHuk6G6QgVe0pU8R2i1fsE.jpg"
+   },
+   {
+    "name": "Jessica Rothe",
+    "character": "Alexis",
+    "profile": "/oItPXy56W0Y5taqIMZilRtnPDMn.jpg"
+   },
+   {
+    "name": "Tom Everett Scott",
+    "character": "David",
+    "profile": "/nVDihOvsSm7kmeyHLtAcEzrrSYC.jpg"
+   }
+  ],
+  "director": "Damien Chazelle"
+ },
+ {
+  "tmdbId": 155,
+  "kind": "movie",
+  "title": "The Dark Knight",
+  "year": 2008,
+  "certification": "PG-13",
+  "genres": [
+   "Action",
+   "Thriller",
+   "Crime"
+  ],
+  "runtime": 152,
+  "tmdbScore": 8.5,
+  "tagline": "Welcome to a world without rules.",
+  "overview": "Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to dismantle the remaining criminal organizations that plague the streets. The partnership proves to be effective, but they soon find themselves prey to a reign of chaos unleashed by a rising criminal mastermind known to the terrified citizens of Gotham as the Joker.",
+  "poster": "/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+  "backdrop": "/9FE5eD92WfVCiivM9Pq9GVSrlWk.jpg",
+  "logo": "/nO5Uix3Qr4WjOyU1BMPv0okyNWm.png",
+  "trailerKey": "_PZpmTj1Q8Q",
+  "cast": [
+   {
+    "name": "Christian Bale",
+    "character": "Bruce Wayne",
+    "profile": "/7Pxez9J8fuPd2Mn9kex13YALrCQ.jpg"
+   },
+   {
+    "name": "Heath Ledger",
+    "character": "Joker",
+    "profile": "/AdWKVqyWpkYSfKE5Gb2qn8JzHni.jpg"
+   },
+   {
+    "name": "Aaron Eckhart",
+    "character": "Harvey Dent",
+    "profile": "/u5JjnRMr9zKEVvOP7k3F6gdcwT6.jpg"
+   },
+   {
+    "name": "Michael Caine",
+    "character": "Alfred",
+    "profile": "/bVZRMlpjTAO2pJK6v90buFgVbSW.jpg"
+   },
+   {
+    "name": "Maggie Gyllenhaal",
+    "character": "Rachel",
+    "profile": "/vsfkWdYWmA9CpzMHTJzrFxlDnEZ.jpg"
+   },
+   {
+    "name": "Gary Oldman",
+    "character": "Gordon",
+    "profile": "/yhaSM5habNNI1Tf4ALRwRk3VvSZ.jpg"
+   },
+   {
+    "name": "Morgan Freeman",
+    "character": "Lucius Fox",
+    "profile": "/905k0RFzH0Kd6gx8oSxRdnr6FL.jpg"
+   },
+   {
+    "name": "Monique Gabriela Curnen",
+    "character": "Ramirez",
+    "profile": "/lJgLQs7cfM49m8VzVviwxIByz76.jpg"
+   },
+   {
+    "name": "Ron Dean",
+    "character": "Wuertz",
+    "profile": "/mgqdr4VFrTVZatkki2suNLYxeDG.jpg"
+   }
+  ],
+  "director": "Christopher Nolan"
+ },
+ {
+  "tmdbId": 27205,
+  "kind": "movie",
+  "title": "Inception",
+  "year": 2010,
+  "certification": "PG-13",
+  "genres": [
+   "Action",
+   "Science Fiction",
+   "Crime"
+  ],
+  "runtime": 148,
+  "tmdbScore": 8.4,
+  "tagline": "Your mind is the scene of the crime.",
+  "overview": "Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets is offered a chance to regain his old life as payment for a task considered to be impossible: \"inception\", the implantation of another person's idea into a target's subconscious.",
+  "poster": "/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg",
+  "backdrop": "/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg",
+  "logo": "/eS5TjZsO30LTfZISyBbPiXshAKd.png",
+  "trailerKey": "cdx31ak4KbQ",
+  "cast": [
+   {
+    "name": "Leonardo DiCaprio",
+    "character": "Dom Cobb",
+    "profile": "/wo2hJpn04vbtmh0B9utCFdsQhxM.jpg"
+   },
+   {
+    "name": "Joseph Gordon-Levitt",
+    "character": "Arthur",
+    "profile": "/z2FA8js799xqtfiFjBTicFYdfk.jpg"
+   },
+   {
+    "name": "Ken Watanabe",
+    "character": "Saito",
+    "profile": "/psAXOYp9SBOXvg6AXzARDedNQ9P.jpg"
+   },
+   {
+    "name": "Tom Hardy",
+    "character": "Eames",
+    "profile": "/d81K0RH8UX7tZj49tZaQhZ9ewH.jpg"
+   },
+   {
+    "name": "Elliot Page",
+    "character": "Ariadne",
+    "profile": "/wSdlM4Qyoi5AGj5eIIp8Bm0Sfkz.jpg"
+   },
+   {
+    "name": "Dileep Rao",
+    "character": "Yusuf",
+    "profile": "/jRNn8SZqFXuI5wOOlHwYsWh0hXs.jpg"
+   },
+   {
+    "name": "Cillian Murphy",
+    "character": "Robert Fischer, Jr.",
+    "profile": "/2lKs67r7FI4bPu0AXxMUJZxmUXn.jpg"
+   },
+   {
+    "name": "Tom Berenger",
+    "character": "Peter Browning",
+    "profile": "/zLxzAdAfu7y02yEx29JSLDgXJZ4.jpg"
+   },
+   {
+    "name": "Marion Cotillard",
+    "character": "Mal Cobb",
+    "profile": "/biitzOF0GffIqFYLyOPkoiaOngQ.jpg"
+   }
+  ],
+  "director": "Christopher Nolan"
+ }
+]
