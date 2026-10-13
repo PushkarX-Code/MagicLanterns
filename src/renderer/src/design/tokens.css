@@ -1,0 +1,45 @@
+:root {
+  /* Surfaces */
+  --bg: #0a0a0b;
+  --bg-raised: #141416;
+  --scrim: rgba(6, 6, 7, 0.72);
+
+  /* Text */
+  --text: #f5f5f7;
+  --text-2: rgba(235, 235, 245, 0.64);
+  --text-3: rgba(235, 235, 245, 0.4);
+  --text-4: rgba(235, 235, 245, 0.22);
+
+  /* Lantern amber, used sparingly */
+  --amber: #ffb547;
+  --amber-hot: #ffd38a;
+  --amber-deep: #f08a24;
+  --amber-glow: rgba(255, 170, 70, 0.45);
+
+  /* Glass */
+  --glass-fill: rgba(30, 30, 34, 0.46);
+  --glass-fill-strong: rgba(36, 36, 40, 0.68);
+  --glass-blur: blur(30px) saturate(180%);
+  --glass-edge: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --glass-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+
+  /* Shape */
+  --r-card: 16px;
+  --r-panel: 24px;
+  --r-pill: 999px;
+
+  /* Depth */
+  --lift: 0 30px 60px -12px rgba(0, 0, 0, 0.72), 0 18px 36px -18px rgba(0, 0, 0, 0.8);
+  --rest: 0 10px 24px -10px rgba(0, 0, 0, 0.6);
+
+  /* Type */
+  --font: 'Inter Variable', 'Inter', 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+
+  /* Layout */
+  --rail: 76px;
+  --rail-open: 252px;
+  --gutter: 64px;
+  --content-left: calc(var(--rail) + 16px + 48px);
+  --titlebar: 36px;
+}

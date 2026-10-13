@@ -1,0 +1,129 @@
+.home {
+  padding-bottom: 80px;
+}
+
+.hero {
+  position: relative;
+  height: min(86vh, 900px);
+  min-height: 560px;
+}
+.hero-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+}
+.hero-slide {
+  position: absolute;
+  inset: 0;
+}
+.hero-kb {
+  position: absolute;
+  inset: 0;
+  transform-origin: 65% 40%;
+  will-change: transform;
+}
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  pointer-events: none;
+}
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(8, 8, 9, 0.88) 0%, rgba(8, 8, 9, 0.55) 30%, rgba(8, 8, 9, 0.05) 62%, transparent 100%),
+    linear-gradient(0deg, rgba(10, 10, 11, 0.95) 0%, rgba(10, 10, 11, 0.4) 26%, transparent 52%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.38) 0%, transparent 18%);
+}
+.hero-content {
+  position: absolute;
+  left: var(--content-left);
+  bottom: 120px;
+  width: min(640px, 48vw);
+  z-index: 2;
+}
+.hero-logo {
+  width: min(520px, 38vw);
+  height: 170px;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 6px 30px rgba(0, 0, 0, 0.55));
+}
+.hero-logo .bimg {
+  background: transparent !important;
+}
+.hero-logo .t-display {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: flex;
+  align-items: flex-end;
+}
+.hero-tagline {
+  margin: 16px 0 0;
+  font-size: 18px;
+  line-height: 1.5;
+  font-weight: 450;
+  color: rgba(245, 245, 247, 0.82);
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 30px;
+}
+.hero-dots {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 128px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+.hero-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.28);
+  overflow: hidden;
+  transition: width 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), background 0.3s ease;
+}
+.hero-dot.is-active {
+  width: 34px;
+  background: rgba(255, 255, 255, 0.22);
+}
+.hero-dot-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  background: rgba(255, 255, 255, 0.9);
+  animation: ml-dot linear forwards;
+}
+@keyframes ml-dot {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.reduce-motion .hero-dot-fill {
+  animation: none;
+  transform: none;
+}
+
+.home-rows {
+  position: relative;
+  margin-top: -64px;
+  z-index: 3;
+}

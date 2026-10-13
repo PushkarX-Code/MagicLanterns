@@ -1,0 +1,23 @@
+appId: com.pushkar.magiclanterns
+productName: Magic Lanterns
+copyright: Made by Pushkar
+directories:
+  output: release
+  buildResources: build
+files:
+  - out/**
+  - resources/**
+  - package.json
+win:
+  icon: build/icon.ico
+  target:
+    - target: nsis
+      arch: [x64]
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  shortcutName: Magic Lanterns
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
