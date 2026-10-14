@@ -241,3 +241,99 @@ export function setSetting(db: Db, key: string, value: unknown): void {
     JSON.stringify(value)
   )
 }
+
+// ---------- Files ----------
+
+export interface KnownFile {
+  id: number
+  size: number
+  mtime: number
+  probed: boolean
+}
+
+export function folderRows(db: Db): { id: number; path: string }[] {
+  return db
+    .prepare('SELECT id, path FROM folders WHERE enabled = 1 ORDER BY added_at')
+    .all()
+    .map((r) => ({ id: Number(r.id), path: String(r.path) }))
+}
+
+export function knownFiles(db: Db, folderId: number): Map<string, KnownFile> {
+  const rows = db.prepare('SELECT id, path, size, mtime, probed_at FROM files WHERE folder_id = ?').all(folderId)
+  return new Map(rows.map((r) => [String(r.path), { id: Number(r.id), size: Number(r.size), mtime: Number(r.mtime), probed: r.probed_at != null }]))
+}
+
+export function insertFile(db: Db, folderId: number, f: { path: string; size: number; mtime: number }, now: number): number {
+  return Number(
+    db.prepare('INSERT INTO files (folder_id, path, size, mtime, added_at) VALUES (?, ?, ?, ?, ?)').run(folderId, f.path, f.size, f.mtime, now)
+      .lastInsertRowid
+  )
+}
+
+/** A file came back or changed on disk: it's present again and needs reading afresh. */
+export function touchFile(db: Db, id: number, f: { size: number; mtime: number }, changed: boolean): void {
+  if (changed) db.prepare('UPDATE files SET size = ?, mtime = ?, missing = 0, probed_at = NULL WHERE id = ?').run(f.size, f.mtime, id)
+  else db.prepare('UPDATE files SET missing = 0 WHERE id = ? AND missing = 1').run(id)
+}
+
+/** Files that vanished keep their watch history; they show again if the drive comes back. */
+export function markMissing(db: Db, ids: number[]): void {
+  const q = db.prepare('UPDATE files SET missing = 1 WHERE id = ?')
+  for (const id of ids) q.run(id)
+}
+
+export interface ProbeRow {
+  duration: number | null
+  container: string | null
+  videoCodec: string | null
+  width: number | null
+  height: number | null
+  fps: number | null
+  bitrate: number | null
+  hdr: string
+  dvProfile: number | null
+  embeddedTitle: string | null
+  streams: {
+    idx: number
+    type: string
+    codec: string | null
+    language: string | null
+    title: string | null
+    channels: number | null
+    layout: string | null
+    isAtmos: boolean
+    isDefault: boolean
+    isForced: boolean
+    isText: boolean
+  }[]
+}
+
+export function saveProbe(db: Db, fileId: number, p: ProbeRow | null, now: number): void {
+  db.exec('BEGIN')
+  try {
+    if (p) {
+      db.prepare(
+        `UPDATE files SET duration = ?, container = ?, video_codec = ?, width = ?, height = ?, fps = ?, bitrate = ?,
+                          hdr = ?, dv_profile = ?, embedded_title = ?, probed_at = ? WHERE id = ?`
+      ).run(p.duration, p.container, p.videoCodec, p.width, p.height, p.fps, p.bitrate, p.hdr, p.dvProfile, p.embeddedTitle, now, fileId)
+      db.prepare('DELETE FROM streams WHERE file_id = ?').run(fileId)
+      const ins = db.prepare(
+        `INSERT INTO streams (file_id, idx, type, codec, language, title, channels, layout, is_atmos, is_default, is_forced, is_text)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      )
+      for (const s of p.streams)
+        ins.run(fileId, s.idx, s.type, s.codec, s.language, s.title, s.channels, s.layout, +s.isAtmos, +s.isDefault, +s.isForced, +s.isText)
+    } else {
+      // Unreadable (damaged or not really a video): remember we tried, so it isn't retried every launch.
+      db.prepare('UPDATE files SET probed_at = ? WHERE id = ?').run(now, fileId)
+    }
+    db.exec('COMMIT')
+  } catch (e) {
+    db.exec('ROLLBACK')
+    throw e
+  }
+}
+
+export function markScanned(db: Db, folderId: number, now: number): void {
+  db.prepare('UPDATE folders SET last_scan_at = ? WHERE id = ?').run(now, folderId)
+}

@@ -107,7 +107,7 @@ export function AboutScreen() {
           <div className="info-kicker">Credits</div>
           <p className="info-small">
             This product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability from JustWatch via TMDB. Includes
-            FFmpeg, licensed under the GPL. Preview film: Sintel © Blender Foundation, CC BY 3.0.
+            FFmpeg, licensed under the GPL (source at ffmpeg.org). Preview film: Sintel © Blender Foundation, CC BY 3.0.
           </p>
           <p className="info-small">Made by Pushkar.</p>
         </section>
