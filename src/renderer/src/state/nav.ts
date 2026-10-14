@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { DiscoverList, TrendingTitle } from '@shared/types'
 
-export type Section = 'home' | 'favorites' | 'files' | 'settings'
+export type Section = 'home' | 'favorites' | 'files' | 'settings' | 'about'
 
 /** Where a card was on screen when it was opened, so the detail page can grow out of it. */
 export interface Origin {
@@ -47,4 +47,4 @@ export const useNav = create<NavState>((set, get) => ({
   back: () => set((s) => (s.stack.length > 1 ? { stack: s.stack.slice(0, -1) } : s))
 }))
 
-export const isSection = (r: Route): r is { name: Section } => ['home', 'favorites', 'files', 'settings'].includes(r.name)
+export const isSection = (r: Route): r is { name: Section } => ['home', 'favorites', 'files', 'settings', 'about'].includes(r.name)

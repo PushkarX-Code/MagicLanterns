@@ -665,3 +665,9 @@ button.provider:hover {
   padding: 0 20px;
   font-size: 15px;
 }
+
+/* More Info sits at the foot of the sidebar */
+.sb-items.sb-bottom {
+  flex: none;
+  margin-top: auto;
+}

@@ -23,6 +23,7 @@ function plain(notes: unknown): string {
 
 export function initUpdater(skipped: () => string | undefined, skip: (version: string) => void): void {
   let state: UpdateState | null = null
+  let manual = false // a check the person asked for shows the update even if they skipped it before
   const publish = (next: UpdateState): void => {
     state = next
     for (const w of BrowserWindow.getAllWindows()) w.webContents.send('update:state', next)
@@ -36,12 +37,26 @@ export function initUpdater(skipped: () => string | undefined, skip: (version: s
     state = null
   })
 
+  // "Check for Updates" on the More Info page. Resolves to what the person should be told.
+  ipcMain.handle('update:check', async (): Promise<'dev' | 'latest' | 'available' | 'offline'> => {
+    if (!app.isPackaged) return 'dev'
+    try {
+      manual = true
+      const r = await autoUpdater.checkForUpdates()
+      return r && r.updateInfo.version !== app.getVersion() ? 'available' : 'latest'
+    } catch {
+      return 'offline'
+    } finally {
+      manual = false
+    }
+  })
+
   if (!app.isPackaged) return // dev builds never update themselves
 
   autoUpdater.autoDownload = false
   autoUpdater.autoInstallOnAppQuit = false
   autoUpdater.on('update-available', (info) => {
-    if (info.version === skipped()) return
+    if (!manual && info.version === skipped()) return
     publish({ stage: 'available', version: info.version, current: app.getVersion(), notes: plain(info.releaseNotes) })
   })
   autoUpdater.on('download-progress', (p) => {

@@ -99,7 +99,7 @@
 :root[data-theme='light'] .ambient-grain {
   display: none;
 }
-:root[data-theme='light'] :is(.player, .detail, .hero-media, .hero-content, .hero-dots, .splash, .card-frame, .poster-frame, .ftile-frame, .frow-thumb, .genre, .collection-frame, .episode-play, .cast-face) {
+:root[data-theme='light'] :is(.player, .detail, .hero-media, .hero-content, .hero-dots, .splash, .card-frame, .poster-frame, .ftile-frame, .frow-thumb, .genre-frame, .collection-frame, .episode-play, .cast-face) {
   color-scheme: dark;
   color: #f5f5f7; /* inherited text was resolved on <body>; re-light it inside dark surfaces */
   --ink: 255 255 255;
@@ -133,4 +133,13 @@
 }
 .reduce-motion .stage {
   transition-duration: 0.15s;
+}
+
+/* Genre names sit on the page itself (no backing card), so in light they read as page text. */
+:root[data-theme='light'] :is(.genre-name, .genre-count) {
+  color: #16161a; /* literal: the frame around them keeps dark-surface tokens for the stills */
+  text-shadow: none;
+}
+:root[data-theme='light'] .genre-count {
+  color: rgba(22, 22, 26, 0.5);
 }
