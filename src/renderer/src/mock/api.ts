@@ -60,7 +60,7 @@ const yearGenre = (i: MediaItem): string =>
     : `${i.year} · ${i.genres[0] ?? ''}`
 
 function card(i: MediaItem, subtitle = yearGenre(i)): CardModel {
-  return { key: i.id, itemId: i.id, image: i.backdrop, logo: i.logo, title: i.title, subtitle, color: i.color }
+  return { key: i.id, itemId: i.id, image: i.thumb ?? i.backdrop, logo: i.thumb ? null : i.logo, title: i.title, subtitle, color: i.color }
 }
 
 function remaining(seconds: number): string {
@@ -179,7 +179,7 @@ function libraryFiles(): FileEntry[] {
         hdr: i.file.hdr,
         addedAt: i.addedAt,
         lastPlayed: p?.lastPlayed,
-        image: i.backdrop,
+        image: i.thumb ?? i.backdrop,
         poster: i.poster,
         color: i.color,
         progress: p && !p.watched ? p.position / p.duration : undefined,

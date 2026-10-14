@@ -23,7 +23,7 @@ export function originOf(el: HTMLElement | null, src: string | null, color: stri
 }
 
 /** 16:9 art card with title and a quiet subtitle underneath. */
-export function Card({ card, focusKey, action = 'detail', width = 340, onFocused }: Props) {
+export function Card({ card, focusKey, action = 'detail', width = 296, onFocused }: Props) {
   const push = useNav((s) => s.push)
   const setAmbient = useAmbient((s) => s.set)
   const frame = useRef<HTMLDivElement>(null)

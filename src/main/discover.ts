@@ -1,22 +1,12 @@
 import { app, ipcMain } from 'electron'
 import type { DiscoverDetails, DiscoverList, TrendingTitle } from '@shared/types'
-import { TMDB_API_KEY } from './keys'
+import { hasMetadata, tmdb } from './keys'
 
 // Discover rows: Top 10 This Week, Top 10 This Month and Greatest of All Time, refreshed automatically
 // from TMDB, with where each title streams in the viewer's country. Cached for six hours.
 
-const API = 'https://api.themoviedb.org/3'
 const TTL = 6 * 60 * 60 * 1000
 const cache = new Map<DiscoverList, { at: number; region: string; items: TrendingTitle[] }>()
-
-async function tmdb<T>(path: string): Promise<T> {
-  // Accept either a v3 API key or a v4 read-access token.
-  const bearer = TMDB_API_KEY.length > 40
-  const url = `${API}${path}${path.includes('?') ? '&' : '?'}${bearer ? '' : `api_key=${TMDB_API_KEY}`}`
-  const res = await fetch(url, { headers: bearer ? { Authorization: `Bearer ${TMDB_API_KEY}` } : {} })
-  if (!res.ok) throw new Error(`TMDB ${res.status}`)
-  return (await res.json()) as T
-}
 
 interface RawTitle {
   id: number
@@ -90,7 +80,7 @@ async function rawList(list: DiscoverList): Promise<(RawTitle & { media_type: 'm
 }
 
 async function discover(list: DiscoverList): Promise<TrendingTitle[]> {
-  if (!TMDB_API_KEY) return []
+  if (!hasMetadata()) return []
   const region = (app.getLocaleCountryCode() || 'US').toUpperCase()
   const hit = cache.get(list)
   if (hit && hit.region === region && Date.now() - hit.at < TTL) return hit.items
@@ -128,7 +118,7 @@ interface RawDetails {
 }
 
 async function details(kind: 'movie' | 'tv', id: number): Promise<DiscoverDetails | null> {
-  if (!TMDB_API_KEY) return null
+  if (!hasMetadata()) return null
   const d = await tmdb<RawDetails>(`/${kind}/${id}?language=en-US&append_to_response=images,credits,videos&include_image_language=en,null`)
   const logo = d.images?.logos?.find((l) => l.iso_639_1 === 'en') ?? d.images?.logos?.[0]
   const director = d.credits?.crew?.find((c) => c.job === 'Director')

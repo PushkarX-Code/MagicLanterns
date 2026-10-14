@@ -23,9 +23,11 @@ jobs:
   windows:
     runs-on: windows-latest
     env:
-      # Optional repository secrets; the app works without them (metadata lookups arrive in Phase 3).
-      MAIN_VITE_TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-      MAIN_VITE_OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
+      # With META_PROXY_URL set (the deployed worker/), no key is built into the app at all.
+      # Without it, the keys are built in scrambled. Both are optional; the library works without them.
+      MAIN_VITE_META_PROXY_URL: ${{ secrets.META_PROXY_URL }}
+      MAIN_VITE_TMDB_API_KEY: ${{ secrets.META_PROXY_URL == '' && secrets.TMDB_API_KEY || '' }}
+      MAIN_VITE_OMDB_API_KEY: ${{ secrets.META_PROXY_URL == '' && secrets.OMDB_API_KEY || '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

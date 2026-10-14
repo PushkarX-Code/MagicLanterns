@@ -1,9 +1,4 @@
 /// <reference types="vite/client" />
 
-interface ImportMetaEnv {
-  readonly MAIN_VITE_TMDB_API_KEY?: string
-  readonly MAIN_VITE_OMDB_API_KEY?: string
-}
-interface ImportMeta {
-  readonly env: ImportMetaEnv
-}
+// Metadata keys and the proxy URL are read in electron.vite.config.ts and injected as __META_* constants
+// (see keys.ts); they are deliberately not exposed through import.meta.env.

@@ -117,13 +117,16 @@ In GitHub, open **Actions → Release → Run workflow**, enter a version higher
 
 ### Metadata keys
 
-Posters, banners and film details work out of the box. Top 10 This Week and live lookups for new files (Phase 3) use two free API keys that are built into the app at compile time and never shown in Settings:
+Posters, banners and film details work out of the box. The Top 10 and Must-Watch rows, and live lookups for new files (Phase 3), use free TMDB and OMDb keys. Keys never appear in Settings or in the source, and the interface never sees them.
 
-1. Copy `.env.example` to `.env`.
-2. Fill in `MAIN_VITE_TMDB_API_KEY` and `MAIN_VITE_OMDB_API_KEY`.
-3. For release builds, add the same values as repository secrets named `TMDB_API_KEY` and `OMDB_API_KEY`.
+**Recommended: the metadata proxy.** `worker/` is a tiny server on the free Workers plan (100,000 requests a day) that holds the keys and forwards only the read-only lookups the app makes, caching answers for six hours. The released app then contains no key at all, and nothing secret goes over the user's connection.
 
-`.env` is git-ignored, and the keys stay in the main process; the interface never sees them.
+1. Create a free Cloudflare account. Copy your Account ID, and make an API token with the *Edit Cloudflare Workers* template.
+2. Add repository secrets `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` and `TMDB_API_KEY`.
+3. Run **Actions → Metadata proxy → Run workflow**. It prints the proxy address (`https://magic-lanterns-meta.<you>.workers.dev`).
+4. Save that address as the repository secret `META_PROXY_URL`. Every release after that is built against the proxy.
+
+**Without the proxy** (local builds), copy `.env.example` to `.env` and fill in the keys. They're built in scrambled, which stops casual snooping but not a determined person, so use the proxy for anything you publish.
 
 ## Keyboard
 

@@ -87,7 +87,9 @@ function createWindow(): void {
       preload: join(__dirname, '../preload/index.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: true
+      sandbox: true,
+      // No inspector in the installed app.
+      devTools: !app.isPackaged
     }
   })
 

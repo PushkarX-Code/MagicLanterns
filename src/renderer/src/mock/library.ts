@@ -35,6 +35,8 @@ interface FixtureEntry {
   overview: string
   poster: string
   backdrop: string
+  /** Key art with the title on it, for cards; banners keep the textless backdrop. */
+  thumb?: string | null
   logo: string
   trailerKey: string | null
   cast: { name: string; character: string; profile: string | null }[]
@@ -179,6 +181,7 @@ function build(entry: FixtureEntry): MediaItem {
     ratings: { tmdb: entry.tmdbScore, imdb: x.imdb, rottenTomatoes: x.rt, metacritic: x.mc },
     poster: entry.poster,
     backdrop: entry.backdrop,
+    thumb: entry.thumb ?? null,
     logo: entry.logo,
     color: x.color,
     trailerKey: entry.trailerKey,

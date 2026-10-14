@@ -448,8 +448,7 @@ export function Detail({ id, origin, entryKey }: { id: string; origin?: Origin; 
               similar.map((s) => (
                 <Card
                   key={s.id}
-                  width={300}
-                  card={{ key: s.id, itemId: s.id, image: s.backdrop, logo: s.logo, title: s.title, subtitle: `${s.year} · ${s.genres[0] ?? ''}`, color: s.color }}
+                  card={{ key: s.id, itemId: s.id, image: s.thumb ?? s.backdrop, logo: s.thumb ? null : s.logo, title: s.title, subtitle: `${s.year} · ${s.genres[0] ?? ''}`, color: s.color }}
                   onFocused={onFocused}
                 />
               ))
