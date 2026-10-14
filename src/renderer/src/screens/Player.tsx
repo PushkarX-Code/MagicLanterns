@@ -17,7 +17,8 @@ import {
   VolumeX,
   X
 } from 'lucide-react'
-import type { PlaybackSource, Settings } from '@shared/types'
+import { playerCaps } from '../player/caps'
+import type { PlaybackPlan, PlaybackSource, Settings } from '@shared/types'
 import { DEFAULT_SETTINGS, EQ_PRESETS } from '@shared/settings'
 import { AudioChain, isLocalSource, needsChain } from '../player/audioChain'
 import { PipIcon } from '../components/Icons'
@@ -96,6 +97,13 @@ function pictureRect(v: HTMLVideoElement): { x: number; y: number; width: number
 const REPEAT_LABEL: Record<Settings['repeat'], string> = { off: 'Repeat Off', one: 'Repeat One', all: 'Repeat All' }
 
 type Menu = null | 'audio' | 'subs' | 'speed' | 'share'
+
+/** What the playback engine is asked to open: a library file by id, or a file picked from disk by path. */
+function targetOf(s: PlaybackSource): { fileId?: string; path?: string } | null {
+  if (s.file?.id) return { fileId: s.file.id }
+  const m = /^ml-file:\/\/local\/(.+)$/.exec(s.url)
+  return m ? { path: decodeURIComponent(m[1]) } : null
+}
 
 function CircleButton({ icon: Icon, label, onPress, big }: { icon: typeof Play; label: string; onPress: () => void; big?: boolean }) {
   return (
@@ -202,6 +210,11 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const hideTimer = useRef(0)
   const hudTimer = useRef(0)
   const candidates = useRef<string[]>([])
+  // The playback engine's plan for this file. Stream modes start part-way in: the picture's clock counts
+  // from the stream's start, so the film's position is offset + currentTime.
+  const engine = useRef<{ plan: PlaybackPlan; target: { fileId?: string; path?: string }; offset: number; forced: boolean } | null>(null)
+  const [streaming, setStreaming] = useState(false)
+  const seekTimer = useRef(0)
   const lastSaved = useRef(0)
   const lastPointer = useRef({ x: -1, y: -1 })
   const wheel = useRef(0)
@@ -224,14 +237,20 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
       .then((s) => {
         if (!alive) return
         setSrc(s)
+        const lang = useSettings.getState().settings?.audioLanguage
+        const tracks = s.file?.audio ?? []
+        const preferred = lang && lang !== 'orig' ? tracks.findIndex((a) => a.language === lang) : -1
+        const track = Math.max(0, preferred >= 0 ? preferred : tracks.findIndex((a) => a.default))
+        setAudio(track)
+        const target = targetOf(s)
+        if (window.lantern?.openPlayback && target) {
+          void openEngine(s, target, track, { resume: !fresh })
+          return
+        }
         candidates.current = [s.url, ...(s.alternates ?? [])].filter(Boolean)
         const first = candidates.current.shift() ?? null
         setUrl(first)
         if (!first) setFailed(true)
-        const lang = useSettings.getState().settings?.audioLanguage
-        const tracks = s.file?.audio ?? []
-        const preferred = lang && lang !== 'orig' ? tracks.findIndex((a) => a.language === lang) : -1
-        setAudio(Math.max(0, preferred >= 0 ? preferred : tracks.findIndex((a) => a.default)))
       })
       .catch(() => alive && setFailed(true))
     return () => {
@@ -311,12 +330,65 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     v.setSinkId(cfg.audioDevice === 'default' ? '' : cfg.audioDevice).catch(() => undefined)
   }, [cfg.audioDevice, ready, processed])
 
+  const isStream = (): boolean => !!engine.current && engine.current.plan.mode !== 'native'
+  /** Where we are in the film, in seconds, whichever way it's playing. */
+  const position = (): number => (isStream() ? engine.current!.offset : 0) + (video.current?.currentTime ?? 0)
+  const length = (): number => {
+    if (isStream()) return engine.current!.plan.duration
+    const d = video.current?.duration ?? 0
+    return Number.isFinite(d) ? d : 0
+  }
+  const streamAt = (t: number): string => `${engine.current!.plan.url}?t=${Math.max(0, t).toFixed(2)}`
+
+  /** Asks the engine how to play this file, then starts it (part-way in when resuming or switching sound). */
+  async function openEngine(
+    s: PlaybackSource,
+    target: { fileId?: string; path?: string },
+    track: number,
+    { resume = false, at, force = false }: { resume?: boolean; at?: number; force?: boolean } = {}
+  ): Promise<void> {
+    const c = useSettings.getState().settings ?? DEFAULT_SETTINGS
+    try {
+      const plan = await window.lantern!.openPlayback(target, {
+        audio: track,
+        caps: playerCaps(c.hwDecode !== 'off'),
+        // Stereo downmix stays with the player's own audio processing (it works on any source), so it never forces conversion.
+        settings: { downmix: false, deinterlace: c.deinterlace, toneMapping: c.toneMapping },
+        session: engine.current?.plan.session ?? undefined,
+        forceStream: force
+      })
+      const f = s.resumeFraction
+      const start = at ?? (resume && f > 0.01 && f < 0.95 ? f * plan.duration : 0)
+      engine.current = { plan, target, offset: plan.mode === 'native' ? 0 : start, forced: force }
+      setStreaming(plan.mode !== 'native')
+      setFailed(false)
+      if (plan.mode === 'native') {
+        resumeAt.current = at ?? null
+        setUrl(plan.url)
+      } else setUrl(streamAt(start))
+      if (plan.mode === 'transcode') flash(plan.encoder?.startsWith('libx') ? 'Converting for playback' : 'Converting for playback · graphics card')
+    } catch {
+      setFailed(true)
+    }
+  }
+  const resumeAt = useRef<number | null>(null)
+
+  // The engine's stream stops with the player.
+  useEffect(
+    () => () => {
+      const id = engine.current?.plan.session
+      if (id) void window.lantern?.closePlayback(id)
+    },
+    []
+  )
+
   const save = useCallback(() => {
     const v = video.current
     // Loose files and streams have no library entry to remember progress on.
-    if (!v || !src?.itemId || !v.duration || !Number.isFinite(v.duration)) return
+    if (!v || !src?.itemId || !length()) return
     lastSaved.current = Date.now()
-    api.saveProgress(src.itemId, src.episodeId, v.currentTime, v.duration)
+    api.saveProgress(src.itemId, src.episodeId, position(), length())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [src])
 
   // Save on the way out.
@@ -351,9 +423,18 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const seekTo = useCallback(
     (t: number) => {
       const v = video.current
-      if (!v || !v.duration) return
-      v.currentTime = Math.max(0, Math.min(v.duration - 0.25, t))
-      setTime(v.currentTime)
+      if (!v || !length()) return
+      const to = Math.max(0, Math.min(length() - 0.25, t))
+      if (isStream()) {
+        // The stream restarts at the new spot; holding an arrow key moves the time first and restarts once.
+        engine.current!.offset = to
+        setTime(to)
+        window.clearTimeout(seekTimer.current)
+        seekTimer.current = window.setTimeout(() => setUrl(streamAt(to)), 180)
+      } else {
+        v.currentTime = to
+        setTime(v.currentTime)
+      }
       poke()
     },
     [poke]
@@ -409,14 +490,14 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     flash(`Speed · ${speedLabel(next)}`)
   }
   const skip = (direction: 1 | -1): void => {
-    seekTo((video.current?.currentTime ?? 0) + direction * step)
+    seekTo(position() + direction * step)
     flash(`${direction > 0 ? '+' : '-'}${step}`)
   }
   const snapshot = async (): Promise<void> => {
     const v = video.current
     if (!v || !v.videoWidth) return
     const format = cfg.snapshotFormat
-    const name = `${src?.title ?? 'Snapshot'} ${timecode(v.currentTime).replace(/:/g, '.')}`
+    const name = `${src?.title ?? 'Snapshot'} ${timecode(position()).replace(/:/g, '.')}`
     const type = format === 'jpg' ? 'image/jpeg' : 'image/png'
     // Full-resolution frame with the picture adjustments baked in, when the pixels are readable.
     let blob: Blob | null = null
@@ -501,7 +582,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     const v = video.current
     const again = (): void => {
       if (!v) return
-      v.currentTime = 0
+      seekTo(0)
       v.play().catch(() => undefined)
     }
     if (cfg.repeat === 'one') return again()
@@ -635,17 +716,32 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const onLoaded = (): void => {
     const v = video.current
     if (!v || !src) return
-    setDuration(Number.isFinite(v.duration) ? v.duration : Infinity)
+    setDuration(isStream() ? engine.current!.plan.duration : Number.isFinite(v.duration) ? v.duration : Infinity)
     setReady(true)
     v.playbackRate = speed
     // Always pick up where you left off; scrub back to the start if you want it. Fresh plays (next episode) start at 0.
+    // Streams already start at the right spot.
     const f = src.resumeFraction
-    if (!fresh && f > 0.01 && f < 0.95 && Number.isFinite(v.duration)) v.currentTime = f * v.duration
+    if (!isStream()) {
+      if (resumeAt.current != null) v.currentTime = resumeAt.current
+      else if (!fresh && f > 0.01 && f < 0.95 && Number.isFinite(v.duration)) v.currentTime = f * v.duration
+      resumeAt.current = null
+    }
     v.play().catch(() => undefined)
     poke()
   }
 
   const onError = (): void => {
+    // Played directly but refused after all (an odd codec inside an MP4): let the engine repackage it.
+    const e = engine.current
+    if (e && src && e.plan.mode === 'native' && !e.forced) {
+      void openEngine(src, e.target, audio, { at: video.current?.currentTime || undefined, force: true })
+      return
+    }
+    if (e) {
+      setFailed(true)
+      return
+    }
     const next = candidates.current.shift()
     if (next) setUrl(next)
     else setFailed(true)
@@ -694,6 +790,13 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     setScrub((s) => (s ? { ...s, dragging: false } : null))
   }
 
+  /** Another sound track: the engine restarts the film at the same moment with that track. */
+  const chooseAudio = (i: number): void => {
+    setAudio(i)
+    const e = engine.current
+    if (e && src && i !== audio) void openEngine(src, e.target, i, { at: position() })
+  }
+
   // ---------- Menus ----------
   const subSize = settings?.subtitleSize ?? 'medium'
   const subStyle = settings?.subtitleStyle ?? 'shadow'
@@ -729,7 +832,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
       const preset = cfg.eqEnabled ? cfg.eqPreset : 'Off'
       return [
         ...(tracks.length
-          ? tracks.map((a, i) => ({ label: a.title, checked: i === audio, onSelect: () => setAudio(i) }))
+          ? tracks.map((a, i) => ({ label: a.title, checked: i === audio, onSelect: () => chooseAudio(i) }))
           : [{ label: 'Default Track', checked: true, onSelect: () => undefined }]),
         {
           label: 'Equalizer',
@@ -858,7 +961,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
               ref={video}
               className="pl-video"
               style={videoStyle(cfg)}
-              crossOrigin={url.startsWith('ml-file:') ? 'anonymous' : undefined}
+              crossOrigin={/^ml-file:|^http:\/\/127\.0\.0\.1:/.test(url) ? 'anonymous' : undefined}
               src={url}
               preload="auto"
               onLoadedMetadata={onLoaded}
@@ -874,8 +977,8 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
               }}
               onTimeUpdate={(e) => {
                 const v = e.currentTarget
-                setTime(v.currentTime)
-                if (v.buffered.length) setBuffered(v.buffered.end(v.buffered.length - 1))
+                setTime(position())
+                if (v.buffered.length) setBuffered((isStream() ? engine.current!.offset : 0) + v.buffered.end(v.buffered.length - 1))
                 if (Date.now() - lastSaved.current > 5000) save()
               }}
               onVolumeChange={(e) => {
@@ -1004,7 +1107,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                   </div>
                   <div className="pl-knob" style={{ left: `${scrub?.dragging ? (scrub.t / (duration || 1)) * 100 : pct}%` }} />
                   <div className="pl-thumb" style={{ left: scrub?.x ?? 0, opacity: scrub ? 1 : 0 }}>
-                    <div className="pl-thumb-frame">{url && <video ref={preview} src={url} muted preload="metadata" />}</div>
+                    <div className="pl-thumb-frame">{url && !streaming && <video ref={preview} src={url} muted preload="metadata" />}</div>
                     <div className="pl-thumb-time">{timecode(scrub?.t ?? 0)}</div>
                   </div>
                 </div>

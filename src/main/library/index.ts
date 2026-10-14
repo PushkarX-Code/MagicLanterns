@@ -38,6 +38,15 @@ function checkedFolder(path: unknown): string {
   return clean
 }
 
+/** The path of a library file by its database id, if it's present. */
+export function libraryFilePath(fileId: string): string | null {
+  if (!db || !/^\d+$/.test(fileId)) return null
+  const r = db.prepare('SELECT path FROM files WHERE id = ? AND missing = 0').get(Number(fileId)) as { path: string } | undefined
+  return r?.path ?? null
+}
+
+export const binaries = { ffmpeg: FFMPEG, ffprobe: FFPROBE }
+
 /** Only files inside library folders or the app's own cache may be streamed to the interface. */
 export function isLibraryPath(path: string): boolean {
   const norm = normalize(path)

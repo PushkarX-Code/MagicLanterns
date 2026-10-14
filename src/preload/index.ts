@@ -33,6 +33,8 @@ const bridge: LanternBridge = {
   searchMatches: (kind, query, year) => ipcRenderer.invoke('meta:search', kind, query, year),
   fixMatch: (itemId, tmdbId) => ipcRenderer.invoke('meta:fix', itemId, tmdbId),
   getLibrary: () => ipcRenderer.invoke('library:snapshot'),
+  openPlayback: (target, opts) => ipcRenderer.invoke('player:open', target, opts),
+  closePlayback: (session) => ipcRenderer.invoke('player:close', session),
   onLibraryChanged: listen<number>('library:changed'),
   saveProgress: (fileId, position, duration) => ipcRenderer.invoke('library:save-progress', fileId, position, duration),
   setWatched: (fileIds, watched) => ipcRenderer.invoke('library:set-watched', fileIds, watched),

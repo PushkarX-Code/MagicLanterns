@@ -1,7 +1,7 @@
 import { EQ_BANDS, type Settings } from '@shared/settings'
 
 /** Sources the renderer reads itself, so WebAudio can process them without tainting. */
-export const isLocalSource = (url: string | null): boolean => !!url && /^(ml-file|blob|file):/i.test(url)
+export const isLocalSource = (url: string | null): boolean => !!url && /^(ml-file|blob|file):|^http:\/\/127\.0\.0\.1:/i.test(url)
 
 /** True when any audio setting needs the processing graph (otherwise the element plays untouched). */
 export function needsChain(s: Settings): boolean {

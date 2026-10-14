@@ -156,6 +156,26 @@ export interface Collection {
   itemIds: string[]
 }
 
+/** What this computer's decoder plays directly, measured once by the interface. */
+export interface PlayerCaps {
+  video: string[]
+  audio: string[]
+  /** Use the graphics card for decoding while converting (Settings → Video → Hardware Decoding). */
+  hwDecode: boolean
+}
+
+/** How a file is reaching the screen. Stream modes restart at a new time for each seek. */
+export interface PlaybackPlan {
+  mode: 'native' | 'remux' | 'audio' | 'transcode'
+  /** Native: the file itself. Otherwise the stream; add ?t=<seconds> to start part-way in. */
+  url: string
+  session: string | null
+  /** The encoder doing the work when the picture is converted (e.g. h264_nvenc). */
+  encoder: string | null
+  /** The film's full length in seconds, whatever part of it is streaming. */
+  duration: number
+}
+
 /** One search result in Fix Match. */
 export interface MatchCandidate {
   id: number

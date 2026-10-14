@@ -164,8 +164,8 @@ function VideoPane({ s, set, update }: PaneProps) {
         />
         <Choice
           label="Deinterlace"
-          hint="Removes combing from TV recordings and DVDs."
-          note={SOON}
+          hint="Removes combing from TV recordings and DVDs. Auto does it only for interlaced files."
+
           value={s.deinterlace}
           onChange={set('deinterlace')}
           options={[
@@ -176,8 +176,8 @@ function VideoPane({ s, set, update }: PaneProps) {
         />
         <Choice
           label="HDR Tone Mapping"
-          hint="Brings HDR films down to your screen's range on non-HDR displays."
-          note={SOON}
+          hint="When an HDR film has to be converted to play, keeps its colours and highlights natural on any screen."
+
           value={s.toneMapping}
           onChange={set('toneMapping')}
           options={[
@@ -309,7 +309,7 @@ function AudioPane(props: PaneProps) {
           options={[{ id: 'orig', label: 'Original Language' }, ...LANGUAGES]}
           onChange={set('audioLanguage')}
         />
-        <Toggle label="Stereo Downmix" hint="Folds 5.1 and 7.1 into two channels for headphones." note="Local files" value={s.downmix} onChange={set('downmix')} />
+        <Toggle label="Stereo Downmix" hint="Folds 5.1 and 7.1 into two channels for headphones." value={s.downmix} onChange={set('downmix')} />
         <Toggle
           label="Passthrough"
           hint="Send Dolby and DTS untouched to your receiver."
