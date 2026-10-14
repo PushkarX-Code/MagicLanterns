@@ -1,0 +1,41 @@
+# Builds the Windows installer and publishes it as a GitHub Release.
+# Run it from the Actions tab (Release → Run workflow) or by pushing a tag like v0.1.0.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag to publish, e.g. v0.1.0'
+        required: true
+        default: 'v0.1.0'
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    env:
+      # Optional repository secrets; the app works without them (metadata lookups arrive in Phase 3).
+      MAIN_VITE_TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+      MAIN_VITE_OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npx electron-vite build
+      - run: npx electron-builder --win --publish never
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version || github.ref_name }}
+          name: Magic Lanterns ${{ github.event.inputs.version || github.ref_name }}
+          target_commitish: ${{ github.sha }}
+          generate_release_notes: true
+          files: release/MagicLanterns-Setup.exe

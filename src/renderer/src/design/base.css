@@ -92,6 +92,11 @@ input {
   backdrop-filter: var(--glass-blur);
   box-shadow: var(--glass-edge), var(--glass-highlight), var(--glass-shadow);
 }
+/* Gloss: a specular sheen across the top and a faint return at the bottom edge, like light on a pane. */
+.glass,
+.glass-strong {
+  background-image: var(--glass-gloss);
+}
 
 /* ---------- Skeleton ---------- */
 .skeleton {

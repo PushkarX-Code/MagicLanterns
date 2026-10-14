@@ -5,20 +5,59 @@ A premium local media player for Windows. Point it at your folders and it turns 
 > The magic lantern was the first projector: a light, a painted glass slide, and a dark room turned into a story.
 > Magic Lanterns does the same to a folder of files.
 
-![Home](docs/screenshots/home.jpg)
+![Magic Lanterns Home](docs/screenshots/home.jpg)
+
+## Download (Windows 10 / 11)
+
+**[⬇ Download MagicLanterns-Setup.exe](https://github.com/PushkarX-Code/MagicLanterns/releases/latest/download/MagicLanterns-Setup.exe)**, then run it.
+
+Or install from PowerShell in one line:
+
+```powershell
+irm https://raw.githubusercontent.com/PushkarX-Code/MagicLanterns/main/install.ps1 | iex
+```
+
+This downloads the latest release and opens the installer. The app isn't code-signed yet, so Windows SmartScreen may say *"Windows protected your PC"*: click **More info → Run anyway**.
 
 ## Screenshots
 
-All screenshots are of the running app. Artwork and details are real film data; the player is showing the open-licensed film *Sintel*.
+Every screenshot is the running app. Artwork and details are real film data; the player is showing the open-licensed film *Sintel*.
 
-| | |
-|---|---|
-| ![Home rows](docs/screenshots/home-rows.jpg) **Home.** Recents, Recently Added and Picks of the Day | ![Genres](docs/screenshots/home-genres.jpg) **Film Genres, Unwatched, Most Watched** |
-| ![Detail](docs/screenshots/detail.jpg) **Detail page** with ratings, formats and resume | ![Player](docs/screenshots/player.jpg) **Player** |
-| ![Paused](docs/screenshots/player-paused.jpg) **Paused** shows where you are | ![Favorites](docs/screenshots/favorites.jpg) **Favorites** |
-| ![Files list](docs/screenshots/files-list.jpg) **Files** in list view, grouped by when they arrived | ![Files grid](docs/screenshots/files-grid.jpg) **Files** in grid view |
-| ![Files menu](docs/screenshots/files-more.jpg) **More menu.** Sort, select, starred, hide watched | ![Light theme](docs/screenshots/theme-light.jpg) **Light theme** |
-| ![Video settings](docs/screenshots/settings-video.jpg) **Settings · Video** | ![Audio settings](docs/screenshots/settings-audio.jpg) **Settings · Audio** with the 10-band equalizer |
+**Home.** Recents, Recently Added, Picks of the Day
+![Home rows](docs/screenshots/home-rows.jpg)
+
+**Film Genres, Unwatched and Most Watched**
+![Genres](docs/screenshots/home-genres.jpg)
+
+**Detail page** with ratings, formats, resume and watchlist
+![Detail](docs/screenshots/detail.jpg)
+
+**Player**
+![Player](docs/screenshots/player.jpg)
+
+**Paused**
+![Paused](docs/screenshots/player-paused.jpg)
+
+**Files.** List view, grouped by when files arrived
+![Files list](docs/screenshots/files-list.jpg)
+
+**Files.** Grid view
+![Files grid](docs/screenshots/files-grid.jpg)
+
+**Files.** The More menu: sort, select, starred, hide watched
+![Files menu](docs/screenshots/files-more.jpg)
+
+**Favorites**
+![Favorites](docs/screenshots/favorites.jpg)
+
+**Settings.** Video
+![Video settings](docs/screenshots/settings-video.jpg)
+
+**Settings.** Audio, with the 10-band equalizer
+![Audio settings](docs/screenshots/settings-audio.jpg)
+
+**Light theme**
+![Light theme](docs/screenshots/theme-light.jpg)
 
 ## What's in it
 
@@ -44,7 +83,7 @@ All screenshots are of the running app. Artwork and details are real film data; 
 
 **Motion:** every button, card and row sinks when pressed and springs back. Reduce Motion swaps this for gentle fades.
 
-## Run it (Windows)
+## Build from source
 
 Requires [Node.js 20+](https://nodejs.org).
 
@@ -64,12 +103,17 @@ The first `npm install` downloads the desktop runtime (about 100 MB).
 | `npm run icons` | Rebuild `build/icon.ico` and PNGs from `build/icon-src/*.svg` |
 | `npm run dist` | Build the Windows installer into `release/` |
 
+### Publishing a release
+
+In GitHub, open **Actions → Release → Run workflow**, enter a version such as `v0.1.0`, and run it. It builds the installer on Windows and publishes it as a Release, which the download link and the PowerShell command above always point at. Pushing a tag like `v0.1.0` does the same.
+
 ### Metadata keys
 
 Posters, banners and film details work out of the box. Live lookups for new files (Phase 3) use two free API keys that are built into the app at compile time and never shown in Settings:
 
 1. Copy `.env.example` to `.env`.
 2. Fill in `MAIN_VITE_TMDB_API_KEY` and `MAIN_VITE_OMDB_API_KEY`.
+3. For release builds, add the same values as repository secrets named `TMDB_API_KEY` and `OMDB_API_KEY`.
 
 `.env` is git-ignored, and the keys stay in the main process; the interface never sees them.
 
