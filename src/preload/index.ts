@@ -34,7 +34,8 @@ const bridge: LanternBridge = {
   },
   downloadUpdate: () => ipcRenderer.invoke('update:download'),
   installUpdate: () => ipcRenderer.invoke('update:install'),
-  skipUpdate: (version) => ipcRenderer.invoke('update:skip', version)
+  skipUpdate: (version) => ipcRenderer.invoke('update:skip', version),
+  checkForUpdates: () => ipcRenderer.invoke('update:check')
 }
 
 contextBridge.exposeInMainWorld('lantern', bridge)

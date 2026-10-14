@@ -54,9 +54,12 @@ Every screenshot is the running app. Artwork and details are real film data; the
 **Light theme**
 ![Light theme](docs/screenshots/theme-light.jpg)
 
+**More Info.** About the app, updates, and the person who makes it
+![More Info](docs/screenshots/more-info.jpg)
+
 ## What's in it
 
-**Sections:** Home, Favorites, Files and Settings.
+**Sections:** Home, Favorites, Files and Settings, with **More Info** at the foot of the sidebar: what the app is, a Check for Updates button, and a note from me.
 
 **Home** opens on a hero carousel, then: your recents (no heading, just the films), Recently Added, Picks of the Day (a fresh shuffle every day), Film Genres, Unwatched, Most Watched, and five rows about the wider world: **Top 10 This Week**, **Top 10 This Month**, **Greatest of All Time**, **Must-Watch Series** and **Must-Watch Anime**. They refresh automatically. Each title opens a full-screen page like your own films, with **Where to Watch** in place of Play: it shows the services carrying it in your country and links straight to them.
 
@@ -140,6 +143,12 @@ The mouse works everywhere: hover focuses, click selects, the scrubber shows fra
 Until Phase 2 the library is a fixed demo of 13 films and 4 series. Every title plays the *Sintel* trailer as a stand-in; drop any video file onto the player to watch your own.
 
 See [PLAN.md](PLAN.md) for the architecture.
+
+## Support Magic Lanterns
+
+Magic Lanterns is free, with no ads, no accounts and no subscriptions, and it will stay that way. It's built by one person. If it has earned a place on your screen, please buy me a coffee: even **$1** genuinely helps, and every contribution goes straight into the next update.
+
+**[☕ Support on Ko-fi → ko-fi.com/buymeacofi](https://ko-fi.com/buymeacofi)**
 
 ## Credits
 

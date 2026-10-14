@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { FolderOpen, House, Settings, Star, type LucideIcon } from 'lucide-react'
+import { FolderOpen, House, Info, Settings, Star, type LucideIcon } from 'lucide-react'
 import { Lantern } from './Lantern'
 import { FocusContext, setFocus, useFocus } from '../focus/focus'
 import { useNav, type Section } from '../state/nav'
@@ -89,6 +89,9 @@ export function Sidebar({ hidden }: { hidden: boolean }) {
             {ITEMS.map((it) => (
               <Item key={it.id} {...it} selected={section === it.id} disabled={hidden} onSelect={select} />
             ))}
+          </div>
+          <div className="sb-items sb-bottom">
+            <Item id="about" label="More Info" icon={Info} selected={section === 'about'} disabled={hidden} onSelect={select} />
           </div>
         </nav>
       </div>

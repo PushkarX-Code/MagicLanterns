@@ -12,6 +12,7 @@ import { FavoritesScreen } from './screens/Favorites'
 import { FilesScreen } from './screens/Files'
 import { GenreScreen } from './screens/Genre'
 import { DiscoverScreen } from './screens/Discover'
+import { AboutScreen } from './screens/About'
 import { SearchScreen } from './screens/Search'
 import { SettingsScreen } from './screens/Settings'
 import { Splash } from './screens/Splash'
@@ -30,6 +31,8 @@ function render(entry: Entry) {
       return <GenreScreen genre={r.genre} entryKey={entry.key} />
     case 'search':
       return <SearchScreen />
+    case 'about':
+      return <AboutScreen />
     case 'settings':
       return <SettingsScreen />
     case 'discover':

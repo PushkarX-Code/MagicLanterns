@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { AudioLines, Captions, Clapperboard, FolderOpen, Info, Keyboard, Play, Sparkles, type LucideIcon } from 'lucide-react'
+import { AudioLines, Captions, Clapperboard, FolderOpen, Keyboard, Play, Sparkles, type LucideIcon } from 'lucide-react'
 import type { LibraryFolder } from '@shared/types'
 import { EQ_BANDS, EQ_PRESETS, type Settings } from '@shared/settings'
 import { Screen } from '../components/Screen'
-import { Lantern, Wordmark } from '../components/Lantern'
 import { Action, Choice, Panel, Picker, Section, Slider, Toggle, settingsPage } from '../components/SettingControls'
 import { FocusContext, setFocus, useFocus } from '../focus/focus'
 import { useSettings } from '../state/settings'
@@ -12,7 +11,7 @@ import { bytes, timeAgo } from '../lib/format'
 import { SLOW_KEY } from '../mock/api'
 import { gsap, d, EASE } from '../design/motion'
 
-type Tab = 'playback' | 'video' | 'audio' | 'subtitles' | 'controls' | 'interface' | 'library' | 'about'
+type Tab = 'playback' | 'video' | 'audio' | 'subtitles' | 'controls' | 'interface' | 'library'
 const TABS: { id: Tab; label: string; icon: LucideIcon }[] = [
   { id: 'playback', label: 'Playback', icon: Play },
   { id: 'video', label: 'Video', icon: Clapperboard },
@@ -21,7 +20,6 @@ const TABS: { id: Tab; label: string; icon: LucideIcon }[] = [
   { id: 'controls', label: 'Controls', icon: Keyboard },
   { id: 'interface', label: 'Interface', icon: Sparkles },
   { id: 'library', label: 'Library', icon: FolderOpen },
-  { id: 'about', label: 'About', icon: Info }
 ]
 
 const SOON = 'Coming soon'
@@ -549,37 +547,6 @@ function LibraryPane({ s, set }: PaneProps) {
   )
 }
 
-// ---------- About ----------
-function AboutPane() {
-  const lantern = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const core = lantern.current?.querySelectorAll('.lm-core, .lm-halo')
-    if (core) gsap.fromTo(core, { opacity: 0.5 }, { opacity: 1, duration: d(1.4), ease: 'sine.inOut' })
-  }, [])
-  return (
-    <Section>
-      <Panel className="about">
-        <div ref={lantern} className="about-mark">
-          <Lantern size={132} />
-        </div>
-        <div className="about-body">
-          <Wordmark />
-          <div className="about-version">Version 0.1.0</div>
-          <p className="about-story">
-            The magic lantern was the first projector: a light, a painted glass slide, and a dark room turned into a story. Magic Lanterns does the same
-            to a folder of files. Every film in your library becomes a lit glass slide waiting to be projected.
-          </p>
-          <div className="about-credits">
-            {/* Attribution required by the metadata provider's terms and the decoder's licence. */}
-            This product uses the TMDB API but is not endorsed or certified by TMDB. Includes FFmpeg, licensed under the GPL.
-          </div>
-          <div className="about-sign">Made by Pushkar</div>
-        </div>
-      </Panel>
-    </Section>
-  )
-}
-
 // ---------- Screen ----------
 function TabButton({ tab, selected, onSelect }: { tab: (typeof TABS)[number]; selected: boolean; onSelect: (t: Tab) => void }) {
   const Icon = tab.icon
@@ -647,7 +614,6 @@ export function SettingsScreen() {
           {tab === 'controls' && <ControlsPane {...props} />}
           {tab === 'interface' && <InterfacePane {...props} />}
           {tab === 'library' && <LibraryPane {...props} />}
-          {tab === 'about' && <AboutPane />}
         </Pane>
       </div>
     </Screen>
