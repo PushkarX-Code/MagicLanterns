@@ -162,6 +162,10 @@ export const MIGRATIONS: string[] = [
   );
 
   CREATE TABLE settings (key TEXT PRIMARY KEY, value_json TEXT NOT NULL);
+  `,
+  /* 2: files are grouped into films and shows by a normalised title before any metadata lookup */ `
+  ALTER TABLE items ADD COLUMN match_key TEXT;
+  CREATE INDEX items_match ON items(kind, match_key);
   `
 ]
 

@@ -146,3 +146,42 @@ test('an unplugged drive changes nothing', async () => {
   assert.equal(listFolders(lib.db)[0].items, 4)
   lib.done()
 })
+
+// ---------- Films and shows from files ----------
+
+import { libraryCounts } from './identify.ts'
+
+test('scanning files films and episodes into items, seasons and episodes', async () => {
+  const lib = library()
+  lib.put('Dune Part Two (2024)/Dune.Part.Two.2024.1080p.mkv') // a second copy of the same film
+  lib.put('Severance/Season 1/Severance.S01E02.mkv')
+  lib.put('Severance/Season 2/Severance.S02E01E02.mkv')
+  lib.put('Dune Part Two (2024)/Extras/Sandworms.mkv')
+  const r = await scanFolder(lib.db, lib.folder(), fakeProbe([]))
+  assert.deepEqual(r.identified, { movies: 4, episodes: 3, extras: 1, unknown: 0 })
+  // broken.avi looked like a film by name, but it can't be read, so it isn't one.
+  assert.deepEqual(libraryCounts(lib.db), { movies: 2, shows: 1, episodes: 4 })
+  const titles = lib.db.prepare("SELECT title, year FROM items WHERE kind = 'movie' ORDER BY title").all().map((x) => `${x.title} ${x.year}`)
+  assert.deepEqual(titles, ['Arrival 2016', 'Dune Part Two 2024'])
+  const seasons = lib.db.prepare('SELECT number, name, (SELECT COUNT(*) FROM episodes e WHERE e.season_id = s.id) AS eps FROM seasons s ORDER BY number').all()
+  assert.deepEqual(seasons.map((x) => [x.number, x.name, x.eps]), [[1, 'Season 1', 2], [2, 'Season 2', 2]])
+  // Nothing new on the next scan: nothing is filed twice.
+  await scanFolder(lib.db, lib.folder(), fakeProbe([]))
+  assert.deepEqual(libraryCounts(lib.db), { movies: 2, shows: 1, episodes: 4 })
+  lib.done()
+})
+
+test('removing a folder removes its films and shows; an unplugged drive keeps them', async () => {
+  const lib = library()
+  await scanFolder(lib.db, lib.folder(), fakeProbe([]))
+  rmSync(join(lib.root, 'Severance'), { recursive: true })
+  await scanFolder(lib.db, lib.folder(), fakeProbe([]))
+  assert.equal(libraryCounts(lib.db).shows, 1, 'missing episodes keep their show for when the drive returns')
+  const { removeFolder } = await import('../db/index.ts')
+  const { pruneOrphans } = await import('./identify.ts')
+  removeFolder(lib.db, lib.root)
+  pruneOrphans(lib.db)
+  assert.deepEqual(libraryCounts(lib.db), { movies: 0, shows: 0, episodes: 0 })
+  assert.equal(Number((lib.db.prepare('SELECT COUNT(*) AS n FROM seasons').get() as { n: number }).n), 0)
+  lib.done()
+})
