@@ -1,6 +1,6 @@
 # Deploys the metadata proxy (worker/) that keeps the API keys on the server.
 # Needs repository secrets CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID and TMDB_API_KEY.
-# The OMDb key joins in Phase 3, when ratings lookups start.
+# OMDB_API_KEY is optional: add it to get IMDb, Rotten Tomatoes and Metacritic ratings.
 name: Metadata proxy
 
 on:
@@ -12,6 +12,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+      OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: cloudflare/wrangler-action@v3
@@ -21,5 +26,7 @@ jobs:
           workingDirectory: worker
           secrets: |
             TMDB_API_KEY
-        env:
-          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+      - name: Ratings key (optional)
+        if: env.OMDB_API_KEY != ''
+        working-directory: worker
+        run: echo "$OMDB_API_KEY" | npx --yes wrangler@3 secret put OMDB_API_KEY

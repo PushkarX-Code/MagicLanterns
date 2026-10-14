@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { ArrowLeft, Check, CheckCheck, Clapperboard, Copy, Ellipsis, FileText, Heart, Play, Plus, Star } from 'lucide-react'
+import { ArrowLeft, Check, CheckCheck, Clapperboard, Copy, Ellipsis, FileText, Heart, Play, Plus, SearchCheck, Star } from 'lucide-react'
+import { FixMatch } from '../components/FixMatch'
 import type { Episode, MediaItem } from '@shared/types'
 import { api } from '../lib/api'
 import { useAsync } from '../lib/useAsync'
@@ -291,6 +292,8 @@ export function Detail({ id, origin, entryKey }: { id: string; origin?: Origin; 
   const [showFlight, setShowFlight] = useState(!!origin)
   const [scrolled, setScrolled] = useState(0)
   const [menu, setMenu] = useState<null | 'more'>(null)
+  const [fixing, setFixing] = useState(false)
+  const replace = useNav((s) => s.replace)
   const back = useNav((s) => s.back)
   const push = useNav((s) => s.push)
   const setAmbient = useAmbient((s) => s.set)
@@ -365,7 +368,11 @@ export function Detail({ id, origin, entryKey }: { id: string; origin?: Origin; 
                 options={[
                   { label: watched ? 'Mark as Unwatched' : 'Mark as Watched', icon: CheckCheck, onSelect: () => api.setWatched(item.id, !watched).then(refresh) },
                   { label: 'Show File Info', icon: FileText, onSelect: () => page.current && scrollPageTo(page.current, document.querySelector('.fileinfo') as HTMLElement, 160) },
-                  { label: 'Copy File Path', icon: Copy, onSelect: () => navigator.clipboard?.writeText(primaryFile(item)?.path ?? '') }
+                  { label: 'Copy File Path', icon: Copy, onSelect: () => navigator.clipboard?.writeText(primaryFile(item)?.path ?? '') },
+                  // Real library titles only: point the title at the right film or show.
+                  ...(window.lantern?.fixMatch && /^[ms]-\d+$/.test(item.id)
+                    ? [{ label: 'Fix Match…', icon: SearchCheck, divider: true, onSelect: () => setFixing(true) }]
+                    : [])
                 ]}
               />
             )}
@@ -471,6 +478,14 @@ export function Detail({ id, origin, entryKey }: { id: string; origin?: Origin; 
           </div>
         )}
       </div>
+      {fixing && (
+        <FixMatch
+          item={item}
+          onClose={() => setFixing(false)}
+          // Fixing can fold this title into one already in the library; follow it there.
+          onFixed={(newId) => newId !== item.id && replace({ name: 'detail', id: newId })}
+        />
+      )}
     </Screen>
   )
 }

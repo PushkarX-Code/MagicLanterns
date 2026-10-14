@@ -1,4 +1,4 @@
-import type { DiscoverDetails, DiscoverList, LibraryFolder, MediaItem, ScanStatus, TrendingTitle, UpdateState } from '../shared/types'
+import type { DiscoverDetails, DiscoverList, LibraryFolder, MatchCandidate, MediaItem, ScanStatus, TrendingTitle, UpdateState } from '../shared/types'
 
 export interface PickedFile {
   path: string
@@ -28,6 +28,9 @@ export interface LanternBridge {
   onScan(cb: (status: ScanStatus) => void): () => void
   /** Whether this build can look up artwork and details, and how far it has got. */
   metadataStatus(): Promise<{ enabled: boolean; matched: number; pending: number; unmatched: number }>
+  /** Fix Match: search TMDB, then point a title at the chosen entry. Resolves to the title's id afterwards. */
+  searchMatches(kind: 'movie' | 'show', query: string, year: number | null): Promise<MatchCandidate[]>
+  fixMatch(itemId: string, tmdbId: number): Promise<string | null>
   /** Every film and show found in the library folders. */
   getLibrary(): Promise<MediaItem[]>
   /** The library changed on disk (a scan found something, a folder was removed). */
