@@ -80,26 +80,21 @@
   flex-direction: column;
   overflow: hidden;
 }
-.sb-profile {
+.sb-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 4px 18px;
+  padding: 6px 4px 22px;
   min-height: 68px;
   white-space: nowrap;
 }
-.sb-avatar {
+.sb-mark {
   flex: none;
   width: 44px;
   height: 44px;
-  border-radius: 50%;
   display: grid;
   place-items: center;
-  font-weight: 650;
-  font-size: 18px;
-  color: #1a0f04;
-  background: radial-gradient(circle at 35% 30%, #ffe2ac, #ffb547 55%, #e07818);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.14), 0 6px 22px rgba(255, 160, 60, 0.32);
+  filter: drop-shadow(0 4px 14px rgba(255, 160, 60, 0.35));
 }
 .sb-who {
   opacity: 0;
@@ -108,6 +103,7 @@
 .sb-name {
   font-weight: 600;
   font-size: 15px;
+  letter-spacing: 0.01em;
 }
 .sb-clock {
   font-size: 13px;
@@ -135,7 +131,7 @@
   display: grid;
   place-items: center;
   flex: none;
-  width: 26px;
+  width: 28px;
 }
 .sb-label {
   font-size: 15px;
@@ -150,35 +146,33 @@
   transform: none;
 }
 .sb-item.is-focused {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgb(var(--ink) / 0.14);
   color: var(--text);
 }
 .sb-item.is-selected {
   background: #fff;
   color: #0a0a0b;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 .sb-item.is-selected.is-focused {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.22), 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 3px rgb(var(--ink) / 0.22), 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 .sb-item.is-selected .sb-label {
   font-weight: 600;
 }
 .sb-foot {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px 4px;
+  justify-content: center;
+  padding: 10px 0 6px;
   font-size: 12px;
-  color: var(--text-4);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-3);
   white-space: nowrap;
+  transition: opacity 0.25s ease;
 }
-.sb-foot span {
+.sidebar.is-open .sb-foot {
   opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.sidebar.is-open .sb-foot span {
-  opacity: 1;
 }
 
 /* ---------- Buttons ---------- */
@@ -209,11 +203,11 @@
   box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.5);
 }
 .pill-solid.is-focused {
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18), 0 0 44px rgba(255, 190, 110, 0.35), 0 18px 40px -10px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 0 4px rgb(var(--ink) / 0.18), 0 0 44px rgba(255, 190, 110, 0.35), 0 18px 40px -10px rgba(0, 0, 0, 0.6);
 }
 .pill-glass {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.12);
+  background: rgb(var(--ink) / 0.12);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   box-shadow: var(--glass-edge), var(--glass-highlight);
@@ -275,7 +269,7 @@
   white-space: nowrap;
   color: var(--text);
   background: rgba(24, 24, 28, 0.94);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgb(var(--ink) / 0.08);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease, transform 0.25s ease;
@@ -319,7 +313,7 @@
 }
 .badge-outline {
   color: var(--text-2);
-  box-shadow: inset 0 0 0 1.2px rgba(255, 255, 255, 0.32);
+  box-shadow: inset 0 0 0 1.2px rgb(var(--ink) / 0.32);
 }
 .badge-solid {
   color: #0a0a0b;
@@ -395,7 +389,7 @@
   max-height: 60vh;
   overflow-y: auto;
   padding: 8px;
-  border-radius: 20px;
+  border-radius: var(--r-panel);
 }
 .pop-below {
   top: calc(100% + 12px);
@@ -428,7 +422,7 @@
   width: 100%;
   height: 44px;
   padding: 0 14px;
-  border-radius: 12px;
+  border-radius: 14px;
   font-size: 15px;
   font-weight: 500;
   color: var(--text);
@@ -544,4 +538,9 @@
 }
 .lantern {
   overflow: visible;
+}
+.pop-divider {
+  height: 1px;
+  margin: 6px 10px;
+  background: rgb(var(--ink) / 0.1);
 }

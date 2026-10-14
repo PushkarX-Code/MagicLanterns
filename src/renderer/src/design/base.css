@@ -92,19 +92,24 @@ input {
   backdrop-filter: var(--glass-blur);
   box-shadow: var(--glass-edge), var(--glass-highlight), var(--glass-shadow);
 }
+/* Gloss: a specular sheen across the top and a faint return at the bottom edge, like light on a pane. */
+.glass,
+.glass-strong {
+  background-image: var(--glass-gloss);
+}
 
 /* ---------- Skeleton ---------- */
 .skeleton {
   position: relative;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.045);
+  background: rgb(var(--ink) / 0.045);
 }
 .skeleton::after {
   content: '';
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.06) 50%, transparent 80%);
+  background: linear-gradient(100deg, transparent 20%, rgb(var(--ink) / 0.06) 50%, transparent 80%);
   animation: ml-shimmer 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 @keyframes ml-shimmer {
@@ -134,4 +139,11 @@ input {
   height: 1px;
   overflow: hidden;
   clip: rect(0 0 0 0);
+}
+
+/* Press feedback (design/press.ts springs --press). Independent `scale` stacks on the focus lift's transform. */
+button,
+[data-focus-leaf],
+.seg-btn {
+  scale: var(--press, 1);
 }

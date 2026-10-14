@@ -3,14 +3,14 @@ import { gsap, EASE, DUR, reduceMotion } from '../design/motion'
 
 /**
  * The focus treatment shared by every card: scale up, lift on a deep soft shadow,
- * a glass sheen sweep, and a parallax tilt that follows the cursor like tvOS.
+ * a glass sheen sweep, and a parallax tilt that follows the cursor.
  */
 export function useLift(
   ref: RefObject<HTMLElement | null>,
   focused: boolean,
-  opts: { scale?: number; tilt?: number; sheen?: RefObject<HTMLElement | null> } = {}
+  opts: { scale?: number; tilt?: number; rise?: number; sheen?: RefObject<HTMLElement | null> } = {}
 ): void {
-  const { scale = 1.08, tilt = 7 } = opts
+  const { scale = 1.08, tilt = 7, rise = 6 } = opts
   const quick = useRef<{ rx: gsap.QuickToFunc; ry: gsap.QuickToFunc } | null>(null)
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export function useLift(
     const reduced = reduceMotion()
     gsap.to(el, {
       scale: focused && !reduced ? scale : 1,
-      y: focused && !reduced ? -6 : 0,
+      y: focused && !reduced ? -rise : 0,
       zIndex: focused ? 5 : 1,
       duration: focused ? DUR.focus : DUR.focus * 0.9,
       ease: EASE.lift,

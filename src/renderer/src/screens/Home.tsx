@@ -3,6 +3,7 @@ import { api } from '../lib/api'
 import { useAsync } from '../lib/useAsync'
 import { Hero, HeroSkeleton } from '../components/Hero'
 import { Card, CardSkeleton } from '../components/Card'
+import { GenreTile } from '../components/GenreTile'
 import { Row, RowSkeleton, scrollPageTo } from '../components/Row'
 import { Screen } from '../components/Screen'
 import { useNav } from '../state/nav'
@@ -40,11 +41,19 @@ export function Home() {
       <div ref={rows} className="home-rows">
         {data
           ? data.rows.map((row) => (
-              <Row key={row.id} title={row.title} focusKey={`ROW-${row.id}`} onRowFocus={(el) => scrollPageTo(page.current, el, 96)}>
+              <Row
+                key={row.id}
+                title={row.title}
+                focusKey={`ROW-${row.id}`}
+                className={row.title ? '' : 'row-untitled'}
+                onRowFocus={(el) => scrollPageTo(page.current, el, row.title ? 96 : 140)}
+              >
                 {(onFocused) =>
-                  row.cards.map((c) => (
-                    <Card key={c.key} card={c} action={row.id === 'continue' ? 'play' : 'detail'} onFocused={onFocused} />
-                  ))
+                  row.kind === 'genres'
+                    ? row.genres!.map((g) => <GenreTile key={g.name} genre={g} onFocused={onFocused} />)
+                    : row.cards.map((c) => (
+                        <Card key={c.key} card={c} action={row.id === 'recents' ? 'play' : 'detail'} onFocused={onFocused} />
+                      ))
                 }
               </Row>
             ))

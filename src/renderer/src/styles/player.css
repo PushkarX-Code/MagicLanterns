@@ -2,6 +2,7 @@
   position: absolute;
   inset: 0;
   z-index: 100;
+  container-type: size; /* forced aspect ratios size the video in cqw/cqh */
   background: #000;
   overflow: hidden;
 }
@@ -12,6 +13,7 @@
   height: 100%;
   object-fit: contain;
   background: #000;
+  transition: filter 0.3s ease;
 }
 .pl-loading {
   position: absolute;
@@ -31,7 +33,7 @@
   height: 54px;
   margin: -27px 0 0 -27px;
   border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.14);
+  border: 3px solid rgb(var(--ink) / 0.14);
   border-top-color: var(--amber);
   animation: ml-spin 1s linear infinite;
   box-shadow: 0 0 40px var(--amber-glow);
@@ -99,9 +101,10 @@
 }
 .pl-top {
   position: absolute;
-  top: 44px;
-  left: var(--gutter);
-  right: 200px;
+  top: 32px;
+  left: 32px;
+  right: 32px;
+  justify-content: space-between;
   display: flex;
   align-items: center;
   gap: 22px;
@@ -160,16 +163,16 @@
   gap: 40px;
 }
 .pl-circle {
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   display: grid;
   place-items: center;
   transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), background 0.2s ease, color 0.2s ease;
 }
 .pl-circle.big {
-  width: 92px;
-  height: 92px;
+  width: 102px;
+  height: 102px;
 }
 .pl-circle:hover {
   transform: scale(1.1);
@@ -187,11 +190,9 @@
 
 .pl-bottom {
   position: absolute !important;
-  left: var(--gutter);
-  right: var(--gutter);
-  bottom: 36px;
-  padding: 18px 26px 14px;
-  border-radius: var(--r-panel);
+  left: 32px;
+  right: 32px;
+  bottom: 28px;
 }
 .pl-bar {
   position: relative;
@@ -206,7 +207,7 @@
   width: 100%;
   height: 6px;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgb(var(--ink) / 0.18);
   overflow: hidden;
   transition: height 0.25s ease;
 }
@@ -218,7 +219,7 @@
 .pl-buffer {
   position: absolute;
   inset: 0 auto 0 0;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgb(var(--ink) / 0.18);
 }
 .pl-fill {
   position: absolute;
@@ -240,7 +241,7 @@
   margin: -8px 0 0 -8px;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18), 0 4px 16px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 4px rgb(var(--ink) / 0.18), 0 4px 16px rgba(0, 0, 0, 0.5);
   opacity: 0;
   transform: scale(0.5);
   transition: opacity 0.2s ease, transform 0.25s ease;
@@ -261,10 +262,10 @@
 .pl-thumb-frame {
   width: 256px;
   aspect-ratio: 16 / 9;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
   background: #111;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 0 1.5px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 0 1.5px rgb(var(--ink) / 0.5);
 }
 .pl-thumb-frame video {
   width: 100%;
@@ -311,8 +312,8 @@
 }
 .pl-btn {
   position: relative;
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -387,7 +388,7 @@
   flex: none;
   width: 176px;
   aspect-ratio: 16 / 9;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
 }
 .pl-next-ring {
@@ -401,7 +402,7 @@
 }
 .pl-next-ring circle {
   fill: rgba(0, 0, 0, 0.45);
-  stroke: rgba(255, 255, 255, 0.25);
+  stroke: rgb(var(--ink) / 0.25);
   stroke-width: 2.5;
 }
 .pl-next-ring .fg {
@@ -451,8 +452,8 @@
 .pl-pause {
   position: absolute;
   z-index: 4;
-  left: var(--gutter);
-  bottom: 200px;
+  left: 32px;
+  bottom: 170px;
   width: min(520px, 42vw);
   padding: 26px 28px;
   border-radius: var(--r-panel);
@@ -507,7 +508,7 @@
   width: 120px;
   height: 5px;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgb(var(--ink) / 0.2);
   overflow: hidden;
 }
 .pl-hud-bar span {
@@ -557,7 +558,7 @@
 }
 .style-glass span {
   padding: 4px 16px;
-  border-radius: 12px;
+  border-radius: 14px;
   background: rgba(20, 20, 24, 0.55);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   backdrop-filter: blur(20px) saturate(160%);
@@ -571,7 +572,7 @@
 .resume {
   width: 520px;
   padding: 34px 34px 30px;
-  border-radius: 28px;
+  border-radius: var(--r-panel);
   text-align: left;
 }
 .resume-kicker {
@@ -597,4 +598,106 @@
 }
 .resume-actions .pill.is-focused {
   transform: scale(1.03);
+}
+button.pl-time {
+  padding: 4px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+button.pl-time:hover {
+  color: var(--text);
+}
+
+/* Subtitle colour and position (player cues and the settings preview) */
+.color-yellow span {
+  color: #ffe14d;
+}
+.color-cyan span {
+  color: #8beeff;
+}
+
+/* ---------- Chrome layout: corner controls, title + tools above a separate scrub pill ---------- */
+.pl-top-left {
+  display: flex;
+  gap: 12px;
+}
+.pl-volume {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 46px;
+  padding: 0 8px 0 18px;
+  border-radius: var(--r-pill);
+}
+.pl-vol-btn {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--text);
+}
+.pl-vol-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 130px;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #fff var(--v), rgb(255 255 255 / 0.25) var(--v));
+  cursor: pointer;
+}
+.pl-vol-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.pl-meta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 12px;
+}
+.pl-meta .pl-title {
+  min-width: 0;
+}
+.pl-meta .pl-title-text {
+  position: static;
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
+}
+.pl-meta .pl-title-sub {
+  margin-top: 4px;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+}
+.pl-tools {
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  border-radius: var(--r-pill);
+}
+.pl-tools .pl-btn {
+  width: 44px;
+  height: 44px;
+}
+.pl-scrub {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 48px;
+  padding: 0 20px;
+  border-radius: var(--r-pill);
+}
+.pl-scrub .pl-bar {
+  flex: 1;
+}
+.pl-scrub .pl-time {
+  min-width: 52px;
+  font-size: 12.5px;
 }

@@ -47,8 +47,10 @@ type Res = '2160p' | '1080p' | '720p'
 interface Extras {
   color: string
   imdb: number
-  rt: number
+  rt?: number
   mc?: number
+  /** How many times it has been played (episodes summed for shows). */
+  plays?: number
   res: Res
   hdr: HdrFormat
   audio: 'atmos' | '7.1' | '5.1' | 'stereo'
@@ -67,32 +69,32 @@ interface Extras {
  * Tried in order; the first one that loads wins. Drop any local video onto the player to use it instead.
  */
 export const SAMPLE_VIDEOS = [
-  'https://download.blender.org/demo/movies/ToS/tears_of_steel_720p.mov',
   'https://download.blender.org/durian/trailer/sintel_trailer-720p.mp4',
-  'https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_720p_h264.mov',
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
+  'https://download.blender.org/durian/trailer/sintel_trailer-480p.mp4',
+  'https://download.blender.org/demo/movies/ToS/tears_of_steel_720p.mov'
 ]
 
 const DAY = 86_400_000
 const NOW = Date.now()
 
 const EXTRAS: Record<number, Extras> = {
-  693134: { color: '#8a4a1c', imdb: 8.5, rt: 92, mc: 79, res: '2160p', hdr: 'DV', audio: 'atmos', addedDaysAgo: 1, progress: 0.42, favorite: true, folder: 'D:\\Movies' },
-  95396: { color: '#24506a', imdb: 8.7, rt: 96, mc: 83, res: '2160p', hdr: 'DV', audio: 'atmos', addedDaysAgo: 3, progress: [2, 3, 0.58], inList: true, folder: 'E:\\TV' },
-  335984: { color: '#9a5a1e', imdb: 8.0, rt: 88, mc: 81, res: '2160p', hdr: 'HDR10', audio: 'atmos', addedDaysAgo: 2, folder: 'D:\\Movies' },
-  872585: { color: '#7a3a16', imdb: 8.3, rt: 93, mc: 90, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 5, progress: 0.16, folder: 'D:\\Movies' },
-  126308: { color: '#5a2418', imdb: 8.6, rt: 99, mc: 85, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 4, progress: [1, 4, 0], episodeRuntime: 58, folder: 'E:\\TV' },
-  157336: { color: '#5c4a32', imdb: 8.7, rt: 73, mc: 74, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 40, watched: true, favorite: true, folder: 'D:\\Movies' },
-  414906: { color: '#5a1a1a', imdb: 7.8, rt: 85, mc: 72, res: '2160p', hdr: 'DV', audio: 'atmos', addedDaysAgo: 12, folder: 'D:\\Movies' },
-  136315: { color: '#1e3e5a', imdb: 8.5, rt: 99, mc: 92, res: '1080p', hdr: 'SDR', audio: '5.1', addedDaysAgo: 9, progress: [2, 6, 0.35], folder: 'E:\\TV' },
-  76341: { color: '#a0521a', imdb: 8.1, rt: 97, mc: 90, res: '2160p', hdr: 'HDR10', audio: 'atmos', addedDaysAgo: 60, folder: 'D:\\Movies' },
-  329865: { color: '#3c4a52', imdb: 7.9, rt: 94, mc: 81, res: '1080p', hdr: 'SDR', audio: '5.1', addedDaysAgo: 75, watched: true, folder: 'D:\\Movies' },
-  94605: { color: '#2a3a6a', imdb: 9.0, rt: 100, mc: 89, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 20, progress: [1, 5, 0.3], favorite: true, folder: 'E:\\TV' },
-  569094: { color: '#6a2a5a', imdb: 8.5, rt: 95, mc: 86, res: '2160p', hdr: 'HDR10', audio: 'atmos', addedDaysAgo: 30, folder: 'D:\\Movies' },
-  361743: { color: '#8a6a3a', imdb: 8.2, rt: 96, mc: 78, res: '2160p', hdr: 'DV', audio: 'atmos', addedDaysAgo: 50, watched: true, folder: 'D:\\Movies' },
-  313369: { color: '#3a2a6a', imdb: 8.0, rt: 91, mc: 94, res: '1080p', hdr: 'SDR', audio: '7.1', addedDaysAgo: 90, inList: true, folder: 'D:\\Movies' },
-  155: { color: '#1e2a3a', imdb: 9.0, rt: 94, mc: 84, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 120, watched: true, folder: 'D:\\Movies' },
-  27205: { color: '#2a3a4a', imdb: 8.8, rt: 87, mc: 74, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 110, inList: true, folder: 'D:\\Movies' }
+  693134: { color: '#8a4a1c', imdb: 8.5, rt: 92, mc: 79, res: '2160p', hdr: 'DV', audio: 'atmos', addedDaysAgo: 1, progress: 0.42, favorite: true, plays: 3, folder: 'D:\\Movies' },
+  95396: { color: '#24506a', imdb: 8.7, rt: 96, mc: 83, res: '2160p', hdr: 'DV', audio: 'atmos', addedDaysAgo: 3, progress: [2, 3, 0.58], inList: true, plays: 14, folder: 'E:\\TV' },
+  335984: { color: '#9a5a1e', imdb: 8.0, rt: 88, mc: 81, res: '2160p', hdr: 'HDR10', audio: 'atmos', addedDaysAgo: 2, plays: 1, folder: 'D:\\Movies' },
+  872585: { color: '#7a3a16', imdb: 8.3, rt: 93, mc: 90, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 5, progress: 0.16, plays: 2, folder: 'D:\\Movies' },
+  126308: { color: '#5a2418', imdb: 8.6, rt: 99, mc: 85, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 4, progress: [1, 4, 0], episodeRuntime: 58, plays: 3, folder: 'E:\\TV' },
+  157336: { color: '#5c4a32', imdb: 8.7, rt: 73, mc: 74, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 40, watched: true, favorite: true, plays: 6, folder: 'D:\\Movies' },
+  414906: { color: '#5a1a1a', imdb: 7.8, rt: 85, mc: 72, res: '2160p', hdr: 'DV', audio: 'atmos', addedDaysAgo: 12, plays: 0, folder: 'D:\\Movies' },
+  136315: { color: '#1e3e5a', imdb: 8.5, rt: 99, mc: 92, res: '1080p', hdr: 'SDR', audio: '5.1', addedDaysAgo: 9, progress: [2, 6, 0.35], plays: 11, folder: 'E:\\TV' },
+  76341: { color: '#a0521a', imdb: 8.1, rt: 97, mc: 90, res: '2160p', hdr: 'HDR10', audio: 'atmos', addedDaysAgo: 60, plays: 4, folder: 'D:\\Movies' },
+  329865: { color: '#3c4a52', imdb: 7.9, rt: 94, mc: 81, res: '1080p', hdr: 'SDR', audio: '5.1', addedDaysAgo: 75, watched: true, plays: 3, folder: 'D:\\Movies' },
+  94605: { color: '#2a3a6a', imdb: 9.0, rt: 100, mc: 89, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 20, progress: [1, 5, 0.3], favorite: true, plays: 9, folder: 'E:\\TV' },
+  569094: { color: '#6a2a5a', imdb: 8.5, rt: 95, mc: 86, res: '2160p', hdr: 'HDR10', audio: 'atmos', addedDaysAgo: 30, plays: 2, folder: 'D:\\Movies' },
+  361743: { color: '#8a6a3a', imdb: 8.2, rt: 96, mc: 78, res: '2160p', hdr: 'DV', audio: 'atmos', addedDaysAgo: 50, watched: true, plays: 5, folder: 'D:\\Movies' },
+  313369: { color: '#3a2a6a', imdb: 8.0, rt: 91, mc: 94, res: '1080p', hdr: 'SDR', audio: '7.1', addedDaysAgo: 90, inList: true, plays: 1, folder: 'D:\\Movies' },
+  155: { color: '#1e2a3a', imdb: 9.0, rt: 94, mc: 84, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 120, watched: true, plays: 7, folder: 'D:\\Movies' },
+  45745: { color: '#4a3a2e', imdb: 7.4, res: '1080p', hdr: 'SDR', audio: 'stereo', addedDaysAgo: 0, progress: 0.3, plays: 8, favorite: true, folder: 'D:\\Movies' },
+  27205: { color: '#2a3a4a', imdb: 8.8, rt: 87, mc: 74, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 110, inList: true, plays: 4, folder: 'D:\\Movies' }
 }
 
 const RES: Record<Res, [number, number]> = { '2160p': [3840, 2160], '1080p': [1920, 1080], '720p': [1280, 720] }
@@ -184,7 +186,8 @@ function build(entry: FixtureEntry): MediaItem {
     preview: { url: SAMPLE_VIDEOS[0], start: 0.2 },
     addedAt: NOW - x.addedDaysAgo * DAY,
     favorite: !!x.favorite,
-    inList: !!x.inList
+    inList: !!x.inList,
+    playCount: x.plays ?? 0
   }
 
   if (entry.kind === 'movie') {

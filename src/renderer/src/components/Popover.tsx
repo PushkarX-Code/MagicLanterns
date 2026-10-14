@@ -10,6 +10,8 @@ export interface PopoverOption {
   hint?: string
   /** Keep the popover open after selecting (multi-select lists). */
   keepOpen?: boolean
+  /** Draw a hairline above this option to start a new group. */
+  divider?: boolean
   onSelect: () => void
 }
 
@@ -18,11 +20,14 @@ function Option({ opt, onClose }: { opt: PopoverOption; onClose: () => void }) {
     opt.onSelect()
     if (!opt.keepOpen) onClose()
   }
-  const { ref, focused, pointer } = useFocus<HTMLButtonElement>({ onEnterPress: select })
+  const { ref, focused, pointer } = useFocus<HTMLButtonElement>({
+    onEnterPress: select,
+    onFocus: () => ref.current?.scrollIntoView({ block: 'nearest' }) // long lists scroll with focus
+  })
   const Icon = opt.icon
   return (
     <button ref={ref} className={`pop-opt ${focused ? 'is-focused' : ''}`} onClick={select} {...pointer}>
-      <span className="pop-check">{opt.checked ? <Check size={16} strokeWidth={2.2} /> : Icon ? <Icon size={16} strokeWidth={1.7} /> : null}</span>
+      <span className="pop-check">{opt.checked ? <Check size={18} strokeWidth={2.2} /> : Icon ? <Icon size={18} strokeWidth={1.7} /> : null}</span>
       <span className="pop-label">{opt.label}</span>
       {opt.hint && <span className="pop-hint">{opt.hint}</span>}
     </button>
@@ -90,7 +95,10 @@ export function Popover({
       >
         {title && <div className="pop-title">{title}</div>}
         {options.map((o) => (
-          <Option key={o.label} opt={o} onClose={close} />
+          <div key={o.label} className="pop-group">
+            {o.divider && <div className="pop-divider" />}
+            <Option opt={o} onClose={close} />
+          </div>
         ))}
       </div>
     </FocusContext.Provider>

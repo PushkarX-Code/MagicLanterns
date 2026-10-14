@@ -21,3 +21,5 @@ nsis:
   shortcutName: Magic Lanterns
   installerIcon: build/icon.ico
   uninstallerIcon: build/icon.ico
+  # Fixed name so "releases/latest/download/MagicLanterns-Setup.exe" always points at the newest build.
+  artifactName: MagicLanterns-Setup.${ext}

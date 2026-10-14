@@ -8,9 +8,9 @@ import { gsap, d, EASE } from './design/motion'
 import { Home } from './screens/Home'
 import { Detail } from './screens/Detail'
 import { Player } from './screens/Player'
-import { LibraryScreen, ContinueScreen } from './screens/Library'
-import { CollectionsScreen, CollectionScreen } from './screens/Collections'
-import { FoldersScreen } from './screens/Folders'
+import { FavoritesScreen } from './screens/Favorites'
+import { FilesScreen } from './screens/Files'
+import { GenreScreen } from './screens/Genre'
 import { SearchScreen } from './screens/Search'
 import { SettingsScreen } from './screens/Settings'
 import { Splash } from './screens/Splash'
@@ -20,18 +20,12 @@ function render(entry: Entry) {
   switch (r.name) {
     case 'home':
       return <Home />
-    case 'movies':
-      return <LibraryScreen kind="movie" />
-    case 'shows':
-      return <LibraryScreen kind="show" />
-    case 'continue':
-      return <ContinueScreen />
-    case 'collections':
-      return <CollectionsScreen />
-    case 'collection':
-      return <CollectionScreen id={r.id} entryKey={entry.key} />
-    case 'folders':
-      return <FoldersScreen />
+    case 'favorites':
+      return <FavoritesScreen />
+    case 'files':
+      return <FilesScreen />
+    case 'genre':
+      return <GenreScreen genre={r.genre} entryKey={entry.key} />
     case 'search':
       return <SearchScreen />
     case 'settings':
@@ -39,7 +33,7 @@ function render(entry: Entry) {
     case 'detail':
       return <Detail id={r.id} origin={r.origin} entryKey={entry.key} />
     case 'player':
-      return <Player key={`${r.itemId}-${r.episodeId}`} itemId={r.itemId} episodeId={r.episodeId} fresh={r.fresh} />
+      return <Player key={entry.key} itemId={r.itemId} episodeId={r.episodeId} fileId={r.fileId} url={r.url} title={r.title} fresh={r.fresh} />
   }
 }
 
@@ -83,12 +77,21 @@ export function App() {
     load()
   }, [load])
 
-  // Esc / Backspace: back one level; at a section root, return to the sidebar like the Menu button on tvOS.
+  // Esc / Backspace: back one level; at a section root, return to the sidebar.
+  // "/" or Ctrl+F opens search from anywhere outside the player.
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
-      if (e.key !== 'Escape' && e.key !== 'Backspace') return
       const t = e.target as HTMLElement
-      if (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA') return
+      const typing = t.tagName === 'INPUT' || t.tagName === 'TEXTAREA'
+      const { stack, push } = useNav.getState()
+      const name = stack[stack.length - 1].route.name
+      if (!typing && name !== 'player' && name !== 'search' && (e.key === '/' || (e.ctrlKey && e.key.toLowerCase() === 'f'))) {
+        e.preventDefault()
+        push({ name: 'search' })
+        return
+      }
+      if (e.key !== 'Escape' && e.key !== 'Backspace') return
+      if (typing) return
       e.preventDefault()
       if (useNav.getState().stack.length > 1) back()
       else setFocus(SIDEBAR_KEY)

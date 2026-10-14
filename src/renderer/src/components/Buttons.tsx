@@ -15,7 +15,6 @@ interface Common {
 export function PillButton({
   icon: Icon,
   children,
-  progress,
   onPress,
   focusKey,
   disabled,
@@ -30,7 +29,7 @@ export function PillButton({
     onArrowPress: onArrowPress ? (dir) => onArrowPress(dir) : undefined,
     onFocus
   })
-  useLift(ref, focused, { scale: 1.06, tilt: 0 })
+  useLift(ref, focused, { scale: 1, tilt: 0, rise: 0 }) // pills stay one size; focus shows as colour, not growth
   return (
     <button
       ref={ref}
@@ -39,13 +38,8 @@ export function PillButton({
       disabled={disabled}
       {...pointer}
     >
-      {Icon && <Icon size={20} strokeWidth={2.2} fill={variant === 'solid' ? 'currentColor' : 'none'} />}
+      {Icon && <Icon size={22} strokeWidth={2.2} fill={variant === 'solid' ? 'currentColor' : 'none'} />}
       <span>{children}</span>
-      {progress !== undefined && progress > 0 && (
-        <span className="pill-progress">
-          <span style={{ width: `${Math.min(100, progress * 100)}%` }} />
-        </span>
-      )}
     </button>
   )
 }
@@ -81,7 +75,7 @@ export function GlassIconButton({
       disabled={disabled}
       {...pointer}
     >
-      <Icon size={Math.round(size * 0.4)} strokeWidth={1.6} />
+      <Icon size={Math.round(size * 0.46)} strokeWidth={1.6} />
       <span ref={tipRef} className="gib-tip">
         {label}
       </span>

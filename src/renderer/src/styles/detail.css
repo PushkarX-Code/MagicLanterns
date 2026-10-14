@@ -160,7 +160,7 @@
   right: 0;
   bottom: 0;
   height: 3px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(var(--ink) / 0.08);
 }
 .detail-progress span {
   display: block;
@@ -202,7 +202,7 @@
   transition: background 0.25s ease, color 0.25s ease, transform 0.3s ease;
 }
 .tab.is-active {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgb(var(--ink) / 0.14);
   color: var(--text);
   box-shadow: var(--glass-edge);
 }
@@ -298,11 +298,11 @@
   margin: 0 auto;
   border-radius: 50%;
   overflow: hidden;
-  box-shadow: var(--rest), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: var(--rest), inset 0 0 0 1px rgb(var(--ink) / 0.08);
   will-change: transform;
 }
 .cast.is-focused .cast-face {
-  box-shadow: var(--lift), 0 0 0 2px rgba(255, 255, 255, 0.6);
+  box-shadow: var(--lift), 0 0 0 2px rgb(var(--ink) / 0.6);
 }
 .cast-initials {
   position: absolute;
@@ -342,7 +342,7 @@
   transition: box-shadow 0.35s ease;
 }
 .fileinfo.is-focused {
-  box-shadow: var(--glass-edge), var(--glass-highlight), 0 0 0 2px rgba(255, 255, 255, 0.35), var(--glass-shadow);
+  box-shadow: var(--glass-edge), var(--glass-highlight), 0 0 0 2px rgb(var(--ink) / 0.35), var(--glass-shadow);
 }
 .fi-head {
   font-size: 12px;

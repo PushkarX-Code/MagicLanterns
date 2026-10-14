@@ -10,9 +10,11 @@ import './styles/detail.css'
 import './styles/player.css'
 import './styles/pages.css'
 import { initFocus } from './focus/focus'
+import { initPressFeedback } from './design/press'
 import { App } from './App'
 
 initFocus()
+initPressFeedback()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -103,7 +103,7 @@
 .poster.is-focused .poster-frame,
 .episode.is-focused .card-frame,
 .collection.is-focused .collection-frame {
-  box-shadow: var(--lift), 0 0 0 1px rgba(255, 255, 255, 0.16);
+  box-shadow: var(--lift), 0 0 0 1px rgb(var(--ink) / 0.16);
 }
 .card-art {
   position: absolute !important;
@@ -126,18 +126,18 @@
 }
 .card-progress {
   position: absolute;
-  left: 18px;
-  right: 18px;
-  bottom: 10px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 4px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.24);
+  border-radius: 0;
+  background: rgb(var(--ink) / 0.24);
   overflow: hidden;
 }
 .card-progress span {
   display: block;
   height: 100%;
-  border-radius: 2px;
+  border-radius: 0 2px 2px 0;
   background: linear-gradient(90deg, var(--amber-deep), var(--amber));
   box-shadow: 0 0 10px var(--amber-glow);
 }
@@ -146,7 +146,7 @@
   inset: 0;
   pointer-events: none;
   opacity: 0;
-  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 0%), rgba(255, 255, 255, 0.22), transparent 55%);
+  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 0%), rgb(var(--ink) / 0.22), transparent 55%);
   transition: opacity 0.4s ease;
   mix-blend-mode: soft-light;
 }
@@ -160,7 +160,7 @@
   inset: -20% -40%;
   pointer-events: none;
   opacity: 0;
-  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.18) 47%, rgba(255, 255, 255, 0.05) 53%, transparent 62%);
+  background: linear-gradient(105deg, transparent 38%, rgb(var(--ink) / 0.18) 47%, rgb(var(--ink) / 0.05) 53%, transparent 62%);
 }
 .card-fallback {
   position: absolute;
@@ -171,8 +171,8 @@
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: rgba(255, 255, 255, 0.9);
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), transparent 60%);
+  color: rgb(var(--ink) / 0.9);
+  background: linear-gradient(160deg, rgb(var(--ink) / 0.08), transparent 60%);
 }
 .card-meta {
   padding: 14px 4px 0;
@@ -267,9 +267,9 @@
   top: 12%;
   width: 62%;
   aspect-ratio: 16 / 9;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgb(var(--ink) / 0.1);
 }
 .collection-slide.s0 {
   left: 6%;
@@ -307,4 +307,78 @@
   position: absolute;
   inset: 0;
   background: radial-gradient(circle at 30% 40%, rgba(255, 181, 71, 0.16), transparent 60%);
+}
+
+/* Untitled first row (Recents) sits right under the hero */
+.row-untitled .row-title {
+  display: none;
+}
+
+/* ---------- Genre tiles ---------- */
+.genre {
+  width: 300px;
+  flex: none;
+  cursor: pointer;
+}
+.genre-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-card);
+  overflow: hidden;
+  box-shadow: var(--rest);
+  will-change: transform;
+  transition: box-shadow 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.genre.is-focused .genre-frame {
+  box-shadow: var(--lift), 0 0 0 1px rgb(var(--ink) / 0.16);
+}
+.genre-slide {
+  position: absolute;
+  top: 14%;
+  width: 58%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgb(var(--ink) / 0.1);
+}
+.genre-slide.s0 {
+  right: 6%;
+  z-index: 3;
+  transform: rotate(4deg);
+}
+.genre-slide.s1 {
+  right: 20%;
+  z-index: 2;
+  transform: rotate(-2deg) translateY(-8%);
+  filter: brightness(0.7);
+}
+.genre-slide.s2 {
+  right: 34%;
+  z-index: 1;
+  transform: rotate(-7deg) translateY(-14%);
+  filter: brightness(0.5);
+}
+.genre-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: linear-gradient(20deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.35) 45%, transparent 75%);
+}
+.genre-name {
+  position: absolute;
+  z-index: 5;
+  left: 18px;
+  bottom: 34px;
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.genre-count {
+  position: absolute;
+  z-index: 5;
+  left: 18px;
+  bottom: 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-3);
 }

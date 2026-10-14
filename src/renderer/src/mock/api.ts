@@ -1,21 +1,9 @@
 import type { LanternApi } from '@shared/api'
-import type { CardModel, Episode, HomeRow, MediaItem, MediaKind, PlaybackSource, Settings } from '@shared/types'
+import type { CardModel, Episode, FileEntry, GenreTile, HomeRow, LibraryFolder, MediaItem, PlaybackSource } from '@shared/types'
+import { DEFAULT_SETTINGS, type Settings } from '@shared/settings'
 import { COLLECTIONS, FOLDERS, ITEMS, SAMPLE_VIDEOS } from './library'
 
 const SETTINGS_KEY = 'ml.settings'
-const DEFAULT_SETTINGS: Settings = {
-  profileName: 'Pushkar',
-  tmdbKey: '',
-  omdbKey: '',
-  metadataLanguage: 'en-US',
-  reduceMotion: false,
-  subtitleSize: 'medium',
-  subtitleStyle: 'shadow',
-  subtitleLanguage: 'eng',
-  audioLanguage: 'eng',
-  autoplayNext: true,
-  heroPreviews: true
-}
 
 function readSettings(): Settings {
   try {
@@ -26,7 +14,7 @@ function readSettings(): Settings {
   }
 }
 
-/** Developer switch (Settings → Developer) that slows every call so skeletons can be judged. */
+/** Developer switch (Settings → Interface) that slows every call so skeletons can be judged. */
 export const SLOW_KEY = 'ml.dev.slow'
 const slow = (): boolean => {
   try {
@@ -80,20 +68,25 @@ function remaining(seconds: number): string {
   return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m left` : `${m}m left`
 }
 
-function continueCards(): CardModel[] {
+/** Recents: whatever was played most recently, in progress first-class, finished titles after. */
+function recentCards(): CardModel[] {
   const cards: { at: number; card: CardModel }[] = []
   for (const i of ITEMS) {
     if (i.kind === 'movie') {
       const p = i.progress
-      if (p && !p.watched && p.position > 0)
-        cards.push({ at: p.lastPlayed ?? 0, card: { ...card(i, remaining(p.duration - p.position)), progress: p.position / p.duration } })
+      if (!p?.lastPlayed) continue
+      const partial = !p.watched && p.position > 0
+      cards.push({
+        at: p.lastPlayed + (partial ? 1e12 : 0),
+        card: { ...card(i, partial ? remaining(p.duration - p.position) : 'Watched'), progress: partial ? p.position / p.duration : undefined }
+      })
       continue
     }
     const nx = upNext(i)
     if (!nx || nx.state === 'start') continue
     const e = nx.episode
     cards.push({
-      at: lastPlayed(i),
+      at: lastPlayed(i) + 1e12,
       card: {
         key: e.id,
         itemId: i.id,
@@ -115,14 +108,30 @@ function isUnwatched(i: MediaItem): boolean {
   return !episodesOf(i).some((e) => e.progress)
 }
 
-function genreRows(): HomeRow[] {
-  const counts = new Map<string, MediaItem[]>()
-  for (const i of ITEMS) for (const g of i.genres) counts.set(g, [...(counts.get(g) ?? []), i])
-  return [...counts.entries()]
-    .filter(([, list]) => list.length >= 4)
+/** Same five picks all day, new ones tomorrow. */
+function picksOfTheDay(): MediaItem[] {
+  const day = Math.floor(Date.now() / 86_400_000)
+  let seed = day * 9301 + 49297
+  const rand = (): number => ((seed = (seed * 9301 + 49297) % 233280) / 233280)
+  return [...ITEMS]
+    .map((i) => ({ i, r: rand() }))
+    .sort((a, b) => a.r - b.r)
+    .slice(0, 6)
+    .map((x) => x.i)
+}
+
+function genreTiles(): GenreTile[] {
+  const map = new Map<string, MediaItem[]>()
+  for (const i of ITEMS) for (const g of i.genres) map.set(g, [...(map.get(g) ?? []), i])
+  return [...map.entries()]
+    .filter(([, list]) => list.length >= 2)
     .sort((a, b) => b[1].length - a[1].length)
-    .slice(0, 4)
-    .map(([g, list]) => ({ id: `genre-${g}`, title: g, cards: list.map((i) => card(i)) }))
+    .map(([name, list]) => ({
+      name,
+      count: list.length,
+      images: list.slice(0, 3).map((i) => i.backdrop).filter(Boolean) as string[],
+      color: list[0].color
+    }))
 }
 
 /** Lightweight typo-tolerant scorer. Phase 5 replaces it with fuse.js over the SQLite index. */
@@ -145,38 +154,148 @@ function score(item: MediaItem, q: string): number {
   return item.title.toLowerCase().includes(q) ? best + 10 : best
 }
 
+// ---------- Files ----------
+
+const fileName = (path: string): string => path.split(/[\\/]/).pop() ?? path
+const folderOf = (path: string): string => path.slice(0, path.length - fileName(path).length - 1)
+
+/** Every physical file in the library, flattened from movies and episodes. */
+function libraryFiles(): FileEntry[] {
+  const out: FileEntry[] = []
+  for (const i of ITEMS) {
+    if (i.kind === 'movie' && i.file) {
+      const p = i.progress
+      out.push({
+        id: `file-${i.id}`,
+        itemId: i.id,
+        title: i.title,
+        subtitle: `${i.year} · ${i.genres[0] ?? ''}`,
+        fileName: fileName(i.file.path),
+        folder: folderOf(i.file.path),
+        path: i.file.path,
+        size: i.file.size,
+        duration: i.file.duration,
+        width: i.file.width,
+        height: i.file.height,
+        hdr: i.file.hdr,
+        addedAt: i.addedAt,
+        lastPlayed: p?.lastPlayed,
+        image: i.backdrop,
+        poster: i.poster,
+        color: i.color,
+        progress: p && !p.watched ? p.position / p.duration : undefined,
+        watched: !!p?.watched,
+        starred: i.favorite
+      })
+      continue
+    }
+    for (const e of episodesOf(i)) {
+      const p = e.progress
+      out.push({
+        id: `file-${e.id}`,
+        itemId: i.id,
+        episodeId: e.id,
+        title: i.title,
+        subtitle: `${code(e)} · ${e.title}`,
+        fileName: fileName(e.file.path),
+        folder: folderOf(e.file.path),
+        path: e.file.path,
+        size: e.file.size,
+        duration: e.file.duration,
+        width: e.file.width,
+        height: e.file.height,
+        hdr: e.file.hdr,
+        // Episodes of a season arrive together; later episodes a little later.
+        addedAt: i.addedAt + (e.season * 100 + e.number) * 60_000,
+        lastPlayed: p?.lastPlayed,
+        image: e.still ?? i.backdrop,
+        poster: i.poster,
+        color: i.color,
+        progress: p && !p.watched ? p.position / p.duration : undefined,
+        watched: !!p?.watched,
+        starred: i.favorite
+      })
+    }
+  }
+  return out
+}
+
+/** Files added by hand that no metadata has matched yet. */
+const looseFiles: FileEntry[] = []
+
+/** "The.Grand.Budapest.Hotel.2014.1080p.BluRay.x264.mkv" → "The Grand Budapest Hotel" + 2014 */
+function cleanName(name: string): { title: string; year?: string } {
+  const base = name.replace(/\.[a-z0-9]{2,4}$/i, '')
+  const year = base.match(/(19|20)\d{2}/)?.[0]
+  const cut = base.split(/(19|20)\d{2}|\b(2160p|1080p|720p|480p|bluray|web-?dl|webrip|hdtv|x264|x265|hevc|remux)\b/i)[0]
+  const title = cut.replace(/[._]+/g, ' ').replace(/[[(]\s*$/, '').trim()
+  return { title: title || base, year }
+}
+
+function hashColor(s: string): string {
+  let h = 0
+  for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) % 360
+  return `hsl(${h}, 32%, 26%)`
+}
+
+// ---------- API ----------
+
 export function createMockApi(): LanternApi {
   let settings = readSettings()
+  const folders: LibraryFolder[] = [...FOLDERS]
+  const hidden = new Set<string>()
+
+  const allFiles = (): FileEntry[] => [...looseFiles, ...libraryFiles()].filter((f) => !hidden.has(f.id))
+
+  const markFile = (id: string, fn: (target: { progress?: MediaItem['progress']; file?: { duration: number } }) => void): void => {
+    const f = allFiles().find((x) => x.id === id)
+    if (!f?.itemId) return
+    const item = byId.get(f.itemId)
+    if (!item) return
+    if (f.episodeId) {
+      const ep = episodesOf(item).find((e) => e.id === f.episodeId)
+      if (ep) fn(ep)
+    } else fn(item)
+  }
 
   return {
     async getHome() {
       await latency('home', 900)
       const hero = ['movie-693134', 'tv-95396', 'movie-335984', 'tv-126308', 'movie-569094'].map((id) => byId.get(id)!)
       const rows: HomeRow[] = [
-        { id: 'continue', title: 'Continue Watching', cards: continueCards() },
+        { id: 'recents', title: '', kind: 'cards', cards: recentCards() },
         {
           id: 'recent',
           title: 'Recently Added',
+          kind: 'cards',
           cards: [...ITEMS].sort((a, b) => b.addedAt - a.addedAt).slice(0, 10).map((i) => card(i, 'Recently Added'))
         },
-        { id: 'movies', title: 'Movies', cards: ITEMS.filter((i) => i.kind === 'movie').map((i) => card(i)) },
-        { id: 'shows', title: 'TV Shows', cards: ITEMS.filter((i) => i.kind === 'show').map((i) => card(i)) },
-        { id: 'unwatched', title: 'Unwatched', cards: ITEMS.filter(isUnwatched).map((i) => card(i)) },
-        ...genreRows()
+        { id: 'picks', title: 'Picks of the Day', kind: 'cards', cards: picksOfTheDay().map((i) => card(i)) },
+        { id: 'genres', title: 'Film Genres', kind: 'genres', cards: [], genres: genreTiles() },
+        { id: 'unwatched', title: 'Unwatched', kind: 'cards', cards: ITEMS.filter(isUnwatched).map((i) => card(i)) },
+        {
+          id: 'most',
+          title: 'Most Watched',
+          kind: 'cards',
+          cards: ITEMS.filter((i) => i.playCount > 0)
+            .sort((a, b) => b.playCount - a.playCount)
+            .slice(0, 10)
+            .map((i) => card(i, `Played ${i.playCount} time${i.playCount === 1 ? '' : 's'}`))
+        }
       ]
-      return { hero, rows: rows.filter((r) => r.cards.length) }
-    },
-    async getLibrary(kind: MediaKind) {
-      await latency(`lib-${kind}`, 500)
-      return ITEMS.filter((i) => i.kind === kind).sort((a, b) => a.title.localeCompare(b.title))
+      return { hero, rows: rows.filter((r) => r.cards.length || r.genres?.length) }
     },
     async getItem(id) {
       await latency(`item-${id}`, 450)
       return byId.get(id) ?? null
     },
-    async getContinueWatching() {
-      await latency('continue', 400)
-      return continueCards()
+    async getGenre(name) {
+      await latency(`genre-${name}`, 400)
+      return ITEMS.filter((i) => i.genres.includes(name)).sort((a, b) => b.year - a.year)
+    },
+    async getFavorites() {
+      await latency('favorites', 400)
+      return ITEMS.filter((i) => i.favorite).sort((a, b) => a.title.localeCompare(b.title))
     },
     async getMoreLikeThis(id) {
       await latency(`more-${id}`, 700)
@@ -190,13 +309,9 @@ export function createMockApi(): LanternApi {
         .map((x) => x.i)
     },
     async getCollections() {
-      await latency('collections', 400)
+      await latency('collections', 300)
       const list = { id: 'my-list', name: 'My List', description: 'Saved for later.', itemIds: ITEMS.filter((i) => i.inList).map((i) => i.id) }
       return [list, ...COLLECTIONS]
-    },
-    async getFolders() {
-      await latency('folders', 300)
-      return FOLDERS
     },
     async search(query) {
       const q = query.trim().toLowerCase()
@@ -206,6 +321,78 @@ export function createMockApi(): LanternApi {
         .filter((x) => x.s > 0)
         .sort((a, b) => b.s - a.s)
         .map((x) => x.i)
+    },
+
+    async getFiles() {
+      await latency('files', 500)
+      return allFiles()
+    },
+    async getFolders() {
+      await latency('folders', 200)
+      return folders
+    },
+    async addFolder(path) {
+      if (!folders.some((f) => f.path === path)) folders.push({ path, items: 0, size: 0, lastScan: Date.now() })
+      return folders
+    },
+    async removeFolder(path) {
+      const i = folders.findIndex((f) => f.path === path)
+      if (i >= 0) folders.splice(i, 1)
+      return folders
+    },
+    async addFiles(files) {
+      const now = Date.now()
+      const added = files.map((f, n): FileEntry => {
+        const name = fileName(f.path)
+        const { title, year } = cleanName(name)
+        return {
+          id: `loose-${now}-${n}`,
+          itemId: null,
+          title,
+          subtitle: year ? `${year} · Not matched yet` : 'Not matched yet',
+          fileName: name,
+          folder: folderOf(f.path) || 'Added files',
+          path: f.path,
+          url: f.url,
+          size: f.size ?? 0,
+          duration: 0,
+          width: 0,
+          height: 0,
+          hdr: 'SDR',
+          addedAt: now + n,
+          image: null,
+          poster: null,
+          color: hashColor(title),
+          watched: false,
+          starred: false
+        }
+      })
+      looseFiles.unshift(...added)
+      return added
+    },
+    async removeFiles(ids) {
+      for (const id of ids) {
+        const loose = looseFiles.findIndex((f) => f.id === id)
+        if (loose >= 0) looseFiles.splice(loose, 1)
+        else hidden.add(id)
+      }
+    },
+    async setFilesStarred(ids, starred) {
+      for (const id of ids) {
+        const loose = looseFiles.find((f) => f.id === id)
+        if (loose) loose.starred = starred
+        const f = allFiles().find((x) => x.id === id)
+        const item = f?.itemId ? byId.get(f.itemId) : undefined
+        if (item) item.favorite = starred
+      }
+    },
+    async setFilesWatched(ids, watched) {
+      for (const id of ids)
+        markFile(id, (t) => {
+          const d = t.file?.duration ?? 0
+          t.progress = watched ? { position: d, duration: d, watched: true, lastPlayed: Date.now() } : undefined
+        })
+      for (const f of looseFiles) if (ids.includes(f.id)) f.watched = watched
     },
 
     async getPlayback(itemId, episodeId) {
@@ -246,6 +433,23 @@ export function createMockApi(): LanternApi {
         intro: { start: 4, end: 22 },
         next: next && { itemId, episodeId: next.id, title: next.title, label: code(next), still: next.still }
       } satisfies PlaybackSource
+    },
+    async getFilePlayback(fileId) {
+      const f = allFiles().find((x) => x.id === fileId)
+      if (!f) throw new Error(`Unknown file ${fileId}`)
+      if (f.itemId) return this.getPlayback(f.itemId, f.episodeId)
+      return {
+        url: f.url ?? '',
+        itemId: null,
+        title: f.title,
+        logo: null,
+        subtitle: f.fileName,
+        overview: f.path,
+        backdrop: null,
+        color: f.color,
+        resumeFraction: 0,
+        file: null
+      }
     },
     async saveProgress(itemId, episodeId, position, duration) {
       const item = byId.get(itemId)

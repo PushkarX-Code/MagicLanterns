@@ -38,7 +38,7 @@
   inset: 0;
   background:
     linear-gradient(90deg, rgba(8, 8, 9, 0.88) 0%, rgba(8, 8, 9, 0.55) 30%, rgba(8, 8, 9, 0.05) 62%, transparent 100%),
-    linear-gradient(0deg, rgba(10, 10, 11, 0.95) 0%, rgba(10, 10, 11, 0.4) 26%, transparent 52%),
+    linear-gradient(0deg, rgb(var(--page-rgb) / 0.95) 0%, rgb(var(--page-rgb) / 0.4) 26%, transparent 52%),
     linear-gradient(180deg, rgba(0, 0, 0, 0.38) 0%, transparent 18%);
 }
 .hero-content {
@@ -81,6 +81,11 @@
   gap: 14px;
   margin-top: 30px;
 }
+.hero-actions .pill {
+  width: 220px;
+  justify-content: center;
+  padding: 0 24px;
+}
 .hero-dots {
   position: absolute;
   right: var(--gutter);
@@ -94,13 +99,13 @@
   width: 8px;
   height: 8px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.28);
+  background: rgb(var(--ink) / 0.28);
   overflow: hidden;
   transition: width 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), background 0.3s ease;
 }
 .hero-dot.is-active {
   width: 34px;
-  background: rgba(255, 255, 255, 0.22);
+  background: rgb(var(--ink) / 0.22);
 }
 .hero-dot-fill {
   position: absolute;

@@ -1,4 +1,4 @@
-// tvOS-style focus engine. norigin-spatial-navigation handles the arrow-key geometry;
+// Ten-foot focus engine. norigin-spatial-navigation handles the arrow-key geometry;
 // this wrapper adds mouse parity (hover = focus) and per-screen activation so hidden screens
 // kept alive underneath the current one can never steal focus.
 

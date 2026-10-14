@@ -1511,5 +1511,37 @@
    }
   ],
   "director": "Christopher Nolan"
+ },
+ {
+  "tmdbId": 45745,
+  "kind": "movie",
+  "title": "Sintel",
+  "year": 2010,
+  "certification": "PG",
+  "genres": [
+   "Animation",
+   "Fantasy"
+  ],
+  "runtime": 14,
+  "tmdbScore": 7.3,
+  "tagline": "",
+  "overview": "A wandering warrior finds an unlikely friend in the form of a young dragon. The two develop a close bond, until one day the dragon is snatched away. She then sets out on a relentless quest to reclaim her friend, finding in the end that her quest exacts a far greater price than she had ever imagined.",
+  "poster": "/l98Zns4oQe1BSvbF4hJ8oL6VSf0.jpg",
+  "backdrop": "/msqeiEyIRpPAtrCeRGFNZQ9tkJL.jpg",
+  "logo": null,
+  "trailerKey": "HOfdboHvshg",
+  "cast": [
+   {
+    "name": "Halina Reijn",
+    "character": "Sintel (voice)",
+    "profile": "/su9FMcM5wKfZiSNs35OLlot4hLd.jpg"
+   },
+   {
+    "name": "Thom Hoffman",
+    "character": "Shaman (voice)",
+    "profile": "/9idfzAANRjFDPnPHsRVVBb2LbNR.jpg"
+   }
+  ],
+  "director": "Colin Levy"
  }
 ]

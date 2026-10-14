@@ -12,7 +12,7 @@ interface Props {
 
 /**
  * A full-height scrolling page that owns one focus region. When it becomes the top screen again
- * (after Back), focus returns to whatever was focused before, like tvOS.
+ * (after Back), focus returns to whatever was focused before.
  */
 export const Screen = forwardRef<HTMLDivElement, Props>(function Screen({ id, children, className = '', initialFocus, onScroll }, scrollRef) {
   const active = useContext(ScreenActive)
