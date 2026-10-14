@@ -223,6 +223,19 @@ export interface TrendingTitle {
   watchLink: string | null
 }
 
+export type DiscoverList = 'week' | 'month' | 'alltime'
+
+/** The extra detail fetched when a discover title is opened full screen. */
+export interface DiscoverDetails {
+  logo: string | null
+  tagline: string
+  runtime: number | null // minutes (per episode for series)
+  genres: string[]
+  credit: { role: string; name: string } | null
+  cast: { name: string; character: string; profile: string | null }[]
+  trailerKey: string | null
+}
+
 /** App update lifecycle, as the renderer sees it. */
 export type UpdateState =
   | { stage: 'available'; version: string; current: string; notes: string }

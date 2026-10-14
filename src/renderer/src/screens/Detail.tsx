@@ -51,7 +51,7 @@ function Flight({ origin, onLanded }: { origin: Origin; onLanded: () => void }) 
   )
 }
 
-function CastMember({ person, onFocused }: { person: MediaItem['cast'][number]; onFocused: (el: HTMLElement) => void }) {
+export function CastMember({ person, onFocused }: { person: MediaItem['cast'][number]; onFocused: (el: HTMLElement) => void }) {
   const { ref, focused, pointer } = useFocus<HTMLDivElement>({ onFocus: () => ref.current && onFocused(ref.current) })
   const face = useRef<HTMLDivElement>(null)
   useLift(face, focused, { scale: 1.1, tilt: 0 })
@@ -236,7 +236,7 @@ function FileInfoPanel({ item, k }: { item: MediaItem; k: number }) {
   )
 }
 
-function Overview({ text }: { text: string }) {
+export function Overview({ text }: { text: string }) {
   const [open, setOpen] = useState(false)
   const body = useRef<HTMLParagraphElement>(null)
   const [clamps, setClamps] = useState(false)

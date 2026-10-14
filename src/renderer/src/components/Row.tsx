@@ -1,7 +1,7 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { FocusContext, pointerMode, useFocus } from '../focus/focus'
-import { gsap, d, EASE } from '../design/motion'
+import { gsap, d, EASE, reduceMotion } from '../design/motion'
 
 /** Scroll a container so `el` sits comfortably in view. Keyboard focus only; the mouse never yanks the page. */
 export function scrollPageTo(container: HTMLElement | null, el: HTMLElement, offset = 120): void {
@@ -30,6 +30,30 @@ export function Row({ title, focusKey, onRowFocus, children, className = '' }: P
   })
   const scroller = useRef<HTMLDivElement>(null)
   const [edges, setEdges] = useState({ left: false, right: true })
+
+  // Reveal: rows that start below the fold wait hidden, then their cards rise in one after another
+  // the first time the row scrolls into view.
+  useEffect(() => {
+    const row = ref.current
+    const s = scroller.current
+    if (!row || !s || reduceMotion() || row.getBoundingClientRect().top < window.innerHeight) return
+    const cards = Array.from(s.children) as HTMLElement[]
+    gsap.set(cards, { opacity: 0, y: 34 })
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return
+        io.disconnect()
+        gsap.to(cards, { opacity: 1, y: 0, duration: d(0.85), ease: EASE.settle, stagger: 0.06, clearProps: 'opacity,transform' })
+      },
+      { threshold: 0.12 }
+    )
+    io.observe(row)
+    return () => {
+      io.disconnect()
+      gsap.set(cards, { clearProps: 'opacity,transform' })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const updateEdges = (): void => {
     const s = scroller.current

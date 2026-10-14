@@ -63,7 +63,7 @@ Every screenshot is the running app. Artwork and details are real film data; the
 
 **Sections:** Home, Favorites, Files and Settings.
 
-**Home** opens on a hero carousel, then: your recents (no heading, just the films), Recently Added, Picks of the Day (a fresh shuffle every day), Film Genres, Unwatched, Most Watched and **Top 10 This Week**: the ten most-watched films and series worldwide, refreshed automatically, with where each one streams in your country and a link to watch it.
+**Home** opens on a hero carousel, then: your recents (no heading, just the films), Recently Added, Picks of the Day (a fresh shuffle every day), Film Genres, Unwatched, Most Watched, and three rows about the wider world: **Top 10 This Week**, **Top 10 This Month** and **Greatest of All Time**. They refresh automatically. Each title opens a full-screen page like your own films, with **Where to Watch** in place of Play: it shows the services carrying it in your country and links straight to them.
 
 **Files** lists every file in your library folders, newest first.
 - **+** adds a folder, adds single files, or opens a network stream (HTTP, HTTPS, HLS).

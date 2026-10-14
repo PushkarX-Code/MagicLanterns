@@ -23,7 +23,7 @@ export function GenreTile({ genre, onFocused }: { genre: Genre; onFocused?: (el:
   useLift(frame, focused, { sheen, scale: 1.06 })
   return (
     <div ref={ref} className={`genre ${focused ? 'is-focused' : ''}`} onClick={open} {...pointer}>
-      <div ref={frame} className="genre-frame" style={{ backgroundColor: genre.color }}>
+      <div ref={frame} className="genre-frame">
         {genre.images.map((src, i) => (
           <div key={src} className={`genre-slide s${i}`}>
             <BlurImage path={src} size="w500" tiny="w92" color={genre.color} />

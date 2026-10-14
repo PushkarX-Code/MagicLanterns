@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   AudioLines,
-  Share2,
+  Share,
   Camera,
   Captions,
   Gauge,
   Maximize,
   Minimize,
   Pause,
-  PictureInPicture2,
   Play,
   RotateCcw,
   RotateCw,
@@ -21,6 +20,7 @@ import {
 import type { PlaybackSource, Settings } from '@shared/types'
 import { DEFAULT_SETTINGS, EQ_PRESETS } from '@shared/settings'
 import { AudioChain, isLocalSource, needsChain } from '../player/audioChain'
+import { PipIcon } from '../components/Icons'
 import { api } from '../lib/api'
 import { timecode } from '../lib/format'
 import { BlurImage } from '../components/BlurImage'
@@ -926,11 +926,11 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                   {fullscreen ? <Minimize size={20} strokeWidth={1.8} /> : <Maximize size={20} strokeWidth={1.8} />}
                 </button>
                 <button className="pl-close glass" onClick={togglePip} aria-label="Picture in Picture">
-                  <PictureInPicture2 size={20} strokeWidth={1.8} />
+                  <PipIcon size={20} strokeWidth={1.8} />
                 </button>
                 <div className="popover-anchor">
                   <button className={`pl-close glass ${menu === 'share' ? 'is-active' : ''}`} onClick={() => setMenu(menu === 'share' ? null : 'share')} aria-label="Share">
-                    <Share2 size={19} strokeWidth={1.8} />
+                    <Share size={19} strokeWidth={1.8} />
                   </button>
                   {menu === 'share' && <Popover title="Share" align="left" options={menuOptions()} onClose={() => setMenu(null)} />}
                 </div>
