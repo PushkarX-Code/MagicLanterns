@@ -5,7 +5,7 @@ A premium local media player for Windows. Point it at your folders and it turns 
 > The magic lantern was the first projector: a light, a painted glass slide, and a dark room turned into a story.
 > Magic Lanterns does the same to a folder of files.
 
-![Magic Lanterns Home](docs/screenshots/home.jpg)
+![Magic Lanterns](docs/showcase/home.jpg)
 
 ## Download (Windows 10 / 11)
 
@@ -19,53 +19,32 @@ irm https://raw.githubusercontent.com/PushkarX-Code/MagicLanterns/main/install.p
 
 This downloads the latest release and opens the installer. The app isn't code-signed yet, so Windows SmartScreen may say *"Windows protected your PC"*: click **More info → Run anyway**.
 
-## Screenshots
+## A look inside
 
-Every screenshot is the running app. Artwork and details are real film data; the player is showing the open-licensed film *Sintel*.
+Every image is the running app, with real film data and artwork.
 
-**Every title gets a cinematic page**
-![Dune: Part Two](docs/screenshots/detail.jpg)
+**A cinematic page for every title**
+![Dune: Part Two](docs/showcase/detail-dune.jpg)
 
 **Anime, front and centre**
-![Attack on Titan on Home](docs/screenshots/home-anime.jpg)
+![Anime on Home](docs/showcase/anime.jpg)
 
-![Attack on Titan](docs/screenshots/detail-aot.jpg)
-
-![Demon Slayer](docs/screenshots/detail-demonslayer.jpg)
-
-![SPY x FAMILY](docs/screenshots/detail-spyfamily.jpg)
+![Attack on Titan](docs/showcase/detail-aot.jpg)
 
 **Animation**
-![Spider-Man: Across the Spider-Verse](docs/screenshots/detail-spiderverse.jpg)
+![Spider-Man: Across the Spider-Verse](docs/showcase/detail-spiderverse.jpg)
 
-**Series, picking up where you left off**
-![Arcane](docs/screenshots/detail-arcane.jpg)
+**Every season with its own cover, every episode its own still**
+![Seasons](docs/showcase/seasons.jpg)
 
-**Every season wears its own cover, every episode its own still**
-![Severance seasons](docs/screenshots/seasons.jpg)
-
-![Blade Runner 2049](docs/screenshots/detail-bladerunner.jpg)
-
-**Home.** Recents, Recently Added, Picks of the Day
-![Home rows](docs/screenshots/home-rows.jpg)
-
-**Film Genres, Unwatched and Most Watched**
-![Genres](docs/screenshots/home-genres.jpg)
+**Your library, row by row**
+![Home rows](docs/showcase/rows.jpg)
 
 **The player**
-![Player](docs/screenshots/player.jpg)
-
-**Favorites**
-![Favorites](docs/screenshots/favorites.jpg)
-
-**Files**
-![Files](docs/screenshots/files-grid.jpg)
+![Player](docs/showcase/player.jpg)
 
 **Light theme**
-![Light theme](docs/screenshots/theme-light.jpg)
-
-**More Info.** About the app, updates, and the person who makes it
-![More Info](docs/screenshots/more-info.jpg)
+![Light theme](docs/showcase/light.jpg)
 
 ## What's in it
 
