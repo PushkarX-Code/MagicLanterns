@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { api } from '../lib/api'
 import { useAsync } from '../lib/useAsync'
 import { Hero, HeroSkeleton } from '../components/Hero'
+import { EmptyLibrary } from '../components/EmptyLibrary'
 import { Card, CardSkeleton } from '../components/Card'
 import { GenreTile } from '../components/GenreTile'
 import { TopTen } from '../components/TopTen'
@@ -38,7 +39,7 @@ export function Home() {
 
   return (
     <Screen id="home" ref={page} className="home" initialFocus="HERO-PLAY">
-      {data ? <Hero items={data.hero} onFocusHero={toTop} /> : <HeroSkeleton />}
+      {!data ? <HeroSkeleton /> : data.hero.length ? <Hero items={data.hero} onFocusHero={toTop} /> : <EmptyLibrary />}
       <div ref={rows} className="home-rows">
         {data
           ? data.rows.map((row) => (

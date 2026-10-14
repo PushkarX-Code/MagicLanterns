@@ -148,13 +148,20 @@ The mouse works everywhere: hover focuses, click selects, the scrubber shows fra
 |---|---|---|
 | 1 | Shell: design system, icon, splash, sidebar, Home, Detail, Player, motion, skeletons | Done |
 | 1.5 | Home, Favorites, Files, full player controls, Settings, themes | Done |
-| 2 | Library engine: database ✓, scanning ✓, file details ✓, name parsing ✓, folder watching ✓, library screens on real data | In progress |
-| 3 | Metadata: live lookups, image cache, Fix Match | |
+| 2 | Library engine: database, scanning, file details, name parsing, folder watching, screens on your real library | Done |
+| 3 | Metadata: live lookups, image cache, Fix Match | Next |
 | 4 | Decoding engine: every format, real subtitles, passthrough | |
 | 4.5 | Casting to TVs and speakers on your network | |
 | 5 | Polish: onboarding, installer | |
 
-Folders you add in Settings are saved in the library database (`%APPDATA%\Magic Lanterns\library.db`) and scanned: every video is found and its details read (length, resolution, frame rate, HDR10 / HDR10+ / HLG / Dolby Vision, audio and subtitle tracks with languages). Names become films and shows: titles, years, seasons and episodes come from file and folder names (scene releases, `Title (Year)/` folders, `S01E02`, `1x02`, multi-episode files, `Season 1/03 - Title.mkv`, anime `Title - 05`), several copies of a film share one entry, and samples, trailers and bonus features are left out. Scans run when a folder is added, each time the app opens, and within seconds of files arriving or leaving while it's open; only new or changed files are read again. Until the library screens switch to this data (the next step), what you browse is a fixed demo of 12 films, 4 series and 5 anime. Every title plays the *Sintel* trailer as a stand-in; drop any video file onto the player to watch your own.
+**Your library.** Home, Files, Favorites, search, the detail pages and the player all show the films and shows in the folders you add. Until metadata arrives (Phase 3), titles come from file names and each card shows a frame from the film itself. Everything else is real now:
+
+- Each file's details: length, resolution, frame rate, HDR10 / HDR10+ / HLG / Dolby Vision, and every audio and subtitle track with its language.
+- Where you stopped watching, favourites and My List, saved in `%APPDATA%\Magic Lanterns\library.db`.
+- Folders are scanned when added and each time the app opens, and they're watched while it's open, so new episodes appear within seconds.
+- Before any folder is added, Home shows a single "Add Folder" welcome.
+
+Files your system can already play (most MP4, WebM and H.264 MKV) play now; every other format arrives with the decoding engine in Phase 4. The demo library you see in screenshots is what the app shows in a browser preview.
 
 See [PLAN.md](PLAN.md) for the architecture.
 

@@ -101,7 +101,8 @@ function EpisodeCard({ ep, show, onFocused }: { ep: Episode; show: MediaItem; on
       </div>
       <div className="episode-meta">
         <div className="episode-kicker">
-          Episode {ep.number} · {runtime(ep.runtime)}
+          Episode {ep.number}
+          {ep.runtime > 0 ? ` · ${runtime(ep.runtime)}` : ''}
           {p && !p.watched ? ` · ${timecode(p.duration - p.position)} left` : ''}
         </div>
         <div className="episode-title">{ep.title}</div>
@@ -170,7 +171,7 @@ function Seasons({ show, page, k }: { show: MediaItem; page: React.RefObject<HTM
         <div className="season-body">
           {/* Each season wears its own cover. */}
           <div ref={cover} className="poster-frame season-cover">
-            <BlurImage key={season} path={current.poster ?? show.poster} size="w342" tiny="w92" color={show.color} fallback={<div className="card-fallback">{current.name}</div>} />
+            <BlurImage key={season} path={current.poster ?? show.poster ?? current.episodes[0]?.still ?? null} size="w342" tiny="w92" color={show.color} fallback={<div className="card-fallback">{current.name}</div>} />
             <div className="card-glare" />
           </div>
           <div ref={list} className="season-episodes">
@@ -464,9 +465,11 @@ export function Detail({ id, origin, entryKey }: { id: string; origin?: Origin; 
             }
           </Row>
         )}
-        <div className="detail-attrib">
-          <Star size={12} strokeWidth={1.6} /> Metadata and artwork from TMDB. Ratings from OMDb.
-        </div>
+        {item.tmdbId > 0 && (
+          <div className="detail-attrib">
+            <Star size={12} strokeWidth={1.6} /> Metadata and artwork from TMDB. Ratings from OMDb.
+          </div>
+        )}
       </div>
     </Screen>
   )

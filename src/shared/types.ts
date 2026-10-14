@@ -38,6 +38,8 @@ export interface SubtitleTrack {
 }
 
 export interface FileInfo {
+  /** Library database id; absent in the demo library. */
+  id?: string
   path: string
   container: string
   size: number // bytes

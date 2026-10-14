@@ -166,6 +166,10 @@ export const MIGRATIONS: string[] = [
   /* 2: files are grouped into films and shows by a normalised title before any metadata lookup */ `
   ALTER TABLE items ADD COLUMN match_key TEXT;
   CREATE INDEX items_match ON items(kind, match_key);
+  `,
+  /* 3: files can be taken out of the library without touching the disk */ `
+  ALTER TABLE files ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0;
+  INSERT INTO collections (name, is_system, created_at) VALUES ('My List', 1, 0);
   `
 ]
 

@@ -1,4 +1,4 @@
-import type { DiscoverDetails, DiscoverList, LibraryFolder, ScanStatus, TrendingTitle, UpdateState } from '../shared/types'
+import type { DiscoverDetails, DiscoverList, LibraryFolder, MediaItem, ScanStatus, TrendingTitle, UpdateState } from '../shared/types'
 
 export interface PickedFile {
   path: string
@@ -26,6 +26,16 @@ export interface LanternBridge {
   rescan(): Promise<void>
   scanStatus(): Promise<ScanStatus>
   onScan(cb: (status: ScanStatus) => void): () => void
+  /** Every film and show found in the library folders. */
+  getLibrary(): Promise<MediaItem[]>
+  /** The library changed on disk (a scan found something, a folder was removed). */
+  onLibraryChanged(cb: (at: number) => void): () => void
+  saveProgress(fileId: string, position: number, duration: number): Promise<void>
+  setWatched(fileIds: string[], watched: boolean): Promise<void>
+  setFavorite(itemId: string, on: boolean): Promise<void>
+  setInList(itemId: string, on: boolean): Promise<void>
+  /** Take files out of the library (they stay on disk). */
+  hideFiles(fileIds: string[]): Promise<void>
   /** Save a snapshot: encoded frame bytes, or a window region to capture. Resolves to the saved file path. */
   snapshot(frame: { bytes?: Uint8Array; rect?: { x: number; y: number; width: number; height: number } }, format: 'png' | 'jpg', name: string): Promise<string>
   setLaunchPrefs(prefs: { hwDecode?: 'auto' | 'off' }): Promise<void>

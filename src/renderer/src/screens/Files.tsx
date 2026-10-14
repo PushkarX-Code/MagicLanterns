@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import type { FileEntry, FileSort, LibraryFolder } from '@shared/types'
 import { api } from '../lib/api'
+import { useLibraryVersion } from '../state/library'
 import { bytes, resolutionLabel, timeAgo, timecode, hdrLabel } from '../lib/format'
 import { BlurImage } from '../components/BlurImage'
 import { GlassIconButton, PillButton } from '../components/Buttons'
@@ -283,9 +284,10 @@ export function FilesScreen() {
     setFiles(f)
     setFolders(dirs)
   }
+  const version = useLibraryVersion((s) => s.version)
   useEffect(() => {
     reload()
-  }, [])
+  }, [version])
   useSettle(body, !!files, '.frow-wrap, .ftile')
 
   const update = (patch: Partial<Prefs>): void => {

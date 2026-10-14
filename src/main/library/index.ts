@@ -1,12 +1,15 @@
 import { statSync } from 'node:fs'
-import { isAbsolute, join, normalize } from 'node:path'
+import { isAbsolute, join, normalize, sep } from 'node:path'
 import ffprobePath from '@ffprobe-installer/ffprobe'
+import ffmpegPath from 'ffmpeg-static'
 import { app, BrowserWindow, ipcMain } from 'electron'
-import type { LibraryFolder, ScanStatus } from '@shared/types'
+import type { LibraryFolder, MediaItem, ScanStatus } from '@shared/types'
 import { addFolder, folderRows, listFolders, openDb, removeFolder, type Db } from '../db/index.ts'
+import { frameFor } from './frames.ts'
 import { pruneOrphans } from './identify.ts'
 import { probeFile } from './probe.ts'
 import { scanFolder } from './scan.ts'
+import { buildSnapshot, hideFiles, saveProgress, setFavorite, setInList, setWatched } from './snapshot.ts'
 import { createWatcher } from './watch.ts'
 
 // The library lives in %APPDATA%/Magic Lanterns/library.db. Folders are scanned when added, at every launch
@@ -15,8 +18,11 @@ import { createWatcher } from './watch.ts'
 let db: Db | null = null
 const open = (): Db => (db ??= openDb(join(app.getPath('userData'), 'library.db')))
 
-// Inside the installed app the binary is unpacked next to the archive, not inside it.
-const FFPROBE = ffprobePath.path.replace('app.asar', 'app.asar.unpacked')
+// Inside the installed app the binaries are unpacked next to the archive, not inside it.
+const unpacked = (p: string): string => p.replace(`app.asar${sep}`, `app.asar.unpacked${sep}`).replace('app.asar/', 'app.asar.unpacked/')
+const FFPROBE = unpacked(ffprobePath.path)
+const FFMPEG = unpacked(ffmpegPath ?? 'ffmpeg')
+const framesDir = (): string => join(app.getPath('userData'), 'cache', 'frames')
 
 function checkedFolder(path: unknown): string {
   if (typeof path !== 'string' || !isAbsolute(path)) throw new Error('Not a folder path')
@@ -25,13 +31,50 @@ function checkedFolder(path: unknown): string {
   return clean
 }
 
+/** Only files inside library folders or the app's own cache may be streamed to the interface. */
+export function isLibraryPath(path: string): boolean {
+  const norm = normalize(path)
+  const inside = (root: string): boolean => {
+    const r = normalize(root).replace(/[\\/]+$/, '') + sep
+    return process.platform === 'win32' ? norm.toLowerCase().startsWith(r.toLowerCase()) : norm.startsWith(r)
+  }
+  return inside(framesDir()) || (!!db && folderRows(db).some((f) => inside(f.path)))
+}
+
+// ---------- Change notices ----------
+
+function send(channel: string, value: unknown): void {
+  for (const w of BrowserWindow.getAllWindows()) w.webContents.send(channel, value)
+}
+let changeTimer: NodeJS.Timeout | null = null
+/** Screens refetch when the library changes; bursts during a scan arrive as one notice. */
+function changed(): void {
+  if (changeTimer) return
+  changeTimer = setTimeout(() => {
+    changeTimer = null
+    send('library:changed', Date.now())
+  }, 400)
+}
+
 // ---------- Scan queue: one folder at a time, each folder queued at most once ----------
 
 const queue: string[] = []
 let status: ScanStatus = { scanning: false, folder: null, found: 0, toRead: 0, read: 0, current: null, queued: 0 }
+const broadcast = (): void => send('scan:progress', status)
 
-function broadcast(): void {
-  for (const w of BrowserWindow.getAllWindows()) w.webContents.send('scan:progress', status)
+/** Files read before artwork frames existed get theirs now. */
+async function backfillFrames(folderId: number): Promise<void> {
+  const rows = open()
+    .prepare(
+      `SELECT f.id, f.path, f.duration FROM files f
+       WHERE f.folder_id = ? AND f.missing = 0 AND f.video_codec IS NOT NULL
+         AND NOT EXISTS (SELECT 1 FROM generated g WHERE g.file_id = f.id AND g.type = 'frame')`
+    )
+    .all(folderId)
+  for (const r of rows) {
+    await frameFor(open(), FFMPEG, framesDir(), Number(r.id), String(r.path), Number(r.duration)).catch(() => undefined)
+    changed()
+  }
 }
 
 let running = false
@@ -45,18 +88,33 @@ async function drain(): Promise<void> {
     status = { scanning: true, folder: path, found: 0, toRead: 0, read: 0, current: null, queued: queue.length }
     broadcast()
     let last = 0
+    let readSince = 0
     try {
-      await scanFolder(open(), folder, (file, ext) => probeFile(FFPROBE, file, ext), (p) => {
-        status = { scanning: true, folder: path, found: p.found, toRead: p.toRead, read: p.read, current: p.current, queued: queue.length }
-        // A few updates a second is plenty for a progress line.
-        if (Date.now() - last > 200 || p.phase !== 'reading') {
-          last = Date.now()
-          broadcast()
+      await scanFolder(
+        open(),
+        folder,
+        (file, ext) => probeFile(FFPROBE, file, ext),
+        (p) => {
+          status = { scanning: true, folder: path, found: p.found, toRead: p.toRead, read: p.read, current: p.current, queued: queue.length }
+          // A few updates a second is plenty for a progress line.
+          if (Date.now() - last > 200 || p.phase !== 'reading') {
+            last = Date.now()
+            broadcast()
+          }
+        },
+        {
+          afterRead: async (fileId, file, info) => {
+            await frameFor(open(), FFMPEG, framesDir(), fileId, file, info.duration)
+            // A long first scan shows films as they're read, not all at the end.
+            if (++readSince % 10 === 0) changed()
+          }
         }
-      })
+      )
+      await backfillFrames(folder.id)
     } catch (e) {
       console.error('Scan failed', path, e)
     }
+    changed()
   }
   status = { scanning: false, folder: null, found: 0, toRead: 0, read: 0, current: null, queued: 0 }
   broadcast()
@@ -70,6 +128,8 @@ function enqueue(paths: string[]): void {
 
 const watcher = createWatcher((folder) => enqueue([folder]))
 const rewatch = (): void => watcher.sync(folderRows(open()).map((f) => f.path))
+
+const strings = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [])
 
 export function initLibrary(): void {
   open()
@@ -88,6 +148,7 @@ export function initLibrary(): void {
       removeFolder(open(), path)
       pruneOrphans(open())
       rewatch()
+      changed()
     }
     return listFolders(open())
   })
@@ -96,6 +157,20 @@ export function initLibrary(): void {
     enqueue(folderRows(open()).map((f) => f.path))
   })
   ipcMain.handle('library:scan-status', (): ScanStatus => status)
+
+  // What the screens show, and the changes they make.
+  ipcMain.handle('library:snapshot', (): MediaItem[] => buildSnapshot(open()))
+  ipcMain.handle('library:save-progress', (_e, fileId: unknown, position: unknown, duration: unknown) => {
+    if (typeof fileId === 'string') saveProgress(open(), fileId, Number(position), Number(duration))
+  })
+  ipcMain.handle('library:set-watched', (_e, fileIds: unknown, watched: unknown) => setWatched(open(), strings(fileIds), !!watched))
+  ipcMain.handle('library:set-favorite', (_e, itemId: unknown, on: unknown) => typeof itemId === 'string' && setFavorite(open(), itemId, !!on))
+  ipcMain.handle('library:set-in-list', (_e, itemId: unknown, on: unknown) => typeof itemId === 'string' && setInList(open(), itemId, !!on))
+  ipcMain.handle('library:hide-files', (_e, fileIds: unknown) => {
+    hideFiles(open(), strings(fileIds))
+    pruneOrphans(open())
+  })
+
   // Catch up on anything that changed while the app was closed.
   enqueue(folderRows(open()).map((f) => f.path))
   rewatch()

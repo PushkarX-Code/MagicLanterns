@@ -8,9 +8,10 @@ files:
   - out/**
   - resources/**
   - package.json
-# The file reader is a program, not a script; it has to sit outside the app archive to run.
+# The file reader and frame grabber are programs, not scripts; they have to sit outside the app archive to run.
 asarUnpack:
   - node_modules/@ffprobe-installer/**
+  - node_modules/ffmpeg-static/**
 win:
   icon: build/icon.ico
   target:

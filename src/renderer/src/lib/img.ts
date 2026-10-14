@@ -4,7 +4,7 @@ export type ImgSize = 'w92' | 'w185' | 'w300' | 'w342' | 'w500' | 'w780' | 'w128
 
 export function img(path: string | null | undefined, size: ImgSize): string | null {
   if (!path) return null
-  if (/^(https?|blob|data|ml-img):/.test(path)) return path
+  if (/^(https?|blob|data|ml-img|ml-file):/.test(path)) return path
   return `https://image.tmdb.org/t/p/${size}${path}`
 }
 
