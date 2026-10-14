@@ -137,8 +137,16 @@ export function buildSnapshot(db: Db): MediaItem[] {
     listId ? db.prepare('SELECT item_id FROM collection_items WHERE collection_id = ?').all(listId).map((r) => Number(r.item_id)) : []
   )
 
-  const images = new Map(db.prepare('SELECT id, source_url FROM images').all().map((r) => [Number(r.id), String(r.source_url)]))
-  const image = (id: unknown): string | null => (id == null ? null : (images.get(Number(id)) ?? null))
+  // Saved copies when there are any (instant, offline); otherwise the online picture.
+  const images = new Map(
+    db.prepare('SELECT id, source_url, local_path, dominant_color FROM images').all().map((r) => [
+      Number(r.id),
+      { url: r.local_path ? fileUrl(String(r.local_path)) : String(r.source_url), color: r.dominant_color ? String(r.dominant_color) : null }
+    ])
+  )
+  const image = (id: unknown): string | null => (id == null ? null : (images.get(Number(id))?.url ?? null))
+  const glow = (r: Record<string, unknown>): string =>
+    images.get(Number(r.backdrop_img))?.color ?? images.get(Number(r.poster_img))?.color ?? hashColor(String(r.title))
   const genres = new Map<number, string[]>()
   for (const g of db.prepare('SELECT ig.item_id, g.name FROM item_genres ig JOIN genres g ON g.id = ig.genre_id ORDER BY g.name').all())
     genres.set(Number(g.item_id), [...(genres.get(Number(g.item_id)) ?? []), String(g.name)])
@@ -164,12 +172,17 @@ export function buildSnapshot(db: Db): MediaItem[] {
     runtime: Number(r.runtime ?? 0),
     certification: String(r.certification ?? ''),
     genres: genres.get(Number(r.id)) ?? [],
-    ratings: r.rating_tmdb != null ? { tmdb: Number(r.rating_tmdb) } : {},
+    ratings: {
+      ...(r.rating_tmdb != null && { tmdb: Number(r.rating_tmdb) }),
+      ...(r.rating_imdb != null && { imdb: Number(r.rating_imdb) }),
+      ...(r.rating_rt != null && { rottenTomatoes: Number(r.rating_rt) }),
+      ...(r.rating_mc != null && { metacritic: Number(r.rating_mc) })
+    },
     poster: image(r.poster_img),
     backdrop: image(r.backdrop_img),
     thumb: image(r.thumb_img),
     logo: image(r.logo_img),
-    color: hashColor(String(r.title)),
+    color: glow(r),
     trailerKey: r.trailer_key ? String(r.trailer_key) : null,
     cast: cast.get(Number(r.id)) ?? [],
     credit: credit.get(Number(r.id)) ?? null,

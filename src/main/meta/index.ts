@@ -1,6 +1,7 @@
 import type { Db } from '../db/index.ts'
 import { applyMatch } from './apply.ts'
-import { findMatch, type Tmdb } from './match.ts'
+import type { MatchCandidate } from '../../shared/types.ts'
+import { findMatch, type Candidate, type Tmdb } from './match.ts'
 
 // Looks up every film and show that hasn't been looked up yet. A few at a time, well inside TMDB's limits.
 
@@ -40,4 +41,22 @@ export async function matchPending(db: Db, tmdb: Tmdb, onItem: () => void = () =
   }
   await Promise.all(Array.from({ length: Math.min(concurrency, pending.length) }, worker))
   return result
+}
+
+/** Fix Match: what TMDB has under a title, best known first. */
+export async function searchCandidates(tmdb: Tmdb, kind: 'movie' | 'show', query: string, year: number | null): Promise<MatchCandidate[]> {
+  const path = kind === 'movie' ? '/search/movie' : '/search/tv'
+  const y = year ? `&${kind === 'movie' ? 'year' : 'first_air_date_year'}=${year}` : ''
+  const { results } = await tmdb<{ results: Candidate[] }>(`${path}?query=${encodeURIComponent(query)}&include_adult=false&language=en-US${y}`)
+  return (results ?? []).slice(0, 12).map((c) => {
+    const date = c.release_date || c.first_air_date
+    return { id: c.id, title: c.title ?? c.name ?? '', year: date ? Number(date.slice(0, 4)) : null, overview: c.overview ?? '', poster: c.poster_path ?? null }
+  })
+}
+
+/** Fix Match: the viewer's choice wins and is never second-guessed by later lookups. */
+export async function fixMatch(db: Db, tmdb: Tmdb, itemId: number, tmdbId: number): Promise<number | null> {
+  const row = db.prepare('SELECT kind FROM items WHERE id = ?').get(itemId) as { kind: 'movie' | 'show' } | undefined
+  if (!row) return null
+  return applyMatch(db, tmdb, itemId, row.kind, { id: tmdbId, score: 1, state: 'manual' })
 }

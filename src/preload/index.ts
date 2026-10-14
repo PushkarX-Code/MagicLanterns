@@ -30,6 +30,8 @@ const bridge: LanternBridge = {
   scanStatus: () => ipcRenderer.invoke('library:scan-status'),
   onScan: listen<ScanStatus>('scan:progress'),
   metadataStatus: () => ipcRenderer.invoke('meta:status'),
+  searchMatches: (kind, query, year) => ipcRenderer.invoke('meta:search', kind, query, year),
+  fixMatch: (itemId, tmdbId) => ipcRenderer.invoke('meta:fix', itemId, tmdbId),
   getLibrary: () => ipcRenderer.invoke('library:snapshot'),
   onLibraryChanged: listen<number>('library:changed'),
   saveProgress: (fileId, position, duration) => ipcRenderer.invoke('library:save-progress', fileId, position, duration),

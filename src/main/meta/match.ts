@@ -16,12 +16,14 @@ export interface Candidate {
   first_air_date?: string
   popularity?: number
   vote_count?: number
+  overview?: string
+  poster_path?: string | null
 }
 
 export interface Match {
   id: number
   score: number
-  state: 'matched' | 'low_confidence'
+  state: 'matched' | 'low_confidence' | 'manual'
 }
 
 /** Edit distance between two strings, as a similarity from 0 to 1. */

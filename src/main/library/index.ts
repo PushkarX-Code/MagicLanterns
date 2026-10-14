@@ -9,10 +9,13 @@ import { frameFor } from './frames.ts'
 import { pruneOrphans } from './identify.ts'
 import { probeFile } from './probe.ts'
 import { scanFolder } from './scan.ts'
-import { buildSnapshot, hideFiles, saveProgress, setFavorite, setInList, setWatched } from './snapshot.ts'
+import { buildSnapshot, hideFiles, itemIdOf, saveProgress, setFavorite, setInList, setWatched } from './snapshot.ts'
 import { createWatcher } from './watch.ts'
-import { hasMetadata, tmdb } from '../keys'
-import { matchPending } from '../meta/index.ts'
+import { hasMetadata, omdb, tmdb } from '../keys'
+import { cacheImages } from '../meta/images.ts'
+import { fixMatch, matchPending, searchCandidates } from '../meta/index.ts'
+import { download, processImage } from '../meta/native.ts'
+import { refreshRatings } from '../meta/ratings.ts'
 
 // The library lives in %APPDATA%/Magic Lanterns/library.db. Folders are scanned when added, at every launch
 // and whenever files arrive or leave while the app is open; only new or changed files are read again.
@@ -24,7 +27,9 @@ const open = (): Db => (db ??= openDb(join(app.getPath('userData'), 'library.db'
 const unpacked = (p: string): string => p.replace(`app.asar${sep}`, `app.asar.unpacked${sep}`).replace('app.asar/', 'app.asar.unpacked/')
 const FFPROBE = unpacked(ffprobePath.path)
 const FFMPEG = unpacked(ffmpegPath ?? 'ffmpeg')
-const framesDir = (): string => join(app.getPath('userData'), 'cache', 'frames')
+const cacheDir = (): string => join(app.getPath('userData'), 'cache')
+const framesDir = (): string => join(cacheDir(), 'frames')
+const imagesDir = (): string => join(cacheDir(), 'images')
 
 function checkedFolder(path: unknown): string {
   if (typeof path !== 'string' || !isAbsolute(path)) throw new Error('Not a folder path')
@@ -40,7 +45,7 @@ export function isLibraryPath(path: string): boolean {
     const r = normalize(root).replace(/[\\/]+$/, '') + sep
     return process.platform === 'win32' ? norm.toLowerCase().startsWith(r.toLowerCase()) : norm.startsWith(r)
   }
-  return inside(framesDir()) || (!!db && folderRows(db).some((f) => inside(f.path)))
+  return inside(cacheDir()) || (!!db && folderRows(db).some((f) => inside(f.path)))
 }
 
 // ---------- Change notices ----------
@@ -121,10 +126,19 @@ async function drain(): Promise<void> {
   status = { scanning: false, folder: null, found: 0, toRead: 0, read: 0, current: null, queued: 0 }
   broadcast()
   // Then fetch artwork and details for anything new; each title appears as soon as it's done.
-  if (hasMetadata()) await matchPending(open(), tmdb, changed).catch((e) => console.error('Metadata lookup failed', e))
+  if (hasMetadata()) await enrich()
   running = false
   // Folders that changed while titles were being looked up.
   if (queue.length) void drain()
+}
+
+/** Details, then ratings, then local copies of every picture. Each part is skipped quietly when offline. */
+async function enrich(): Promise<void> {
+  await matchPending(open(), tmdb, changed).catch((e) => console.error('Metadata lookup failed', e))
+  await refreshRatings(open(), omdb).then((n) => n && changed()).catch(() => undefined)
+  let saved = 0
+  await cacheImages(open(), imagesDir(), download, processImage, { onSaved: () => ++saved % 12 === 0 && changed() }).catch(() => undefined)
+  if (saved) changed()
 }
 
 function enqueue(paths: string[]): void {
@@ -163,6 +177,20 @@ export function initLibrary(): void {
     enqueue(folderRows(open()).map((f) => f.path))
   })
   ipcMain.handle('library:scan-status', (): ScanStatus => status)
+  ipcMain.handle('meta:search', (_e, kind: unknown, query: unknown, year: unknown) =>
+    hasMetadata() && (kind === 'movie' || kind === 'show') && typeof query === 'string'
+      ? searchCandidates(tmdb, kind, query, typeof year === 'number' ? year : null)
+      : []
+  )
+  ipcMain.handle('meta:fix', async (_e, itemId: unknown, tmdbId: unknown): Promise<string | null> => {
+    const id = typeof itemId === 'string' ? itemIdOf(itemId) : null
+    if (id == null || typeof tmdbId !== 'number' || !hasMetadata()) return null
+    const kind = (open().prepare('SELECT kind FROM items WHERE id = ?').get(id) as { kind: string } | undefined)?.kind
+    const into = await fixMatch(open(), tmdb, id, tmdbId)
+    changed()
+    void enrich()
+    return into == null ? null : `${kind === 'show' ? 's' : 'm'}-${into}`
+  })
   ipcMain.handle('meta:status', () => {
     const n = (sql: string): number => Number((open().prepare(sql).get() as { n: number }).n)
     return {

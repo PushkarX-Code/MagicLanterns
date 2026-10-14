@@ -156,6 +156,15 @@ export interface Collection {
   itemIds: string[]
 }
 
+/** One search result in Fix Match. */
+export interface MatchCandidate {
+  id: number
+  title: string
+  year: number | null
+  overview: string
+  poster: string | null
+}
+
 /** What the library scanner is doing right now. */
 export interface ScanStatus {
   scanning: boolean

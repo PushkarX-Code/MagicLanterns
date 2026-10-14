@@ -175,3 +175,95 @@ test('offline: titles stay pending and are tried again later', async () => {
   assert.equal(Number((db.prepare("SELECT COUNT(*) AS n FROM items WHERE match_state = 'pending'").get() as { n: number }).n), 4)
   done()
 })
+
+// ---------- Step 13: saved artwork, glow colours, ratings, Fix Match ----------
+
+import { readFileSync } from 'node:fs'
+import { cacheImages, glowColor } from './images.ts'
+import { parseRatings, refreshRatings } from './ratings.ts'
+import { fixMatch, searchCandidates } from './index.ts'
+
+test('glow colour: the picture\'s hue, deep enough to sit behind white text', () => {
+  const px = (r: number, g: number, b: number, n = 100) => new Uint8Array(Array.from({ length: n }, () => [r, g, b, 255]).flat())
+  const orange = glowColor(px(230, 120, 30))
+  assert.match(orange, /^#[0-9a-f]{6}$/)
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(orange.slice(i, i + 2), 16))
+  assert.ok(r > g && g > b, `still orange: ${orange}`)
+  assert.ok(r < 110, 'dark enough for an ambient glow')
+  // Platform bitmaps come as BGRA.
+  assert.equal(glowColor(px(30, 120, 230), 'bgra'), orange)
+  // A black frame doesn't produce a colour.
+  assert.match(glowColor(px(0, 0, 0)), /^#/)
+})
+
+test('every picture the library uses is saved once, at the size its job needs', async () => {
+  const { db, done } = seeded()
+  await matchPending(db, fakeTmdb([]), () => {}, { concurrency: 1 })
+  const dir = mkdtempSync(join(tmpdir(), 'ml-img-'))
+  const asked: string[] = []
+  const r = await cacheImages(
+    db,
+    dir,
+    async (url) => {
+      asked.push(url)
+      if (url.includes('/z.jpg')) throw new Error('404')
+      return Buffer.from(url)
+    },
+    (input, o) => ({ data: input, ext: o.png ? 'png' : 'jpg', width: o.maxWidth, height: 1, color: o.color ? '#402010' : null }),
+    { concurrency: 2 }
+  )
+  assert.ok(asked.includes('https://image.tmdb.org/t/p/original/banner.jpg'), 'banners at full quality')
+  assert.ok(asked.includes('https://image.tmdb.org/t/p/w780/thumb.jpg'))
+  assert.ok(asked.includes('https://image.tmdb.org/t/p/w500/logo.png'))
+  assert.ok(asked.includes('https://image.tmdb.org/t/p/w185/tc.jpg'), 'faces small')
+  assert.ok(asked.includes('https://image.tmdb.org/t/p/w780/ep1.jpg'))
+  assert.equal(r.failed, 1)
+  const items = buildSnapshot(db)
+  const dune = items.find((i) => i.kind === 'movie')!
+  assert.match(dune.backdrop!, /^ml-file:\/\/local\//)
+  assert.ok(readFileSync(decodeURIComponent(dune.logo!.replace('ml-file://local/', ''))).length > 0)
+  assert.equal(dune.color, '#402010', 'glow comes from the banner')
+  assert.equal(dune.cast.find((c) => c.name === 'Zendaya')!.profile, '/z.jpg', 'a picture that failed stays online')
+  // Second run: only the one that failed is tried again.
+  asked.length = 0
+  await cacheImages(db, dir, async (u) => (asked.push(u), Buffer.from(u)), (i) => ({ data: i, ext: 'jpg', width: 1, height: 1, color: null }))
+  assert.deepEqual(asked, ['https://image.tmdb.org/t/p/w185/z.jpg'])
+  rmSync(dir, { recursive: true, force: true })
+  done()
+})
+
+test('ratings from IMDb, Rotten Tomatoes and Metacritic, refreshed monthly', async () => {
+  assert.deepEqual(
+    parseRatings({ imdbRating: '8.5', Ratings: [{ Source: 'Internet Movie Database', Value: '8.5/10' }, { Source: 'Rotten Tomatoes', Value: '92%' }, { Source: 'Metacritic', Value: '79/100' }] }),
+    { imdb: 8.5, rt: 92, mc: 79 }
+  )
+  assert.deepEqual(parseRatings({ imdbRating: 'N/A' }), { imdb: null, rt: null, mc: null })
+  const { db, done } = seeded()
+  await matchPending(db, fakeTmdb([]), () => {}, { concurrency: 1 })
+  const calls: string[] = []
+  const omdb = async <T,>(id: string): Promise<T | null> => (calls.push(id), { imdbRating: '8.6', Ratings: [{ Source: 'Rotten Tomatoes', Value: '93%' }] } as T)
+  assert.equal(await refreshRatings(db, omdb, 1e12), 2)
+  assert.deepEqual(calls.sort(), ['tt15239678', 'tt2560140'])
+  const dune = buildSnapshot(db).find((i) => i.kind === 'movie')!
+  assert.deepEqual(dune.ratings, { tmdb: 8.2, imdb: 8.6, rottenTomatoes: 93 })
+  // Within the month: no new requests. No key in the build: nothing happens.
+  assert.equal(await refreshRatings(db, omdb, 1e12 + 1000), 0)
+  assert.equal(calls.length, 2)
+  assert.equal(await refreshRatings(db, async () => null, 1e13), 0)
+  done()
+})
+
+test('Fix Match: search shows choices; picking one wins and is never redone automatically', async () => {
+  const { db, done } = seeded()
+  await matchPending(db, fakeTmdb([]), () => {}, { concurrency: 1 })
+  const holiday = Number((db.prepare("SELECT id FROM items WHERE title = 'Holiday 2019'").get() as { id: number }).id)
+  const found = await searchCandidates(fakeTmdb([]), 'movie', 'Dune: Part Two', null)
+  assert.deepEqual(found.map((c) => [c.id, c.title, c.year]), [[693134, 'Dune: Part Two', 2024]])
+  // The home video was really a copy of Dune: Part Two; it joins the existing film.
+  const into = await fixMatch(db, fakeTmdb([]), holiday, 693134)
+  const dune = Number((db.prepare("SELECT id FROM items WHERE tmdb_id = 693134").get() as { id: number }).id)
+  assert.equal(into, dune)
+  assert.equal(Number((db.prepare("SELECT COUNT(*) AS n FROM items WHERE kind = 'movie'").get() as { n: number }).n), 1)
+  assert.equal((db.prepare('SELECT match_state FROM items WHERE id = ?').get(dune) as { match_state: string }).match_state, 'manual')
+  done()
+})
