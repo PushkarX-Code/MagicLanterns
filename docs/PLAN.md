@@ -11,11 +11,8 @@ MagicLanterns/
 ├─ electron.vite.config.ts
 ├─ electron-builder.yml          NSIS installer, asarUnpack for ffmpeg/ffprobe/sqlite
 ├─ package.json / tsconfig.*.json
-├─ LOGO_PROMPT.md  PLAN.md
-├─ build/                        icon.ico, icon.png (1024), installer art
-├─ scripts/
-│  ├─ build-icons.ts             SVG → PNG 16…1024 → .ico
-│  └─ build-mock.ts              one-off: builds the Phase 1 fixture
+├─ build/                        icon.ico, icon.png (1024), build-icons.mjs (SVG → PNG → .ico)
+├─ docs/                         PLAN.md, LOGO_PROMPT.md, README images
 └─ src/
    ├─ shared/                    imported by main, engine, preload, renderer
    │  ├─ types.ts                Item, Show, Season, Episode, FileInfo, Track, Progress…
