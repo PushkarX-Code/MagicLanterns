@@ -89,9 +89,10 @@
   --glass-edge: inset 0 0 0 1px rgba(0, 0, 0, 0.07);
   --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 1), inset 0 -1px 0 rgba(0, 0, 0, 0.04);
   --glass-gloss: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.2) 40%, rgba(255, 255, 255, 0) 70%);
-  --glass-shadow: 0 10px 28px rgba(30, 30, 40, 0.08);
-  --lift: 0 16px 32px -14px rgba(30, 30, 40, 0.25);
-  --rest: 0 6px 14px -8px rgba(30, 30, 40, 0.18);
+  /* On paper, depth comes from a whisper of shadow, never a smudge. */
+  --glass-shadow: 0 1px 2px rgba(20, 20, 30, 0.04), 0 8px 24px -14px rgba(20, 20, 30, 0.1);
+  --lift: 0 14px 30px -18px rgba(20, 20, 30, 0.24);
+  --rest: 0 1px 2px rgba(20, 20, 30, 0.05), 0 4px 10px -6px rgba(20, 20, 30, 0.08);
 }
 :root[data-theme='light'] .ambient {
   opacity: 0.32;
@@ -120,7 +121,21 @@
 
 /* Light: lit controls (focused pills, active segments) get a soft shadow so white still reads on paper. */
 :root[data-theme='light'] :is(.seg-btn.is-active, .gib.is-focused, .pill-glass.is-focused, .set-tab.is-focused, .pop-opt.is-focused) {
-  box-shadow: 0 6px 18px -6px rgba(30, 30, 40, 0.35), inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px -3px rgba(20, 20, 30, 0.16), inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+/* Light: the glass slides in genre and collection tiles rest on the page instead of floating over a pit. */
+:root[data-theme='light'] :is(.genre-slide, .collection-slide) {
+  box-shadow: 0 6px 14px -8px rgba(20, 20, 30, 0.28), 0 0 0 0.5px rgba(0, 0, 0, 0.06);
+}
+:root[data-theme='light'] :is(.genre-name, .genre-count) {
+  text-shadow: none;
+}
+:root[data-theme='light'] .sb-item.is-selected {
+  box-shadow: 0 2px 8px -3px rgba(20, 20, 30, 0.3);
+}
+:root[data-theme='light'] .sb-panel {
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.07), 0 12px 40px -16px rgba(20, 20, 30, 0.16);
 }
 
 /* Opening the sidebar widens the page margin instead of covering content. */
@@ -142,4 +157,7 @@
 }
 :root[data-theme='light'] .genre-count {
   color: rgba(22, 22, 26, 0.5);
+}
+:root[data-theme='light'] .sidebar-dim {
+  background: linear-gradient(90deg, rgba(246, 246, 248, 0.7) 0%, rgba(246, 246, 248, 0.25) 22%, transparent 40%);
 }
