@@ -29,7 +29,7 @@ export function PillButton({
     onArrowPress: onArrowPress ? (dir) => onArrowPress(dir) : undefined,
     onFocus
   })
-  useLift(ref, focused, { scale: 1.06, tilt: 0 })
+  useLift(ref, focused, { scale: 1, tilt: 0, rise: 0 }) // pills stay one size; focus shows as colour, not growth
   return (
     <button
       ref={ref}
