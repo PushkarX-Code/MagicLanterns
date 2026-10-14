@@ -230,8 +230,10 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
         if (!first) setFailed(true)
         const resumable = !fresh && s.resumeFraction > 0.01 && s.resumeFraction < 0.95
         setResumePrompt(resumable && (useSettings.getState().settings?.resumeMode ?? 'ask') === 'ask')
-        const def = s.file?.audio.findIndex((a) => a.default) ?? -1
-        setAudio(Math.max(0, def))
+        const lang = useSettings.getState().settings?.audioLanguage
+        const tracks = s.file?.audio ?? []
+        const preferred = lang && lang !== 'orig' ? tracks.findIndex((a) => a.language === lang) : -1
+        setAudio(Math.max(0, preferred >= 0 ? preferred : tracks.findIndex((a) => a.default)))
       })
       .catch(() => alive && setFailed(true))
     return () => {
@@ -867,7 +869,10 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
 
           {/* Subtitles (real cues arrive with the FFmpeg pipeline; style preview works now). */}
           {subTrack && cuePreview && (
-            <div className={`pl-cue size-${subSize} style-${subStyle}`} style={{ bottom: visible ? 190 : 72 }}>
+            <div
+              className={`pl-cue size-${subSize} style-${subStyle} color-${cfg.subtitleColor}`}
+              style={{ bottom: (visible ? 190 : 72) + (cfg.subtitlePosition === 'raised' ? 70 : 0) }}
+            >
               <span>{subTrack.title} subtitles will look like this.</span>
             </div>
           )}

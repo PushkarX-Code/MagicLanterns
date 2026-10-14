@@ -135,3 +135,10 @@ input {
   overflow: hidden;
   clip: rect(0 0 0 0);
 }
+
+/* Press feedback (design/press.ts springs --press). Independent `scale` stacks on the focus lift's transform. */
+button,
+[data-focus-leaf],
+.seg-btn {
+  scale: var(--press, 1);
+}

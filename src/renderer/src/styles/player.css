@@ -609,3 +609,11 @@ button.pl-time {
 button.pl-time:hover {
   color: var(--text);
 }
+
+/* Subtitle colour and position (player cues and the settings preview) */
+.color-yellow span {
+  color: #ffe14d;
+}
+.color-cyan span {
+  color: #8beeff;
+}

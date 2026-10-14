@@ -20,7 +20,10 @@ function Option({ opt, onClose }: { opt: PopoverOption; onClose: () => void }) {
     opt.onSelect()
     if (!opt.keepOpen) onClose()
   }
-  const { ref, focused, pointer } = useFocus<HTMLButtonElement>({ onEnterPress: select })
+  const { ref, focused, pointer } = useFocus<HTMLButtonElement>({
+    onEnterPress: select,
+    onFocus: () => ref.current?.scrollIntoView({ block: 'nearest' }) // long lists scroll with focus
+  })
   const Icon = opt.icon
   return (
     <button ref={ref} className={`pop-opt ${focused ? 'is-focused' : ''}`} onClick={select} {...pointer}>
