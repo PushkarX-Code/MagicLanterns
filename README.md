@@ -150,7 +150,7 @@ The mouse works everywhere: hover focuses, click selects, the scrubber shows fra
 | 1.5 | Home, Favorites, Files, full player controls, Settings, themes | Done |
 | 2 | Library engine: database, scanning, file details, name parsing, folder watching, screens on your real library | Done |
 | 3 | Metadata: live lookups, saved artwork, colour glow, ratings, Fix Match | Done |
-| 4 | Decoding engine: every format, real subtitles, passthrough | Next |
+| 4 | Playback engine: every format ✓, sound tracks ✓, subtitles, scrub previews, Skip Intro, Up Next | In progress |
 | 4.5 | Casting to TVs and speakers on your network | |
 | 5 | Polish: onboarding, installer | |
 
@@ -161,7 +161,7 @@ The mouse works everywhere: hover focuses, click selects, the scrubber shows fra
 - Folders are scanned when added and each time the app opens, and they're watched while it's open, so new episodes appear within seconds.
 - Before any folder is added, Home shows a single "Add Folder" welcome.
 
-Files your system can already play (most MP4, WebM and H.264 MKV) play now; every other format arrives with the decoding engine in Phase 4. The demo library you see in screenshots is what the app shows in a browser preview.
+**Every format plays.** Files your computer decodes play straight from disk. Everything else goes through the built-in engine as it plays: MKV, AVI and TS are repackaged on the fly (no quality lost, no waiting), sound the system can't decode (DTS, TrueHD, Dolby Digital) is converted keeping 5.1, and pictures it can't (10-bit anime releases, HEVC without a decoder, MPEG-2, VC-1, Dolby Vision profile 5) are converted using your graphics card when it has an encoder, with HDR tone-mapped and interlaced video cleaned up. Seeking anywhere is instant; switching to another sound track restarts at the same moment. The demo library you see in screenshots is what the app shows in a browser preview.
 
 See [PLAN.md](PLAN.md) for the architecture.
 

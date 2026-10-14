@@ -9,7 +9,7 @@ export const fileUrl = (path: string): string => `ml-file://local/${encodeURICom
 
 const LANGS = new Intl.DisplayNames(['en'], { type: 'language' })
 function languageName(code: string | null): string {
-  if (!code) return 'Unknown'
+  if (!code) return ''
   try {
     return LANGS.of(code) ?? code
   } catch {
@@ -65,7 +65,7 @@ function fileInfo(f: FileRow, streams: Map<number, Record<string, unknown>[]>): 
         index: Number(s.idx),
         codec: String(s.codec ?? ''),
         language: String(s.language ?? 'und'),
-        title: [languageName(s.language as string | null), s.title ? String(s.title) : label].join(' · '),
+        title: [languageName(s.language as string | null), s.title ? String(s.title) : label].filter(Boolean).join(' · '),
         channels: Number(s.channels ?? 2),
         atmos,
         default: !!s.is_default
@@ -77,7 +77,7 @@ function fileInfo(f: FileRow, streams: Map<number, Record<string, unknown>[]>): 
       index: Number(s.idx),
       codec: String(s.codec ?? ''),
       language: String(s.language ?? 'und'),
-      title: [languageName(s.language as string | null), s.title ? String(s.title) : '', s.is_forced ? 'Forced' : ''].filter(Boolean).join(' · '),
+      title: [languageName(s.language as string | null) || `Track ${Number(s.idx)}`, s.title ? String(s.title) : '', s.is_forced ? 'Forced' : ''].filter(Boolean).join(' · '),
       forced: !!s.is_forced,
       external: false
     }))

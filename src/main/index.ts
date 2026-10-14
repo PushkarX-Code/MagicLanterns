@@ -5,7 +5,8 @@ import { Readable } from 'node:stream'
 import { app, BrowserWindow, dialog, ipcMain, nativeTheme, protocol, session, shell } from 'electron'
 import { initUpdater } from './updater'
 import { initDiscover } from './discover'
-import { initLibrary, isLibraryPath } from './library'
+import { binaries, initLibrary, isLibraryPath, libraryFilePath } from './library'
+import { closePlayer, initPlayer } from './player'
 
 const isDev = !app.isPackaged && !!process.env['ELECTRON_RENDERER_URL']
 
@@ -73,8 +74,8 @@ const CSP = [
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self' data:",
   "img-src 'self' data: blob: https://image.tmdb.org ml-file:",
-  "media-src 'self' blob: https: ml-file:",
-  "connect-src 'self' https: ml-file:"
+  "media-src 'self' blob: https: ml-file: http://127.0.0.1:*",
+  "connect-src 'self' https: ml-file: http://127.0.0.1:*"
 ].join('; ')
 
 function createWindow(): void {
@@ -173,6 +174,13 @@ app.whenReady().then(() => {
   }
   createWindow()
   initLibrary()
+  initPlayer({
+    ...binaries,
+    resolve: ({ fileId, path }) =>
+      fileId ? libraryFilePath(fileId) : path && (picked.has(path) || isLibraryPath(path)) && existsSync(path) ? path : null,
+    directUrl: (path) => `ml-file://local/${encodeURIComponent(path)}`
+  })
+  app.on('will-quit', closePlayer)
   initDiscover()
   initUpdater(
     () => readPrefs().skippedVersion,
