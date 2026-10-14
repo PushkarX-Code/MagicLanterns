@@ -74,6 +74,8 @@ export interface Episode {
 export interface Season {
   number: number
   name: string
+  /** The season's own cover art; falls back to the show poster. */
+  poster: string | null
   episodes: Episode[]
 }
 

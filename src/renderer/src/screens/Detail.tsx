@@ -135,6 +135,7 @@ function Seasons({ show, page, k }: { show: MediaItem; page: React.RefObject<HTM
   }, [seasons])
   const [season, setSeason] = useState(initial)
   const list = useRef<HTMLDivElement>(null)
+  const cover = useRef<HTMLDivElement>(null)
   // Entering from above lands on the current season's tab, not the episode row beneath it.
   const { ref, focusKey } = useFocus<HTMLDivElement>({
     focusKey: `SEASONS-${k}`,
@@ -146,6 +147,7 @@ function Seasons({ show, page, k }: { show: MediaItem; page: React.RefObject<HTM
   useEffect(() => {
     if (list.current)
       gsap.fromTo(list.current.querySelectorAll('.episode'), { opacity: 0, x: 18 }, { opacity: 1, x: 0, duration: d(0.6), ease: EASE.settle, stagger: 0.04 })
+    if (cover.current) gsap.fromTo(cover.current, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: d(0.6), ease: EASE.settle })
   }, [season])
 
   if (!current) return null
@@ -165,10 +167,17 @@ function Seasons({ show, page, k }: { show: MediaItem; page: React.RefObject<HTM
           ))}
           <span className="tabs-count">{current.episodes.length} Episodes</span>
         </div>
-        <div ref={list}>
-          <Row title="" focusKey={`EPISODES-${k}-${season}`} className="row-bare" onRowFocus={(el) => scrollPageTo(page.current, el, 200)}>
-            {(onFocused) => current.episodes.map((ep) => <EpisodeCard key={ep.id} ep={ep} show={show} onFocused={onFocused} />)}
-          </Row>
+        <div className="season-body">
+          {/* Each season wears its own cover. */}
+          <div ref={cover} className="poster-frame season-cover">
+            <BlurImage key={season} path={current.poster ?? show.poster} size="w342" tiny="w92" color={show.color} fallback={<div className="card-fallback">{current.name}</div>} />
+            <div className="card-glare" />
+          </div>
+          <div ref={list} className="season-episodes">
+            <Row title="" focusKey={`EPISODES-${k}-${season}`} className="row-bare" onRowFocus={(el) => scrollPageTo(page.current, el, 200)}>
+              {(onFocused) => current.episodes.map((ep) => <EpisodeCard key={ep.id} ep={ep} show={show} onFocused={onFocused} />)}
+            </Row>
+          </div>
         </div>
       </section>
     </FocusContext.Provider>

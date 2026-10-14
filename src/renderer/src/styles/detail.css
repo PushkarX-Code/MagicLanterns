@@ -217,6 +217,33 @@
   color: var(--text-3);
 }
 
+/* Season cover beside its episodes */
+.season-body {
+  display: flex;
+  align-items: flex-start;
+}
+.season-cover {
+  flex: none;
+  width: 200px;
+  aspect-ratio: 2 / 3;
+  margin-left: var(--content-left);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--rest);
+}
+.season-episodes {
+  flex: 1;
+  min-width: 0;
+}
+.season-episodes .row {
+  margin-top: 0;
+}
+.season-episodes .row-scroll {
+  padding-left: 28px;
+  scroll-padding-left: 28px;
+}
+
 .episode {
   width: 380px;
   flex: none;

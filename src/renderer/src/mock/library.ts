@@ -42,7 +42,7 @@ interface FixtureEntry {
   cast: { name: string; character: string; profile: string | null }[]
   director?: string | null
   creator?: string | null
-  seasons?: { number: number; episodes: FixtureEpisode[] }[]
+  seasons?: { number: number; poster?: string | null; episodes: FixtureEpisode[] }[]
 }
 
 type Res = '2160p' | '1080p' | '720p'
@@ -213,6 +213,7 @@ function build(entry: FixtureEntry): MediaItem {
   base.seasons = (entry.seasons ?? []).map((s): Season => ({
     number: s.number,
     name: `Season ${s.number}`,
+    poster: s.poster ?? entry.poster,
     episodes: s.episodes.map((e): Episode => {
       const runtime = e.runtime ?? typical
       const code = `S${String(s.number).padStart(2, '0')}E${String(e.number).padStart(2, '0')}`

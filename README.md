@@ -41,6 +41,9 @@ Every screenshot is the running app. Artwork and details are real film data; the
 **Series, picking up where you left off**
 ![Arcane](docs/screenshots/detail-arcane.jpg)
 
+**Every season wears its own cover, every episode its own still**
+![Severance seasons](docs/screenshots/seasons.jpg)
+
 ![Blade Runner 2049](docs/screenshots/detail-bladerunner.jpg)
 
 **Home.** Recents, Recently Added, Picks of the Day
