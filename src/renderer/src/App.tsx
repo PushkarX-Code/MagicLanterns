@@ -11,6 +11,7 @@ import { Player } from './screens/Player'
 import { FavoritesScreen } from './screens/Favorites'
 import { FilesScreen } from './screens/Files'
 import { GenreScreen } from './screens/Genre'
+import { DiscoverScreen } from './screens/Discover'
 import { SearchScreen } from './screens/Search'
 import { SettingsScreen } from './screens/Settings'
 import { Splash } from './screens/Splash'
@@ -31,6 +32,8 @@ function render(entry: Entry) {
       return <SearchScreen />
     case 'settings':
       return <SettingsScreen />
+    case 'discover':
+      return <DiscoverScreen title={r.title} list={r.list} entryKey={entry.key} />
     case 'detail':
       return <Detail id={r.id} origin={r.origin} entryKey={entry.key} />
     case 'player':
@@ -58,7 +61,7 @@ function ScreenHost({ entry, top, first, live }: { entry: Entry; top: boolean; f
     wasTop.current = top
   }, [top])
 
-  const kind = entry.route.name === 'player' ? 'is-player' : entry.route.name === 'detail' ? 'is-full' : 'is-section'
+  const kind = entry.route.name === 'player' ? 'is-player' : entry.route.name === 'detail' || entry.route.name === 'discover' ? 'is-full' : 'is-section'
   return (
     <div ref={el} className={`screen-host ${kind} ${top ? 'is-top' : 'is-under'}`} aria-hidden={!top}>
       <ScreenActive.Provider value={top && live}>{render(entry)}</ScreenActive.Provider>
@@ -72,7 +75,7 @@ export function App() {
   const load = useSettings((s) => s.load)
   const [splash, setSplash] = useState(true)
   const top = stack[stack.length - 1]
-  const immersive = top.route.name === 'detail' || top.route.name === 'player'
+  const immersive = top.route.name === 'detail' || top.route.name === 'discover' || top.route.name === 'player'
 
   useEffect(() => {
     load()

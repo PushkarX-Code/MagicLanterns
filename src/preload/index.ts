@@ -24,7 +24,8 @@ const bridge: LanternBridge = {
   pickFiles: () => ipcRenderer.invoke('dialog:open-files'),
   snapshot: (frame, format, name) => ipcRenderer.invoke('player:snapshot', frame, format, name),
   setLaunchPrefs: (prefs) => ipcRenderer.invoke('prefs:set', prefs),
-  getTrending: () => ipcRenderer.invoke('discover:trending'),
+  getDiscover: (list) => ipcRenderer.invoke('discover:list', list),
+  getDiscoverDetails: (kind, id) => ipcRenderer.invoke('discover:details', kind, id),
   updateState: () => ipcRenderer.invoke('update:state'),
   onUpdate: (cb) => {
     const listener = (_e: unknown, state: Parameters<typeof cb>[0]): void => cb(state)

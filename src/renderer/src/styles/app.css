@@ -552,59 +552,7 @@
   background: rgba(0, 0, 0, 0.5);
 }
 
-/* Top 10 title sheet */
-.sheet {
-  width: min(760px, calc(100vw - 64px));
-  max-height: calc(100vh - 80px);
-  overflow: hidden auto;
-  border-radius: var(--r-panel);
-}
-.sheet-art {
-  position: relative;
-  aspect-ratio: 16 / 7;
-}
-.sheet-art .bimg,
-.sheet-art > div:first-child {
-  position: absolute !important;
-  inset: 0;
-}
-.sheet-art-shade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, var(--glass-fill-strong) 0%, transparent 55%);
-}
-.sheet-rank {
-  position: absolute;
-  left: 28px;
-  top: 22px;
-  padding: 5px 12px;
-  border-radius: var(--r-pill);
-  font-size: 12.5px;
-  font-weight: 650;
-  letter-spacing: 0.03em;
-  color: #1a1004;
-  background: var(--amber);
-}
-.sheet-body {
-  padding: 4px 32px 28px;
-}
-.sheet-title {
-  margin: 0;
-  font-size: 30px;
-  font-weight: 650;
-  letter-spacing: -0.015em;
-}
-.sheet-meta {
-  margin-top: 6px;
-  font-size: 14px;
-  color: var(--text-3);
-}
-.sheet-overview {
-  margin: 16px 0 0;
-  font-size: 15.5px;
-  line-height: 1.6;
-  color: var(--text-2);
-}
+/* Where-to-watch block (discover pages) */
 .sheet-where {
   margin-top: 22px;
 }
@@ -643,15 +591,23 @@
   font-size: 14px;
   color: var(--text-3);
 }
-.sheet-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 26px;
+.disc-rank {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+  color: #1a1004;
+  background: var(--amber);
 }
-.sheet-attrib {
-  margin-top: 16px;
-  font-size: 11.5px;
-  color: var(--text-4);
+button.provider {
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.3s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+button.provider:hover {
+  background: rgb(var(--ink) / 0.14);
 }
 
 /* Software update */
