@@ -25,8 +25,8 @@
   --glass-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
 
   /* Shape */
-  --r-card: 16px;
-  --r-panel: 24px;
+  --r-card: 20px;
+  --r-panel: 28px;
   --r-pill: 999px;
 
   /* Depth */

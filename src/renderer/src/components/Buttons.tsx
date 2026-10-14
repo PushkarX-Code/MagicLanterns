@@ -39,7 +39,7 @@ export function PillButton({
       disabled={disabled}
       {...pointer}
     >
-      {Icon && <Icon size={20} strokeWidth={2.2} fill={variant === 'solid' ? 'currentColor' : 'none'} />}
+      {Icon && <Icon size={22} strokeWidth={2.2} fill={variant === 'solid' ? 'currentColor' : 'none'} />}
       <span>{children}</span>
       {progress !== undefined && progress > 0 && (
         <span className="pill-progress">
@@ -81,7 +81,7 @@ export function GlassIconButton({
       disabled={disabled}
       {...pointer}
     >
-      <Icon size={Math.round(size * 0.4)} strokeWidth={1.6} />
+      <Icon size={Math.round(size * 0.46)} strokeWidth={1.6} />
       <span ref={tipRef} className="gib-tip">
         {label}
       </span>

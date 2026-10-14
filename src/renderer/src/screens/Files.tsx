@@ -111,7 +111,7 @@ function StarButton({ on, onToggle }: { on: boolean; onToggle: () => void }) {
       aria-label={on ? 'Unstar' : 'Star'}
       {...pointer}
     >
-      <Star size={16} strokeWidth={1.8} fill={on ? 'currentColor' : 'none'} />
+      <Star size={19} strokeWidth={1.8} fill={on ? 'currentColor' : 'none'} />
     </button>
   )
 }
@@ -444,7 +444,7 @@ export function FilesScreen() {
             {...search.pointer}
             onClick={() => searchInput.current?.focus()}
           >
-            <Search size={17} strokeWidth={1.7} />
+            <Search size={19} strokeWidth={1.7} />
             <input
               ref={searchInput}
               value={query}

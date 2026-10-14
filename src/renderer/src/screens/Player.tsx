@@ -17,6 +17,7 @@ import {
   X
 } from 'lucide-react'
 import type { PlaybackSource, Settings } from '@shared/types'
+import { DEFAULT_SETTINGS } from '@shared/settings'
 import { api } from '../lib/api'
 import { timecode } from '../lib/format'
 import { BlurImage } from '../components/BlurImage'
@@ -28,14 +29,17 @@ import { gsap, d, EASE } from '../design/motion'
 
 const HIDE_AFTER = 3000
 const NEXT_CARD_LEAD = 30 // seconds before the end the Next Episode card slides in
-const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2]
+const SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4]
+const WHEEL_NOTCH = 100 // deltaY of one mouse-wheel click
+const speedLabel = (s: number): string => (s === 1 ? 'Normal' : `${s}×`)
+const REPEAT_LABEL: Record<Settings['repeat'], string> = { off: 'Repeat Off', one: 'Repeat One', all: 'Repeat All' }
 
 type Menu = null | 'audio' | 'subs' | 'speed'
 
 function CircleButton({ icon: Icon, label, onPress, big }: { icon: typeof Play; label: string; onPress: () => void; big?: boolean }) {
   return (
     <button className={`pl-circle glass ${big ? 'big' : ''}`} onClick={onPress} aria-label={label}>
-      <Icon size={big ? 34 : 26} strokeWidth={1.6} fill={Icon === Play || Icon === Pause ? 'currentColor' : 'none'} />
+      <Icon size={big ? 40 : 30} strokeWidth={1.6} fill={Icon === Play || Icon === Pause ? 'currentColor' : 'none'} />
     </button>
   )
 }
@@ -44,7 +48,7 @@ function CircleButton({ icon: Icon, label, onPress, big }: { icon: typeof Play; 
 function BarButton({ icon: Icon, label, onPress, active }: { icon: typeof Play; label: string; onPress: () => void; active?: boolean }) {
   return (
     <button className={`pl-btn ${active ? 'is-active' : ''}`} onClick={onPress} aria-label={label}>
-      <Icon size={20} strokeWidth={1.6} />
+      <Icon size={24} strokeWidth={1.6} />
       <span className="gib-tip">{label}</span>
     </button>
   )
@@ -104,6 +108,8 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const replace = useNav((s) => s.replace)
   const settings = useSettings((s) => s.settings)
   const updateSettings = useSettings((s) => s.update)
+  const cfg = settings ?? DEFAULT_SETTINGS
+  const step = cfg.seekStep
 
   const [src, setSrc] = useState<PlaybackSource | null>(null)
   const [url, setUrl] = useState<string | null>(null)
@@ -115,7 +121,8 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const [buffered, setBuffered] = useState(0)
   const [volume, setVolume] = useState(1)
   const [muted, setMuted] = useState(false)
-  const [speed, setSpeed] = useState(1)
+  const [speed, setSpeed] = useState(() => useSettings.getState().settings?.defaultSpeed ?? DEFAULT_SETTINGS.defaultSpeed)
+  const [showRemaining, setShowRemaining] = useState(() => useSettings.getState().settings?.showRemaining ?? true)
   const [audio, setAudio] = useState(0)
   const [subtitle, setSubtitle] = useState<number | null>(null)
   const [visible, setVisible] = useState(true)
@@ -138,6 +145,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const candidates = useRef<string[]>([])
   const lastSaved = useRef(0)
   const lastPointer = useRef({ x: -1, y: -1 })
+  const wheel = useRef(0)
 
   const { ref: root, focusKey } = useFocus<HTMLDivElement>({ focusKey: 'PLAYER', trackChildren: true, isFocusBoundary: true })
 
@@ -159,7 +167,8 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
         const first = candidates.current.shift() ?? null
         setUrl(first)
         if (!first) setFailed(true)
-        setResumePrompt(!fresh && s.resumeFraction > 0.01 && s.resumeFraction < 0.95)
+        const resumable = !fresh && s.resumeFraction > 0.01 && s.resumeFraction < 0.95
+        setResumePrompt(resumable && (useSettings.getState().settings?.resumeMode ?? 'ask') === 'ask')
         const def = s.file?.audio.findIndex((a) => a.default) ?? -1
         setAudio(Math.max(0, def))
       })
@@ -243,10 +252,10 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     hudTimer.current = window.setTimeout(() => setHud(null), 1100)
   }
 
-  const changeVolume = (delta: number): void => {
+  const changeVolume = (direction: 1 | -1): void => {
     const v = video.current
     if (!v) return
-    v.volume = Math.max(0, Math.min(1, Math.round((v.volume + delta) * 20) / 20))
+    v.volume = Math.max(0, Math.min(1, Math.round(v.volume * 100 + direction * cfg.volumeStep) / 100))
     v.muted = false
     flash(`volume:${v.volume}`)
   }
@@ -273,6 +282,40 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     if (!src?.next) return
     save()
     replace({ name: 'player', itemId: src.next.itemId, episodeId: src.next.episodeId, fresh: true })
+  }
+
+  const setRate = (s: number): void => {
+    setSpeed(s)
+    if (video.current) video.current.playbackRate = s
+  }
+  const nudgeSpeed = (direction: 1 | -1): void => {
+    const i = SPEEDS.indexOf(speed)
+    const at = i === -1 ? SPEEDS.indexOf(1) : i
+    const next = SPEEDS[Math.max(0, Math.min(SPEEDS.length - 1, at + direction))]
+    setRate(next)
+    flash(`Speed · ${speedLabel(next)}`)
+  }
+  const skip = (direction: 1 | -1): void => {
+    seekTo((video.current?.currentTime ?? 0) + direction * step)
+    flash(`${direction > 0 ? '+' : '-'}${step}`)
+  }
+  const cycleRepeat = (): void => {
+    const order: Settings['repeat'][] = ['off', 'one', 'all']
+    const next = order[(order.indexOf(cfg.repeat) + 1) % order.length]
+    updateSettings({ repeat: next })
+    flash(REPEAT_LABEL[next])
+  }
+  const onFinished = (): void => {
+    const v = video.current
+    const again = (): void => {
+      if (!v) return
+      v.currentTime = 0
+      v.play().catch(() => undefined)
+    }
+    if (cfg.repeat === 'one') return again()
+    if (src?.next && (cfg.autoplayNext || cfg.repeat === 'all')) return playNext()
+    if (cfg.repeat === 'all') return again()
+    exit()
   }
 
   const cycleSubs = (): void => {
@@ -325,18 +368,37 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
           else toggle()
           break
         case 'ArrowLeft':
-          seekTo((v?.currentTime ?? 0) - 10)
-          flash('-10')
+          skip(-1)
           break
         case 'ArrowRight':
-          seekTo((v?.currentTime ?? 0) + 10)
-          flash('+10')
+          skip(1)
           break
         case 'ArrowUp':
-          changeVolume(0.05)
+          changeVolume(1)
           break
         case 'ArrowDown':
-          changeVolume(-0.05)
+          changeVolume(-1)
+          break
+        case '[':
+        case '-':
+          nudgeSpeed(-1)
+          break
+        case ']':
+        case '+':
+          nudgeSpeed(1)
+          break
+        case '=':
+          setRate(1)
+          flash('Speed · Normal')
+          break
+        case 'l':
+        case 'L':
+          cycleRepeat()
+          break
+        case 'n':
+        case 'N':
+          if (src?.next) playNext()
+          else handled = false
           break
         case 'f':
         case 'F':
@@ -376,8 +438,12 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     if (!v || !src) return
     setDuration(Number.isFinite(v.duration) ? v.duration : Infinity)
     setReady(true)
+    v.playbackRate = speed
     if (!resumePrompt) {
-      if (fresh || src.resumeFraction <= 0.01) v.play().catch(() => undefined)
+      // "Always resume" picks up silently; "Never" (and fresh plays) start from the top.
+      const f = src.resumeFraction
+      if (!fresh && cfg.resumeMode === 'always' && f > 0.01 && f < 0.95 && Number.isFinite(v.duration)) v.currentTime = f * v.duration
+      v.play().catch(() => undefined)
     }
     poke()
   }
@@ -393,6 +459,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     setResumePrompt(false)
     if (!v || !src) return
     v.currentTime = fromStart ? 0 : src.resumeFraction * (v.duration || 0)
+    v.playbackRate = speed
     v.play().catch(() => undefined)
     poke()
   }
@@ -450,14 +517,10 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
         ? tracks.map((a, i) => ({ label: a.title, checked: i === audio, onSelect: () => setAudio(i) }))
         : [{ label: 'Default Track', checked: true, onSelect: () => undefined }]
     if (menu === 'speed')
-      return SPEEDS.map((s) => ({
-        label: s === 1 ? 'Normal' : `${s}×`,
-        checked: s === speed,
-        onSelect: () => {
-          setSpeed(s)
-          if (video.current) video.current.playbackRate = s
-        }
-      }))
+      return [
+        ...SPEEDS.map((s) => ({ label: speedLabel(s), checked: s === speed, onSelect: () => setRate(s) })),
+        { label: REPEAT_LABEL[cfg.repeat], hint: 'L', divider: true, keepOpen: true, onSelect: cycleRepeat }
+      ]
     const preview = (): void => {
       setCuePreview(true)
       window.setTimeout(() => setCuePreview(false), 2600)
@@ -515,7 +578,19 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
             lastPointer.current = { x: e.screenX, y: e.screenY }
           }}
           onClick={(e) => e.target === e.currentTarget && toggle()}
-          onDoubleClick={(e) => e.target === e.currentTarget && toggleFullscreen()}
+          onDoubleClick={(e) => cfg.doubleClickFullscreen && e.target === e.currentTarget && toggleFullscreen()}
+          onWheel={(e) => {
+            if (menu || resumePrompt || cfg.wheelAction === 'off') return
+            if ((e.target as HTMLElement).closest('.popover')) return
+            // Trackpads send many tiny deltas; act once per wheel notch.
+            wheel.current += e.deltaY
+            if (Math.abs(wheel.current) < WHEEL_NOTCH) return
+            const dir = wheel.current < 0 ? 1 : -1
+            wheel.current = 0
+            if (cfg.wheelAction === 'volume') changeVolume(dir)
+            else skip(dir)
+            poke()
+          }}
           onDragOver={(e) => e.preventDefault()}
           onDrop={onDrop}
         >
@@ -564,9 +639,9 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                 setVolume(e.currentTarget.volume)
                 setMuted(e.currentTarget.muted)
               }}
-              onEnded={() => (src?.next ? playNext() : exit())}
+              onEnded={onFinished}
               onClick={toggle}
-              onDoubleClick={toggleFullscreen}
+              onDoubleClick={() => cfg.doubleClickFullscreen && toggleFullscreen()}
             />
           )}
 
@@ -603,7 +678,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
           <div ref={chrome} className="pl-chrome">
             <div className="pl-top">
               <button className="pl-close glass" onClick={exit} aria-label="Close">
-                <X size={20} strokeWidth={1.8} />
+                <X size={23} strokeWidth={1.8} />
               </button>
               {src && (
                 <div className="pl-title">
@@ -624,9 +699,9 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
             </div>
 
             <div className="pl-center" style={{ display: ready ? undefined : 'none' }} onClick={(e) => e.stopPropagation()}>
-              <CircleButton icon={RotateCcw} label="Back 10 seconds" onPress={() => seekTo(time - 10)} />
+              <CircleButton icon={RotateCcw} label={`Back ${step} seconds`} onPress={() => skip(-1)} />
               <CircleButton icon={playing ? Pause : Play} label={playing ? 'Pause' : 'Play'} onPress={toggle} big />
-              <CircleButton icon={RotateCw} label="Forward 10 seconds" onPress={() => seekTo(time + 10)} />
+              <CircleButton icon={RotateCw} label={`Forward ${step} seconds`} onPress={() => skip(1)} />
             </div>
 
             <div className="pl-bottom glass" onClick={(e) => e.stopPropagation()}>
@@ -664,7 +739,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                     {menu === 'subs' && <Popover title="Subtitles" placement="above" align="right" options={menuOptions()} onClose={() => setMenu(null)} />}
                   </div>
                   <div className="popover-anchor">
-                    <BarButton icon={Gauge} label="Speed" active={menu === 'speed' || speed !== 1} onPress={() => setMenu(menu === 'speed' ? null : 'speed')} />
+                    <BarButton icon={Gauge} label={speed === 1 ? 'Speed' : `Speed · ${speedLabel(speed)}`} active={menu === 'speed' || speed !== 1 || cfg.repeat !== 'off'} onPress={() => setMenu(menu === 'speed' ? null : 'speed')} />
                     {menu === 'speed' && <Popover title="Playback Speed" placement="above" align="right" options={menuOptions()} onClose={() => setMenu(null)} />}
                   </div>
                   <BarButton
@@ -686,7 +761,16 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                   />
                   <BarButton icon={fullscreen ? Minimize : Maximize} label={fullscreen ? 'Exit Full Screen' : 'Full Screen'} onPress={toggleFullscreen} />
                 </div>
-                <span className="pl-time right">{live ? 'LIVE' : `-${timecode(remaining)}`}</span>
+                <button
+                  className="pl-time right"
+                  aria-label={showRemaining ? 'Show total length' : 'Show time remaining'}
+                  onClick={() => {
+                    setShowRemaining(!showRemaining)
+                    updateSettings({ showRemaining: !showRemaining })
+                  }}
+                >
+                  {live ? 'LIVE' : showRemaining ? `-${timecode(remaining)}` : timecode(duration)}
+                </button>
               </div>
             </div>
           </div>
@@ -731,9 +815,9 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                     <span style={{ width: `${Number(hud.split(':')[1]) * 100}%` }} />
                   </span>
                 </>
-              ) : hud === '+10' || hud === '-10' ? (
+              ) : /^[+-]\d+$/.test(hud) ? (
                 <>
-                  {hud === '+10' ? <RotateCw size={18} strokeWidth={1.7} /> : <RotateCcw size={18} strokeWidth={1.7} />}
+                  {hud.startsWith('+') ? <RotateCw size={18} strokeWidth={1.7} /> : <RotateCcw size={18} strokeWidth={1.7} />}
                   <span>{hud} sec</span>
                 </>
               ) : (

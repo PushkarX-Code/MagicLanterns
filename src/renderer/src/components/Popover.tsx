@@ -24,7 +24,7 @@ function Option({ opt, onClose }: { opt: PopoverOption; onClose: () => void }) {
   const Icon = opt.icon
   return (
     <button ref={ref} className={`pop-opt ${focused ? 'is-focused' : ''}`} onClick={select} {...pointer}>
-      <span className="pop-check">{opt.checked ? <Check size={16} strokeWidth={2.2} /> : Icon ? <Icon size={16} strokeWidth={1.7} /> : null}</span>
+      <span className="pop-check">{opt.checked ? <Check size={18} strokeWidth={2.2} /> : Icon ? <Icon size={18} strokeWidth={1.7} /> : null}</span>
       <span className="pop-label">{opt.label}</span>
       {opt.hint && <span className="pop-hint">{opt.hint}</span>}
     </button>

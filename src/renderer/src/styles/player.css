@@ -160,16 +160,16 @@
   gap: 40px;
 }
 .pl-circle {
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   display: grid;
   place-items: center;
   transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), background 0.2s ease, color 0.2s ease;
 }
 .pl-circle.big {
-  width: 92px;
-  height: 92px;
+  width: 102px;
+  height: 102px;
 }
 .pl-circle:hover {
   transform: scale(1.1);
@@ -261,7 +261,7 @@
 .pl-thumb-frame {
   width: 256px;
   aspect-ratio: 16 / 9;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
   background: #111;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 0 1.5px rgba(255, 255, 255, 0.5);
@@ -311,8 +311,8 @@
 }
 .pl-btn {
   position: relative;
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -387,7 +387,7 @@
   flex: none;
   width: 176px;
   aspect-ratio: 16 / 9;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
 }
 .pl-next-ring {
@@ -557,7 +557,7 @@
 }
 .style-glass span {
   padding: 4px 16px;
-  border-radius: 12px;
+  border-radius: 14px;
   background: rgba(20, 20, 24, 0.55);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   backdrop-filter: blur(20px) saturate(160%);
@@ -571,7 +571,7 @@
 .resume {
   width: 520px;
   padding: 34px 34px 30px;
-  border-radius: 28px;
+  border-radius: 32px;
   text-align: left;
 }
 .resume-kicker {
@@ -597,4 +597,13 @@
 }
 .resume-actions .pill.is-focused {
   transform: scale(1.03);
+}
+button.pl-time {
+  padding: 4px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+button.pl-time:hover {
+  color: var(--text);
 }

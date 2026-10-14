@@ -26,7 +26,7 @@ function Item({ id, label, icon: Icon, selected, disabled, onSelect }: { id: Sec
       {...pointer}
     >
       <span className="sb-icon">
-        <Icon size={20} strokeWidth={selected ? 2 : 1.6} />
+        <Icon size={24} strokeWidth={selected ? 1.9 : 1.55} />
       </span>
       <span className="sb-label">{label}</span>
     </button>
