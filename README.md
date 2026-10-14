@@ -111,7 +111,7 @@ The first `npm install` downloads the desktop runtime (about 100 MB).
 | `npm run build` | Production bundle into `out/` |
 | `npm run preview` | Run the production bundle |
 | `npm run typecheck` | TypeScript check for main + renderer |
-| `npm test` | Library database tests |
+| `npm test` | Library database and scanner tests |
 | `npm run icons` | Rebuild `build/icon.ico` and PNGs from `build/icon-src/*.svg` |
 | `npm run dist` | Build the Windows installer into `release/` |
 
@@ -148,13 +148,13 @@ The mouse works everywhere: hover focuses, click selects, the scrubber shows fra
 |---|---|---|
 | 1 | Shell: design system, icon, splash, sidebar, Home, Detail, Player, motion, skeletons | Done |
 | 1.5 | Home, Favorites, Files, full player controls, Settings, themes | Done |
-| 2 | Library engine: database ✓, scan, file probing, parsing, folder watching | In progress |
+| 2 | Library engine: database ✓, scanning ✓, file details ✓, name parsing, folder watching | In progress |
 | 3 | Metadata: live lookups, image cache, Fix Match | |
 | 4 | Decoding engine: every format, real subtitles, passthrough | |
 | 4.5 | Casting to TVs and speakers on your network | |
 | 5 | Polish: onboarding, installer | |
 
-Library folders you add in Settings are saved in the library database (`%APPDATA%\Magic Lanterns\library.db`). Until scanning lands, the library itself is a fixed demo of 12 films, 4 series and 5 anime. Every title plays the *Sintel* trailer as a stand-in; drop any video file onto the player to watch your own.
+Folders you add in Settings are saved in the library database (`%APPDATA%\Magic Lanterns\library.db`) and scanned: every video is found and its details read (length, resolution, frame rate, HDR10 / HDR10+ / HLG / Dolby Vision, audio and subtitle tracks with languages). Scans run when a folder is added and each time the app opens, and only new or changed files are read again. Until scanned films appear on Home (the next steps), the library you browse is a fixed demo of 12 films, 4 series and 5 anime. Every title plays the *Sintel* trailer as a stand-in; drop any video file onto the player to watch your own.
 
 See [PLAN.md](PLAN.md) for the architecture.
 
@@ -166,6 +166,6 @@ Magic Lanterns is free, with no ads, no accounts and no subscriptions, and it wi
 
 ## Credits
 
-This product uses the TMDB API but is not endorsed or certified by TMDB. *Sintel* © Blender Foundation, CC BY 3.0.
+This product uses the TMDB API but is not endorsed or certified by TMDB. File details are read with FFmpeg's ffprobe, licensed under the GPL (source at ffmpeg.org). *Sintel* © Blender Foundation, CC BY 3.0.
 
 Made by Pushkar.

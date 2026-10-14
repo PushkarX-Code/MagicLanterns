@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { AudioLines, Captions, Clapperboard, FolderOpen, Keyboard, Play, Sparkles, type LucideIcon } from 'lucide-react'
-import type { LibraryFolder } from '@shared/types'
+import type { LibraryFolder, ScanStatus } from '@shared/types'
 import { EQ_BANDS, EQ_PRESETS, type Settings } from '@shared/settings'
 import { Screen } from '../components/Screen'
 import { Action, Choice, Panel, Picker, Section, Slider, Toggle, settingsPage } from '../components/SettingControls'
@@ -502,27 +502,50 @@ function InterfacePane({ s, set }: PaneProps) {
 // ---------- Library ----------
 function LibraryPane({ s, set }: PaneProps) {
   const [folders, setFolders] = useState<LibraryFolder[] | null>(null)
+  const [scan, setScan] = useState<ScanStatus | null>(null)
   useEffect(() => {
     api.getFolders().then(setFolders)
+    const bridge = window.lantern
+    if (!bridge?.onScan) return
+    bridge.scanStatus().then(setScan)
+    let was: string | null = null
+    return bridge.onScan((next) => {
+      setScan(next)
+      // A folder just finished: its counts changed.
+      if (was && next.folder !== was) api.getFolders().then(setFolders)
+      was = next.folder
+    })
   }, [])
   const add = async (): Promise<void> => {
     const path = window.lantern ? await window.lantern.pickFolder() : window.prompt('Folder path')
     if (path) setFolders(await api.addFolder(path).catch(() => folders))
   }
+  const hint = (f: LibraryFolder): string => {
+    if (scan?.scanning && scan.folder === f.path)
+      return scan.toRead ? `Reading ${scan.read} of ${scan.toRead} new files…` : `Looking for films… ${scan.found} found`
+    return f.lastScan ? `${f.items} files · ${bytes(f.size)} · scanned ${timeAgo(f.lastScan)}` : 'Waiting to scan'
+  }
   return (
     <>
-      <Section title="Folders" footer="Magic Lanterns watches these folders and adds new films as they arrive.">
+      <Section title="Folders" footer="Magic Lanterns looks through these folders every time it opens, and reads only what's new or changed.">
         {folders?.map((f) => (
           <Action
             key={f.path}
             label={f.path}
-            hint={f.lastScan ? `${f.items} items · ${bytes(f.size)} · scanned ${timeAgo(f.lastScan)}` : 'Not scanned yet'}
+            hint={hint(f)}
             value="Remove"
             danger
             onPress={async () => setFolders(await api.removeFolder(f.path))}
           />
         ))}
         <Action label="Add Folder…" hint="Films, shows or a whole drive." onPress={add} />
+        {window.lantern?.rescan && !!folders?.length && (
+          <Action
+            label="Scan Again"
+            hint={scan?.scanning ? 'Scanning now…' : 'Look for new, changed or removed files.'}
+            onPress={() => window.lantern?.rescan()}
+          />
+        )}
       </Section>
       <Section title="Metadata">
         <Picker

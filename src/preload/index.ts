@@ -1,10 +1,11 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type { LanternBridge } from './bridge'
+import type { ScanStatus } from '../shared/types'
 
 const listen =
-  (channel: string) =>
-  (cb: (value: boolean) => void): (() => void) => {
-    const listener = (_e: unknown, value: boolean): void => cb(value)
+  <T = boolean,>(channel: string) =>
+  (cb: (value: T) => void): (() => void) => {
+    const listener = (_e: unknown, value: T): void => cb(value)
     ipcRenderer.on(channel, listener)
     return () => ipcRenderer.removeListener(channel, listener)
   }
@@ -25,6 +26,9 @@ const bridge: LanternBridge = {
   getFolders: () => ipcRenderer.invoke('library:folders'),
   addFolder: (path) => ipcRenderer.invoke('library:add-folder', path),
   removeFolder: (path) => ipcRenderer.invoke('library:remove-folder', path),
+  rescan: () => ipcRenderer.invoke('library:rescan'),
+  scanStatus: () => ipcRenderer.invoke('library:scan-status'),
+  onScan: listen<ScanStatus>('scan:progress'),
   snapshot: (frame, format, name) => ipcRenderer.invoke('player:snapshot', frame, format, name),
   setLaunchPrefs: (prefs) => ipcRenderer.invoke('prefs:set', prefs),
   getDiscover: (list) => ipcRenderer.invoke('discover:list', list),

@@ -154,6 +154,17 @@ export interface Collection {
   itemIds: string[]
 }
 
+/** What the library scanner is doing right now. */
+export interface ScanStatus {
+  scanning: boolean
+  folder: string | null
+  found: number
+  toRead: number
+  read: number
+  current: string | null
+  queued: number
+}
+
 export interface LibraryFolder {
   path: string
   items: number

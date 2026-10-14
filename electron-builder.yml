@@ -8,6 +8,9 @@ files:
   - out/**
   - resources/**
   - package.json
+# The file reader is a program, not a script; it has to sit outside the app archive to run.
+asarUnpack:
+  - node_modules/@ffprobe-installer/**
 win:
   icon: build/icon.ico
   target:
