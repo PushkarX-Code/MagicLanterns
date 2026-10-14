@@ -185,3 +185,42 @@ test('removing a folder removes its films and shows; an unplugged drive keeps th
   assert.equal(Number((lib.db.prepare('SELECT COUNT(*) AS n FROM seasons').get() as { n: number }).n), 0)
   lib.done()
 })
+
+// ---------- What the screens see ----------
+
+import { buildSnapshot, hideFiles, saveProgress, setFavorite, setInList } from './snapshot.ts'
+
+test('the library snapshot: films, shows with seasons, watch state, favourites, My List, hidden files', async () => {
+  const lib = library()
+  lib.put('Severance/Season 2/Severance.S02E01.mkv')
+  await scanFolder(lib.db, lib.folder(), fakeProbe([]))
+  let items = buildSnapshot(lib.db)
+  const titles = items.map((i) => `${i.kind}:${i.title}`).sort()
+  assert.deepEqual(titles, ['movie:Arrival', 'movie:Dune Part Two', 'show:Severance'])
+  const show = items.find((i) => i.kind === 'show')!
+  assert.deepEqual(show.seasons!.map((s) => [s.number, s.episodes.map((e) => e.number)]), [[1, [1]], [2, [1]]])
+  const arrival = items.find((i) => i.title === 'Arrival')!
+  assert.equal(arrival.year, 2016)
+  assert.equal(arrival.file!.width, 1920)
+  assert.equal(arrival.progress, undefined)
+
+  saveProgress(lib.db, arrival.file!.id!, 30, 60)
+  setFavorite(lib.db, arrival.id, true)
+  setInList(lib.db, show.id, true)
+  items = buildSnapshot(lib.db)
+  const again = items.find((i) => i.title === 'Arrival')!
+  assert.deepEqual([again.progress?.position, again.progress?.watched, again.favorite], [30, false, true])
+  assert.equal(items.find((i) => i.kind === 'show')!.inList, true)
+
+  // Finishing it counts a play, once.
+  saveProgress(lib.db, arrival.file!.id!, 59, 60)
+  saveProgress(lib.db, arrival.file!.id!, 60, 60)
+  assert.deepEqual([buildSnapshot(lib.db).find((i) => i.title === 'Arrival')!.playCount], [1])
+
+  hideFiles(lib.db, [arrival.file!.id!])
+  assert.equal(buildSnapshot(lib.db).some((i) => i.title === 'Arrival'), false)
+  // A rescan doesn't bring a hidden file back.
+  await scanFolder(lib.db, lib.folder(), fakeProbe([]))
+  assert.equal(buildSnapshot(lib.db).some((i) => i.title === 'Arrival'), false)
+  lib.done()
+})

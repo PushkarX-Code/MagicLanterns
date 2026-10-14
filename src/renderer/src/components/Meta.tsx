@@ -25,7 +25,7 @@ export function MetaLine({ item, genres = true }: { item: MediaItem; genres?: bo
         </span>
       )}
       <span>{item.kind === 'show' ? `${item.seasons?.length ?? 1} Season${(item.seasons?.length ?? 1) > 1 ? 's' : ''}` : runtime(item.runtime)}</span>
-      <span>{item.year}</span>
+      {!!item.year && <span>{item.year}</span>}
       {item.certification && <Badge>{item.certification}</Badge>}
       {f && <Badge>{resolutionLabel(f)}</Badge>}
       {hdr && <Badge>{hdr}</Badge>}

@@ -5,7 +5,7 @@ import { Readable } from 'node:stream'
 import { app, BrowserWindow, dialog, ipcMain, nativeTheme, protocol, session, shell } from 'electron'
 import { initUpdater } from './updater'
 import { initDiscover } from './discover'
-import { initLibrary } from './library'
+import { initLibrary, isLibraryPath } from './library'
 
 const isDev = !app.isPackaged && !!process.env['ELECTRON_RENDERER_URL']
 
@@ -31,6 +31,7 @@ protocol.registerSchemesAsPrivileged([
 
 const VIDEO_EXT = ['mkv', 'mp4', 'avi', 'mov', 'm4v', 'webm', 'ts', 'wmv']
 const MIME: Record<string, string> = {
+  '.jpg': 'image/jpeg',
   '.mp4': 'video/mp4',
   '.m4v': 'video/mp4',
   '.mov': 'video/quicktime',
@@ -41,9 +42,13 @@ const MIME: Record<string, string> = {
   '.wmv': 'video/x-ms-wmv'
 }
 
+/** Files the viewer picked by hand this session; everything else must live in a library folder. */
+const picked = new Set<string>()
+
 function serveFile(request: Request): Response {
   // ml-file://local/<encoded absolute path>
   const path = decodeURIComponent(new URL(request.url).pathname.slice(1))
+  if (!picked.has(path) && !isLibraryPath(path)) return new Response('Forbidden', { status: 403 })
   if (!existsSync(path)) return new Response('Not found', { status: 404 })
   const size = statSync(path).size
   const type = MIME[extname(path).toLowerCase()] ?? 'application/octet-stream'
@@ -67,7 +72,7 @@ const CSP = [
   "script-src 'self'",
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self' data:",
-  "img-src 'self' data: blob: https://image.tmdb.org",
+  "img-src 'self' data: blob: https://image.tmdb.org ml-file:",
   "media-src 'self' blob: https: ml-file:",
   "connect-src 'self' https: ml-file:"
 ].join('; ')
@@ -137,6 +142,7 @@ ipcMain.handle('dialog:open-files', async (e) => {
     ? await dialog.showOpenDialog(win, { properties: ['openFile', 'multiSelections'], filters: [{ name: 'Video', extensions: VIDEO_EXT }] })
     : null
   if (!r || r.canceled) return []
+  for (const p of r.filePaths) picked.add(p)
   return r.filePaths.map((path) => ({ path, url: `ml-file://local/${encodeURIComponent(path)}`, size: statSync(path).size }))
 })
 

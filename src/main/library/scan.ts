@@ -72,7 +72,11 @@ export async function scanFolder(
   folder: { id: number; path: string },
   probe: Probe,
   onProgress: (p: ScanProgress) => void = () => {},
-  { concurrency = 3, now = Date.now } = {}
+  {
+    concurrency = 3,
+    now = Date.now,
+    afterRead
+  }: { concurrency?: number; now?: () => number; afterRead?: (fileId: number, path: string, info: ProbeRow) => Promise<void> } = {}
 ): Promise<ScanResult> {
   const result: ScanResult = { folder: folder.path, found: 0, added: 0, changed: 0, missing: 0, read: 0, unreadable: 0 }
   // An unplugged drive or a disconnected share: leave everything as it was.
@@ -114,6 +118,7 @@ export async function scanFolder(
       report(f.path)
       const info = await probe(f.path, extname(f.path)).catch(() => null)
       saveProbe(db, f.id, info, now())
+      if (info?.videoCodec && afterRead) await afterRead(f.id, f.path, info).catch(() => undefined)
       result.read++
       if (!info) result.unreadable++
     }

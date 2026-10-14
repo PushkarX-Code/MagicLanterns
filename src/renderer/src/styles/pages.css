@@ -1102,3 +1102,41 @@ kbd {
   line-height: 1.6;
   color: var(--text-4);
 }
+
+/* ---------- Home with nothing in the library yet ---------- */
+.empty-library {
+  position: relative;
+  min-height: 72vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 var(--gutter) 0 var(--content-left);
+  overflow: hidden;
+}
+.empty-glow {
+  position: absolute;
+  inset: -20% -10% auto auto;
+  width: 70vw;
+  height: 70vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 196, 120, 0.16), transparent 62%);
+  pointer-events: none;
+}
+.empty-title {
+  position: relative;
+  margin: 0;
+  max-width: 14ch;
+}
+.empty-text {
+  position: relative;
+  max-width: 52ch;
+  margin: 18px 0 30px;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.empty-actions {
+  position: relative;
+  display: flex;
+  gap: 14px;
+}
