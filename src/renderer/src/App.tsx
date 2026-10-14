@@ -14,6 +14,7 @@ import { GenreScreen } from './screens/Genre'
 import { SearchScreen } from './screens/Search'
 import { SettingsScreen } from './screens/Settings'
 import { Splash } from './screens/Splash'
+import { UpdatePrompt } from './components/UpdatePrompt'
 
 function render(entry: Entry) {
   const r = entry.route
@@ -111,6 +112,7 @@ export function App() {
         ))}
       </main>
       {splash && <Splash onDone={() => setSplash(false)} />}
+      <UpdatePrompt ready={!splash} />
     </div>
   )
 }

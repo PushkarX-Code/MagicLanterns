@@ -8,9 +8,13 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag to publish, e.g. v0.1.0'
+        description: 'Version tag to publish, e.g. v0.2.0 (must be higher than the last release for updates to reach people)'
         required: true
         default: 'v0.1.0'
+      notes:
+        description: 'What this update brings (shown in the in-app update prompt). Leave empty to list merged changes.'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -29,6 +33,12 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      # The installer, the in-app version and the update feed all take their version from the tag.
+      - name: Stamp version
+        shell: bash
+        run: |
+          TAG="${{ github.event.inputs.version || github.ref_name }}"
+          npm version "${TAG#v}" --no-git-tag-version --allow-same-version
       - run: npm run typecheck
       - run: npx electron-vite build
       - run: npx electron-builder --win --publish never
@@ -37,5 +47,10 @@ jobs:
           tag_name: ${{ github.event.inputs.version || github.ref_name }}
           name: Magic Lanterns ${{ github.event.inputs.version || github.ref_name }}
           target_commitish: ${{ github.sha }}
-          generate_release_notes: true
-          files: release/MagicLanterns-Setup.exe
+          body: ${{ github.event.inputs.notes }}
+          generate_release_notes: ${{ github.event.inputs.notes == '' }}
+          # latest.yml and the blockmap let installed copies find and verify the update.
+          files: |
+            release/MagicLanterns-Setup.exe
+            release/MagicLanterns-Setup.exe.blockmap
+            release/latest.yml

@@ -206,3 +206,26 @@ export interface PlaybackSource {
 }
 
 export type { Settings } from './settings'
+
+/** One of this week's most-watched titles worldwide, with where it streams in the viewer's country. */
+export interface TrendingTitle {
+  rank: number
+  id: number
+  kind: 'movie' | 'tv'
+  title: string
+  year: number | null
+  overview: string
+  poster: string | null
+  backdrop: string | null
+  rating: number | null
+  providers: { name: string; logo: string | null }[]
+  /** Page listing every service that carries it (links out to each). */
+  watchLink: string | null
+}
+
+/** App update lifecycle, as the renderer sees it. */
+export type UpdateState =
+  | { stage: 'available'; version: string; current: string; notes: string }
+  | { stage: 'downloading'; version: string; percent: number }
+  | { stage: 'ready'; version: string }
+  | { stage: 'error'; message: string }

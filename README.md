@@ -63,7 +63,7 @@ Every screenshot is the running app. Artwork and details are real film data; the
 
 **Sections:** Home, Favorites, Files and Settings.
 
-**Home** opens on a hero carousel, then: your recents (no heading, just the films), Recently Added, Picks of the Day (a fresh shuffle every day), Film Genres, Unwatched and Most Watched.
+**Home** opens on a hero carousel, then: your recents (no heading, just the films), Recently Added, Picks of the Day (a fresh shuffle every day), Film Genres, Unwatched, Most Watched and **Top 10 This Week**: the ten most-watched films and series worldwide, refreshed automatically, with where each one streams in your country and a link to watch it.
 
 **Files** lists every file in your library folders, newest first.
 - **+** adds a folder, adds single files, or opens a network stream (HTTP, HTTPS, HLS).
@@ -76,12 +76,15 @@ Every screenshot is the running app. Artwork and details are real film data; the
 - 10-band equalizer with presets, volume boost to 200%, normalize, audio delay, stereo downmix and output device. These apply to files on your drives.
 - Snapshots at full resolution (Shift+S), saved to `Pictures\Magic Lanterns`.
 - Keep on top, start in full screen, pause when minimized, scroll wheel for volume or seeking.
+- Corner controls for full screen, picture in picture and share (copy the frame or the title and time).
 
 **Settings** has eight tabs: Playback, Video, Audio, Subtitles, Controls, Interface, Library and About. Options that need the upcoming decoding engine are labelled *Coming soon* rather than pretending to work.
 
 **Themes:** Default (warm dark that picks up the colours of what you're browsing), Dark (true black) and Light. Films always play on black.
 
-**Motion:** every button, card and row sinks when pressed and springs back. Reduce Motion swaps this for gentle fades.
+**Motion:** every button, card and row sinks when pressed and springs back. Opening the sidebar slides the page over to make room. Reduce Motion swaps this for gentle fades.
+
+**Updates:** when a new version is published, the app offers it the next time you open it, never while a film is playing. You see what's new and choose **Update Now**, **Skip This Version** or **Later**. Nothing installs until you restart.
 
 ## Build from source
 
@@ -105,11 +108,11 @@ The first `npm install` downloads the desktop runtime (about 100 MB).
 
 ### Publishing a release
 
-In GitHub, open **Actions → Release → Run workflow**, enter a version such as `v0.1.0`, and run it. It builds the installer on Windows and publishes it as a Release, which the download link and the PowerShell command above always point at. Pushing a tag like `v0.1.0` does the same.
+In GitHub, open **Actions → Release → Run workflow**, enter a version higher than the last one (for example `v0.2.0`) and a short note on what's new, then run it. That note is what people see in the in-app update prompt. It builds the installer on Windows and publishes it as a Release, which the download link and the PowerShell command above always point at. Pushing a tag like `v0.1.0` does the same.
 
 ### Metadata keys
 
-Posters, banners and film details work out of the box. Live lookups for new files (Phase 3) use two free API keys that are built into the app at compile time and never shown in Settings:
+Posters, banners and film details work out of the box. Top 10 This Week and live lookups for new files (Phase 3) use two free API keys that are built into the app at compile time and never shown in Settings:
 
 1. Copy `.env.example` to `.env`.
 2. Fill in `MAIN_VITE_TMDB_API_KEY` and `MAIN_VITE_OMDB_API_KEY`.
@@ -136,6 +139,7 @@ The mouse works everywhere: hover focuses, click selects, the scrubber shows fra
 | 2 | Library engine: scan, file probing, parsing, database, folder watching | Next |
 | 3 | Metadata: live lookups, image cache, Fix Match | |
 | 4 | Decoding engine: every format, real subtitles, passthrough | |
+| 4.5 | Casting to TVs and speakers on your network | |
 | 5 | Polish: onboarding, installer | |
 
 Until Phase 2 the library is a fixed demo of 13 films and 4 series. Every title plays the *Sintel* trailer as a stand-in; drop any video file onto the player to watch your own.
