@@ -2,6 +2,7 @@
   position: absolute;
   inset: 0;
   z-index: 100;
+  container-type: size; /* forced aspect ratios size the video in cqw/cqh */
   background: #000;
   overflow: hidden;
 }
@@ -12,6 +13,7 @@
   height: 100%;
   object-fit: contain;
   background: #000;
+  transition: filter 0.3s ease;
 }
 .pl-loading {
   position: absolute;

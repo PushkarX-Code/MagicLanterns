@@ -32,6 +32,38 @@ const NEXT_CARD_LEAD = 30 // seconds before the end the Next Episode card slides
 const SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4]
 const WHEEL_NOTCH = 100 // deltaY of one mouse-wheel click
 const speedLabel = (s: number): string => (s === 1 ? 'Normal' : `${s}×`)
+const FIT_ORDER: Settings['videoFit'][] = ['fit', 'fill', 'stretch']
+const FIT_LABEL: Record<Settings['videoFit'], string> = { fit: 'Fit to Screen', fill: 'Fill Screen', stretch: 'Stretch' }
+const FIT_CSS: Record<Settings['videoFit'], React.CSSProperties['objectFit']> = { fit: 'contain', fill: 'cover', stretch: 'fill' }
+const ASPECT_ORDER: Settings['aspect'][] = ['auto', '16:9', '4:3', '21:9', '2.39:1', '1:1']
+
+/** Size, crop and colour of the picture, from the Video settings. */
+function videoStyle(s: Settings): React.CSSProperties {
+  const style: React.CSSProperties = { objectFit: FIT_CSS[s.videoFit] }
+  if (s.aspect !== 'auto') {
+    // Force a shape: the largest box of that ratio that fits the window, picture stretched into it.
+    const [w, h] = s.aspect.split(':').map(Number)
+    const r = w / h
+    Object.assign(style, {
+      inset: 'auto',
+      left: '50%',
+      top: '50%',
+      width: `min(100cqw, ${100 * r}cqh)`,
+      height: `min(100cqh, ${100 / r}cqw)`,
+      translate: '-50% -50%',
+      objectFit: 'fill'
+    })
+  }
+  const f = [
+    s.brightness !== 100 && `brightness(${s.brightness}%)`,
+    s.contrast !== 100 && `contrast(${s.contrast}%)`,
+    s.saturation !== 100 && `saturate(${s.saturation}%)`,
+    s.hue !== 0 && `hue-rotate(${s.hue}deg)`
+  ].filter(Boolean)
+  if (f.length) style.filter = f.join(' ')
+  return style
+}
+
 const REPEAT_LABEL: Record<Settings['repeat'], string> = { off: 'Repeat Off', one: 'Repeat One', all: 'Repeat All' }
 
 type Menu = null | 'audio' | 'subs' | 'speed'
@@ -190,6 +222,36 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
 
   useEffect(() => window.lantern?.onFullscreen(setFullscreen), [])
 
+  // Start in full screen if asked, and leave it again on the way out.
+  useEffect(() => {
+    if (!useSettings.getState().settings?.startFullscreen) return
+    if (window.lantern) window.lantern.setFullscreen(true)
+    else if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => undefined)
+  }, [])
+
+  // Keep on top: never, only while a film is playing, or whenever the player is open.
+  useEffect(() => {
+    const on = cfg.keepOnTop === 'always' || (cfg.keepOnTop === 'playing' && playing)
+    window.lantern?.setAlwaysOnTop(on)
+  }, [cfg.keepOnTop, playing])
+  useEffect(() => () => void window.lantern?.setAlwaysOnTop(false), [])
+
+  // Pause when the window is minimised (or the tab hidden, in a browser).
+  useEffect(() => {
+    const hide = (): void => {
+      if (useSettings.getState().settings?.pauseOnMinimize ?? true) video.current?.pause()
+    }
+    const off = window.lantern?.onMinimized((min) => min && hide())
+    const onVis = (): void => {
+      if (!window.lantern && document.hidden) hide()
+    }
+    document.addEventListener('visibilitychange', onVis)
+    return () => {
+      off?.()
+      document.removeEventListener('visibilitychange', onVis)
+    }
+  }, [])
+
   const save = useCallback(() => {
     const v = video.current
     // Loose files and streams have no library entry to remember progress on.
@@ -299,6 +361,16 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     seekTo((video.current?.currentTime ?? 0) + direction * step)
     flash(`${direction > 0 ? '+' : '-'}${step}`)
   }
+  const cycleFit = (): void => {
+    const next = FIT_ORDER[(FIT_ORDER.indexOf(cfg.videoFit) + 1) % FIT_ORDER.length]
+    updateSettings({ videoFit: next, aspect: 'auto' })
+    flash(FIT_LABEL[next])
+  }
+  const cycleAspect = (): void => {
+    const next = ASPECT_ORDER[(ASPECT_ORDER.indexOf(cfg.aspect) + 1) % ASPECT_ORDER.length]
+    updateSettings({ aspect: next })
+    flash(next === 'auto' ? 'Aspect · Original' : `Aspect · ${next}`)
+  }
   const cycleRepeat = (): void => {
     const order: Settings['repeat'][] = ['off', 'one', 'all']
     const next = order[(order.indexOf(cfg.repeat) + 1) % order.length]
@@ -394,6 +466,14 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
         case 'l':
         case 'L':
           cycleRepeat()
+          break
+        case 'z':
+        case 'Z':
+          cycleFit()
+          break
+        case 'a':
+        case 'A':
+          cycleAspect()
           break
         case 'n':
         case 'N':
@@ -619,6 +699,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
             <video
               ref={video}
               className="pl-video"
+              style={videoStyle(cfg)}
               src={url}
               preload="auto"
               onLoadedMetadata={onLoaded}
