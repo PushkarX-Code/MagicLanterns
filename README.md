@@ -24,17 +24,18 @@ This downloads the latest release and opens the installer. The app isn't code-si
 Every image is the running app, with real film data and artwork.
 
 **A cinematic page for every title**
-![Attack on Titan](docs/showcase/detail-aot.webp)
 
-![Spider-Man: Across the Spider-Verse](docs/showcase/detail-spiderverse.webp)
+<p><img src="docs/showcase/bladerunner.webp" width="49%" alt="Blade Runner 2049"> <img src="docs/showcase/spyfamily.webp" width="49%" alt="SPY x FAMILY"></p>
+<p><img src="docs/showcase/aot.webp" width="49%" alt="Attack on Titan"> <img src="docs/showcase/spiderverse.webp" width="49%" alt="Spider-Man: Across the Spider-Verse"></p>
+<p><img src="docs/showcase/madmax.webp" width="49%" alt="Mad Max: Fury Road"> <img src="docs/showcase/arcane.webp" width="49%" alt="Arcane"></p>
+<p><img src="docs/showcase/jjk.webp" width="49%" alt="JUJUTSU KAISEN"> <img src="docs/showcase/demonslayer.webp" width="49%" alt="Demon Slayer"></p>
 
-**Every season with its own cover, every episode its own still**
-![Seasons](docs/showcase/seasons.webp)
+**Every season with its own cover, and a player that plays everything**
 
-**The player**
-![Player](docs/showcase/player.webp)
+<p><img src="docs/showcase/seasons.webp" width="49%" alt="Seasons"> <img src="docs/showcase/player.webp" width="49%" alt="Player"></p>
 
 **Light theme**
+
 ![Light theme](docs/showcase/light.webp)
 
 ## What's in it
@@ -133,7 +134,7 @@ The mouse works everywhere: hover focuses, click selects, the scrubber shows fra
 
 **Every format plays.** Files your computer decodes play straight from disk. Everything else goes through the built-in engine as it plays: MKV, AVI and TS are repackaged on the fly (no quality lost, no waiting), sound the system can't decode (DTS, TrueHD, Dolby Digital) is converted keeping 5.1, and pictures it can't (10-bit anime releases, HEVC without a decoder, MPEG-2, VC-1, Dolby Vision profile 5) are converted using your graphics card when it has an encoder, with HDR tone-mapped and interlaced video cleaned up. Seeking anywhere is instant; switching to another sound track restarts at the same moment. The demo library you see in screenshots is what the app shows in a browser preview.
 
-See [PLAN.md](PLAN.md) for the architecture.
+See [PLAN.md](docs/PLAN.md) for the architecture.
 
 ## Support Magic Lanterns
 
