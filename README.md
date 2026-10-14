@@ -24,21 +24,12 @@ This downloads the latest release and opens the installer. The app isn't code-si
 Every image is the running app, with real film data and artwork.
 
 **A cinematic page for every title**
-![Dune: Part Two](docs/showcase/detail-dune.jpg)
-
-**Anime, front and centre**
-![Anime on Home](docs/showcase/anime.jpg)
-
 ![Attack on Titan](docs/showcase/detail-aot.jpg)
 
-**Animation**
 ![Spider-Man: Across the Spider-Verse](docs/showcase/detail-spiderverse.jpg)
 
 **Every season with its own cover, every episode its own still**
 ![Seasons](docs/showcase/seasons.jpg)
-
-**Your library, row by row**
-![Home rows](docs/showcase/rows.jpg)
 
 **The player**
 ![Player](docs/showcase/player.jpg)
