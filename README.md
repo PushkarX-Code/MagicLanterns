@@ -25,14 +25,23 @@ Every image is the running app, with real film data and artwork.
 
 **A cinematic page for every title**
 
-<p><img src="docs/showcase/bladerunner.webp" width="49%" alt="Blade Runner 2049"> <img src="docs/showcase/spyfamily.webp" width="49%" alt="SPY x FAMILY"></p>
-<p><img src="docs/showcase/aot.webp" width="49%" alt="Attack on Titan"> <img src="docs/showcase/spiderverse.webp" width="49%" alt="Spider-Man: Across the Spider-Verse"></p>
-<p><img src="docs/showcase/madmax.webp" width="49%" alt="Mad Max: Fury Road"> <img src="docs/showcase/arcane.webp" width="49%" alt="Arcane"></p>
-<p><img src="docs/showcase/jjk.webp" width="49%" alt="JUJUTSU KAISEN"> <img src="docs/showcase/demonslayer.webp" width="49%" alt="Demon Slayer"></p>
+![Attack on Titan](docs/showcase/aot.webp)
 
-**Every season with its own cover, and a player that plays everything**
+![Blade Runner 2049](docs/showcase/bladerunner.webp)
 
-<p><img src="docs/showcase/seasons.webp" width="49%" alt="Seasons"> <img src="docs/showcase/player.webp" width="49%" alt="Player"></p>
+![Arcane](docs/showcase/arcane.webp)
+
+![SPY x FAMILY](docs/showcase/spyfamily.webp)
+
+![Spider-Man: Across the Spider-Verse](docs/showcase/spiderverse.webp)
+
+**Every season with its own cover, every episode its own still**
+
+![Seasons](docs/showcase/seasons.webp)
+
+**The player**
+
+![Player](docs/showcase/player.webp)
 
 **Light theme**
 
