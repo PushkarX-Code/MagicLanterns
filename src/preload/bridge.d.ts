@@ -1,4 +1,4 @@
-import type { DiscoverDetails, DiscoverList, TrendingTitle, UpdateState } from '../shared/types'
+import type { DiscoverDetails, DiscoverList, LibraryFolder, TrendingTitle, UpdateState } from '../shared/types'
 
 export interface PickedFile {
   path: string
@@ -18,6 +18,10 @@ export interface LanternBridge {
   onMinimized(cb: (minimized: boolean) => void): () => void
   pickFolder(): Promise<string | null>
   pickFiles(): Promise<PickedFile[]>
+  /** Library folders saved in the library database. Add rejects a path that isn't an existing folder. */
+  getFolders(): Promise<LibraryFolder[]>
+  addFolder(path: string): Promise<LibraryFolder[]>
+  removeFolder(path: string): Promise<LibraryFolder[]>
   /** Save a snapshot: encoded frame bytes, or a window region to capture. Resolves to the saved file path. */
   snapshot(frame: { bytes?: Uint8Array; rect?: { x: number; y: number; width: number; height: number } }, format: 'png' | 'jpg', name: string): Promise<string>
   setLaunchPrefs(prefs: { hwDecode?: 'auto' | 'off' }): Promise<void>

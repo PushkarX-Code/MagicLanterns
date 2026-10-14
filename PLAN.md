@@ -74,7 +74,7 @@ MagicLanterns/
 | Motion | gsap (+ Flip for card → detail shared element) | GSAP Standard "no charge" license ⚠ |
 | Focus engine | @noriginmedia/norigin-spatial-navigation | MIT |
 | Icons / font | lucide-react, @fontsource-variable/inter (bundled, offline) | ISC / OFL |
-| Database | better-sqlite3 (WAL mode) | MIT |
+| Database | built-in `node:sqlite` (WAL mode), no native module to rebuild | Node / public domain |
 | Watcher | chokidar | MIT |
 | Media | ffmpeg-static, ffprobe-static | GPL builds ⚠ |
 | Parsing | @ctrl/video-filename-parser | MIT |
@@ -90,7 +90,7 @@ MagicLanterns/
 - **GSAP:** free including all plugins, but its own license, not OSI open source. Fine for this app.
 - **ffmpeg-static:** GPL binaries. Free for personal use; public distribution needs a license notice + source link (added to About + installer).
 - **Code signing:** Windows certificates are paid. Installer ships unsigned → SmartScreen "unknown publisher" warning on first install.
-- **Native modules:** better-sqlite3 and sharp use prebuilt Electron binaries; if prebuilds miss, Windows needs VS Build Tools (free).
+- **Native modules:** the database is built into the runtime, so nothing to compile. sharp ships prebuilt binaries; if a prebuild misses, Windows needs VS Build Tools (free).
 - **Playback limits:** Dolby Vision profile 5 has no correct native path in Chromium — it plays tone-mapped via FFmpeg, not true DV.
 
 ---

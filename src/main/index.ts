@@ -5,6 +5,7 @@ import { Readable } from 'node:stream'
 import { app, BrowserWindow, dialog, ipcMain, nativeTheme, protocol, session, shell } from 'electron'
 import { initUpdater } from './updater'
 import { initDiscover } from './discover'
+import { initLibrary } from './library'
 
 const isDev = !app.isPackaged && !!process.env['ELECTRON_RENDERER_URL']
 
@@ -165,6 +166,7 @@ app.whenReady().then(() => {
     })
   }
   createWindow()
+  initLibrary()
   initDiscover()
   initUpdater(
     () => readPrefs().skippedVersion,
