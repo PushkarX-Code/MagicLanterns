@@ -113,11 +113,10 @@ function picksOfTheDay(): MediaItem[] {
   const day = Math.floor(Date.now() / 86_400_000)
   let seed = day * 9301 + 49297
   const rand = (): number => ((seed = (seed * 9301 + 49297) % 233280) / 233280)
-  return [...ITEMS]
-    .map((i) => ({ i, r: rand() }))
-    .sort((a, b) => a.r - b.r)
-    .slice(0, 6)
-    .map((x) => x.i)
+  // Always lead with anime, then a daily shuffle of everything else.
+  const shuffled = [...ITEMS].map((i) => ({ i, r: rand() })).sort((a, b) => a.r - b.r).map((x) => x.i)
+  const anime = shuffled.filter((i) => i.genres.includes('Anime')).slice(0, 3)
+  return [...anime, ...shuffled.filter((i) => !anime.includes(i))].slice(0, 6)
 }
 
 function genreTiles(): GenreTile[] {
@@ -125,7 +124,7 @@ function genreTiles(): GenreTile[] {
   for (const i of ITEMS) for (const g of i.genres) map.set(g, [...(map.get(g) ?? []), i])
   return [...map.entries()]
     .filter(([, list]) => list.length >= 2)
-    .sort((a, b) => b[1].length - a[1].length)
+    .sort((a, b) => (a[0] === 'Anime' ? -1 : b[0] === 'Anime' ? 1 : b[1].length - a[1].length)) // Anime leads
     .map(([name, list]) => ({
       name,
       count: list.length,
@@ -261,7 +260,7 @@ export function createMockApi(): LanternApi {
   return {
     async getHome() {
       await latency('home', 900)
-      const hero = ['movie-693134', 'tv-95396', 'movie-335984', 'tv-126308', 'movie-569094'].map((id) => byId.get(id)!)
+      const hero = ['movie-693134', 'tv-1429', 'tv-95396', 'tv-85937', 'movie-335984', 'movie-569094'].map((id) => byId.get(id)!)
       const rows: HomeRow[] = [
         { id: 'recents', title: '', kind: 'cards', cards: recentCards() },
         {

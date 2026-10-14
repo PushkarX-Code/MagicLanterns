@@ -46,7 +46,7 @@ interface FixtureEntry {
 type Res = '2160p' | '1080p' | '720p'
 interface Extras {
   color: string
-  imdb: number
+  imdb?: number
   rt?: number
   mc?: number
   /** How many times it has been played (episodes summed for shows). */
@@ -81,7 +81,6 @@ const EXTRAS: Record<number, Extras> = {
   693134: { color: '#8a4a1c', imdb: 8.5, rt: 92, mc: 79, res: '2160p', hdr: 'DV', audio: 'atmos', addedDaysAgo: 1, progress: 0.42, favorite: true, plays: 3, folder: 'D:\\Movies' },
   95396: { color: '#24506a', imdb: 8.7, rt: 96, mc: 83, res: '2160p', hdr: 'DV', audio: 'atmos', addedDaysAgo: 3, progress: [2, 3, 0.58], inList: true, plays: 14, folder: 'E:\\TV' },
   335984: { color: '#9a5a1e', imdb: 8.0, rt: 88, mc: 81, res: '2160p', hdr: 'HDR10', audio: 'atmos', addedDaysAgo: 2, plays: 1, folder: 'D:\\Movies' },
-  872585: { color: '#7a3a16', imdb: 8.3, rt: 93, mc: 90, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 5, progress: 0.16, plays: 2, folder: 'D:\\Movies' },
   126308: { color: '#5a2418', imdb: 8.6, rt: 99, mc: 85, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 4, progress: [1, 4, 0], episodeRuntime: 58, plays: 3, folder: 'E:\\TV' },
   157336: { color: '#5c4a32', imdb: 8.7, rt: 73, mc: 74, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 40, watched: true, favorite: true, plays: 6, folder: 'D:\\Movies' },
   414906: { color: '#5a1a1a', imdb: 7.8, rt: 85, mc: 72, res: '2160p', hdr: 'DV', audio: 'atmos', addedDaysAgo: 12, plays: 0, folder: 'D:\\Movies' },
@@ -94,6 +93,12 @@ const EXTRAS: Record<number, Extras> = {
   313369: { color: '#3a2a6a', imdb: 8.0, rt: 91, mc: 94, res: '1080p', hdr: 'SDR', audio: '7.1', addedDaysAgo: 90, inList: true, plays: 1, folder: 'D:\\Movies' },
   155: { color: '#1e2a3a', imdb: 9.0, rt: 94, mc: 84, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 120, watched: true, plays: 7, folder: 'D:\\Movies' },
   45745: { color: '#4a3a2e', imdb: 7.4, res: '1080p', hdr: 'SDR', audio: 'stereo', addedDaysAgo: 0, progress: 0.3, plays: 8, favorite: true, folder: 'D:\\Movies' },
+  // Anime (TMDB data; ratings beyond TMDB's own left out rather than guessed)
+  1429: { color: '#1e3a4e', res: '1080p', hdr: 'SDR', audio: '5.1', addedDaysAgo: 0, progress: [1, 2, 0.45], favorite: true, plays: 12, folder: 'E:\\Anime' },
+  120089: { color: '#4a6a5a', res: '1080p', hdr: 'SDR', audio: 'stereo', addedDaysAgo: 1, inList: true, plays: 6, folder: 'E:\\Anime' },
+  85937: { color: '#5a1e22', res: '1080p', hdr: 'SDR', audio: '5.1', addedDaysAgo: 2, progress: [1, 3, 0.2], plays: 10, folder: 'E:\\Anime' },
+  95479: { color: '#2a2450', res: '1080p', hdr: 'SDR', audio: '5.1', addedDaysAgo: 6, plays: 0, folder: 'E:\\Anime' },
+  31910: { color: '#a0581a', res: '1080p', hdr: 'SDR', audio: 'stereo', addedDaysAgo: 14, plays: 15, folder: 'E:\\Anime' },
   27205: { color: '#2a3a4a', imdb: 8.8, rt: 87, mc: 74, res: '2160p', hdr: 'HDR10', audio: '5.1', addedDaysAgo: 110, inList: true, plays: 4, folder: 'D:\\Movies' }
 }
 
@@ -240,7 +245,7 @@ export const COLLECTIONS: Collection[] = [
     id: 'nolan',
     name: 'Christopher Nolan',
     description: 'Time, memory and very large IMAX cameras.',
-    itemIds: ['movie-872585', 'movie-157336', 'movie-27205', 'movie-155']
+    itemIds: ['movie-157336', 'movie-27205', 'movie-155']
   },
   {
     id: 'villeneuve',
@@ -264,7 +269,8 @@ export const COLLECTIONS: Collection[] = [
 
 export const FOLDERS: LibraryFolder[] = [
   { path: 'D:\\Movies', items: ITEMS.filter((i) => i.kind === 'movie').length, size: 0, lastScan: NOW - 2 * 3_600_000 },
-  { path: 'E:\\TV', items: ITEMS.filter((i) => i.kind === 'show').length, size: 0, lastScan: NOW - 2 * 3_600_000 }
+  { path: 'E:\\TV', items: ITEMS.filter((i) => i.kind === 'show' && !i.genres.includes('Anime')).length, size: 0, lastScan: NOW - 2 * 3_600_000 },
+  { path: 'E:\\Anime', items: ITEMS.filter((i) => i.genres.includes('Anime')).length, size: 0, lastScan: NOW - 2 * 3_600_000 }
 ]
 for (const f of FOLDERS) {
   f.size = ITEMS.filter((i) => (i.file?.path ?? i.seasons?.[0]?.episodes[0]?.file.path ?? '').startsWith(f.path)).reduce(
