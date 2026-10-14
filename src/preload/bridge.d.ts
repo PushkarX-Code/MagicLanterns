@@ -16,6 +16,7 @@ export interface LanternBridge {
   onMinimized(cb: (minimized: boolean) => void): () => void
   pickFolder(): Promise<string | null>
   pickFiles(): Promise<PickedFile[]>
-  snapshot(rect: { x: number; y: number; width: number; height: number } | undefined, format: 'png' | 'jpg', name: string): Promise<string>
+  /** Save a snapshot: encoded frame bytes, or a window region to capture. Resolves to the saved file path. */
+  snapshot(frame: { bytes?: Uint8Array; rect?: { x: number; y: number; width: number; height: number } }, format: 'png' | 'jpg', name: string): Promise<string>
   setLaunchPrefs(prefs: { hwDecode?: 'auto' | 'off' }): Promise<void>
 }

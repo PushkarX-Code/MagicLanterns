@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   AudioLines,
+  Camera,
   Captions,
   Gauge,
   Maximize,
@@ -17,7 +18,8 @@ import {
   X
 } from 'lucide-react'
 import type { PlaybackSource, Settings } from '@shared/types'
-import { DEFAULT_SETTINGS } from '@shared/settings'
+import { DEFAULT_SETTINGS, EQ_PRESETS } from '@shared/settings'
+import { AudioChain, isLocalSource, needsChain } from '../player/audioChain'
 import { api } from '../lib/api'
 import { timecode } from '../lib/format'
 import { BlurImage } from '../components/BlurImage'
@@ -62,6 +64,31 @@ function videoStyle(s: Settings): React.CSSProperties {
   ].filter(Boolean)
   if (f.length) style.filter = f.join(' ')
   return style
+}
+
+const BOOSTS = [100, 125, 150, 200]
+const EQ_NAMES = Object.keys(EQ_PRESETS)
+
+type SinkElement = HTMLVideoElement & { setSinkId?: (id: string) => Promise<void> }
+
+/** Where the picture actually sits inside the <video> box (object-fit: contain leaves bars). */
+function pictureRect(v: HTMLVideoElement): { x: number; y: number; width: number; height: number } {
+  const r = v.getBoundingClientRect()
+  const fit = getComputedStyle(v).objectFit
+  let { width, height } = r
+  if (fit === 'contain' && v.videoWidth && v.videoHeight) {
+    const scale = Math.min(r.width / v.videoWidth, r.height / v.videoHeight)
+    width = v.videoWidth * scale
+    height = v.videoHeight * scale
+  }
+  const x = Math.max(0, r.x + (r.width - width) / 2)
+  const y = Math.max(0, r.y + (r.height - height) / 2)
+  return {
+    x: Math.round(x),
+    y: Math.round(y),
+    width: Math.round(Math.min(width, window.innerWidth - x)),
+    height: Math.round(Math.min(height, window.innerHeight - y))
+  }
 }
 
 const REPEAT_LABEL: Record<Settings['repeat'], string> = { off: 'Repeat Off', one: 'Repeat One', all: 'Repeat All' }
@@ -178,6 +205,8 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const lastSaved = useRef(0)
   const lastPointer = useRef({ x: -1, y: -1 })
   const wheel = useRef(0)
+  const chain = useRef<AudioChain | null>(null)
+  const [processed, setProcessed] = useState(false)
 
   const { ref: root, focusKey } = useFocus<HTMLDivElement>({ focusKey: 'PLAYER', trackChildren: true, isFocusBoundary: true })
 
@@ -251,6 +280,36 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
       document.removeEventListener('visibilitychange', onVis)
     }
   }, [])
+
+  // Audio effects (EQ, boost, normalise, delay, downmix, output device). WebAudio can only process media
+  // the app reads itself, so this runs for local files; streams play through untouched.
+  const local = isLocalSource(url)
+  useEffect(() => {
+    const v = video.current
+    if (!v || !local) return
+    if (!chain.current && needsChain(cfg)) {
+      try {
+        chain.current = new AudioChain(v)
+        setProcessed(true)
+      } catch {
+        return // already wired, or WebAudio unavailable: keep plain playback
+      }
+    }
+    chain.current?.apply(cfg)
+  }, [cfg, local, url, ready])
+  useEffect(
+    () => () => {
+      chain.current?.close()
+      chain.current = null
+    },
+    []
+  )
+  // Without the graph, the element itself can still pick the output device.
+  useEffect(() => {
+    const v = video.current as SinkElement | null
+    if (!v?.setSinkId || chain.current) return
+    v.setSinkId(cfg.audioDevice === 'default' ? '' : cfg.audioDevice).catch(() => undefined)
+  }, [cfg.audioDevice, ready, processed])
 
   const save = useCallback(() => {
     const v = video.current
@@ -361,6 +420,51 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     seekTo((video.current?.currentTime ?? 0) + direction * step)
     flash(`${direction > 0 ? '+' : '-'}${step}`)
   }
+  const snapshot = async (): Promise<void> => {
+    const v = video.current
+    if (!v || !v.videoWidth) return
+    const format = cfg.snapshotFormat
+    const name = `${src?.title ?? 'Snapshot'} ${timecode(v.currentTime).replace(/:/g, '.')}`
+    const type = format === 'jpg' ? 'image/jpeg' : 'image/png'
+    // Full-resolution frame with the picture adjustments baked in, when the pixels are readable.
+    let blob: Blob | null = null
+    try {
+      const c = document.createElement('canvas')
+      c.width = v.videoWidth
+      c.height = v.videoHeight
+      const ctx = c.getContext('2d')!
+      ctx.filter = videoStyle(cfg).filter ?? 'none'
+      ctx.drawImage(v, 0, 0)
+      blob = await new Promise<Blob | null>((ok) => c.toBlob(ok, type, 0.92))
+    } catch {
+      blob = null // cross-origin stream: the canvas is tainted
+    }
+    try {
+      if (window.lantern) {
+        let saved: string
+        if (blob) saved = await window.lantern.snapshot({ bytes: new Uint8Array(await blob.arrayBuffer()) }, format, name)
+        else {
+          // Capture the window instead, with the controls hidden for the shot.
+          const el = chrome.current
+          if (el) gsap.set(el, { autoAlpha: 0, overwrite: true })
+          await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+          saved = await window.lantern.snapshot({ rect: pictureRect(v) }, format, name)
+          if (el) gsap.set(el, { autoAlpha: 1 })
+        }
+        flash(`Snapshot saved · ${saved.split(/[\\/]/).pop()}`)
+      } else if (blob) {
+        const a = document.createElement('a')
+        a.href = URL.createObjectURL(blob)
+        a.download = `${name}.${format}`
+        a.click()
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000)
+        flash('Snapshot saved')
+      } else flash('Snapshots of streams need the desktop app')
+    } catch {
+      flash("Couldn't save the snapshot")
+    }
+  }
+
   const cycleFit = (): void => {
     const next = FIT_ORDER[(FIT_ORDER.indexOf(cfg.videoFit) + 1) % FIT_ORDER.length]
     updateSettings({ videoFit: next, aspect: 'auto' })
@@ -492,8 +596,11 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
           }
           break
         case 's':
-        case 'S':
           cycleSubs()
+          break
+        case 'S':
+          if (e.shiftKey) snapshot()
+          else cycleSubs() // caps lock
           break
         case 'Escape':
         case 'Backspace':
@@ -592,10 +699,35 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const menuOptions = (): PopoverOption[] => {
     if (!src) return []
     const tracks = src.file?.audio ?? []
-    if (menu === 'audio')
-      return tracks.length
-        ? tracks.map((a, i) => ({ label: a.title, checked: i === audio, onSelect: () => setAudio(i) }))
-        : [{ label: 'Default Track', checked: true, onSelect: () => undefined }]
+    if (menu === 'audio') {
+      const effects = local ? undefined : 'Local files'
+      const preset = cfg.eqEnabled ? cfg.eqPreset : 'Off'
+      return [
+        ...(tracks.length
+          ? tracks.map((a, i) => ({ label: a.title, checked: i === audio, onSelect: () => setAudio(i) }))
+          : [{ label: 'Default Track', checked: true, onSelect: () => undefined }]),
+        {
+          label: 'Equalizer',
+          hint: effects ?? preset,
+          divider: true,
+          keepOpen: true,
+          onSelect: () => {
+            // Off → each preset in turn → Off
+            const i = cfg.eqEnabled ? EQ_NAMES.indexOf(cfg.eqPreset) + 1 : 0
+            if (i >= EQ_NAMES.length) updateSettings({ eqEnabled: false })
+            else updateSettings({ eqEnabled: true, eqPreset: EQ_NAMES[i], eqBands: [...EQ_PRESETS[EQ_NAMES[i]]] })
+          }
+        },
+        {
+          label: 'Volume Boost',
+          hint: effects ?? `${cfg.volumeBoost}%`,
+          keepOpen: true,
+          onSelect: () => updateSettings({ volumeBoost: BOOSTS[(BOOSTS.indexOf(cfg.volumeBoost) + 1) % BOOSTS.length] })
+        },
+        { label: 'Normalize Volume', hint: effects, checked: cfg.normalize, keepOpen: true, onSelect: () => updateSettings({ normalize: !cfg.normalize }) },
+        { label: 'Stereo Downmix', hint: effects, checked: cfg.downmix, keepOpen: true, onSelect: () => updateSettings({ downmix: !cfg.downmix }) }
+      ]
+    }
     if (menu === 'speed')
       return [
         ...SPEEDS.map((s) => ({ label: speedLabel(s), checked: s === speed, onSelect: () => setRate(s) })),
@@ -651,6 +783,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
         <div
           ref={root}
           className={`player ${playing ? 'is-playing' : 'is-paused'}`}
+          data-audio={processed ? 'processed' : 'direct'}
           onPointerMove={(e) => {
             // Browsers fire synthetic moves when the chrome fades under a resting cursor; only real travel wakes it.
             const last = lastPointer.current
@@ -700,11 +833,15 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
               ref={video}
               className="pl-video"
               style={videoStyle(cfg)}
+              crossOrigin={url.startsWith('ml-file:') ? 'anonymous' : undefined}
               src={url}
               preload="auto"
               onLoadedMetadata={onLoaded}
               onError={onError}
-              onPlay={() => setPlaying(true)}
+              onPlay={() => {
+                setPlaying(true)
+                chain.current?.resume()
+              }}
               onPause={() => {
                 setPlaying(false)
                 save()
@@ -823,6 +960,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                     <BarButton icon={Gauge} label={speed === 1 ? 'Speed' : `Speed · ${speedLabel(speed)}`} active={menu === 'speed' || speed !== 1 || cfg.repeat !== 'off'} onPress={() => setMenu(menu === 'speed' ? null : 'speed')} />
                     {menu === 'speed' && <Popover title="Playback Speed" placement="above" align="right" options={menuOptions()} onClose={() => setMenu(null)} />}
                   </div>
+                  <BarButton icon={Camera} label="Snapshot (Shift+S)" onPress={snapshot} />
                   <BarButton
                     icon={PictureInPicture2}
                     label="Picture in Picture"

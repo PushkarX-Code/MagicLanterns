@@ -134,14 +134,15 @@ ipcMain.handle('dialog:open-files', async (e) => {
   return r.filePaths.map((path) => ({ path, url: `ml-file://local/${encodeURIComponent(path)}`, size: statSync(path).size }))
 })
 
-// VLC-style snapshot: capture the video area, save to Pictures\Magic Lanterns.
-ipcMain.handle('player:snapshot', async (e, rect: Electron.Rectangle | undefined, format: 'png' | 'jpg', name: string) => {
-  const image = await e.sender.capturePage(rect)
+// VLC-style snapshot, saved to Pictures\Magic Lanterns. The renderer sends the full-resolution frame
+// when it can read the pixels; otherwise (protected streams) we capture the video area of the window.
+ipcMain.handle('player:snapshot', async (e, frame: { bytes?: Uint8Array; rect?: Electron.Rectangle }, format: 'png' | 'jpg', name: string) => {
+  const image = frame.bytes ? null : await e.sender.capturePage(frame.rect)
   const dir = join(app.getPath('pictures'), 'Magic Lanterns')
   await mkdir(dir, { recursive: true })
   const safe = name.replace(/[<>:"/\\|?*]+/g, ' ').trim() || 'Snapshot'
   const file = join(dir, `${safe} ${new Date().toISOString().replace(/[:.]/g, '-')}.${format}`)
-  await writeFile(file, format === 'jpg' ? image.toJPEG(92) : image.toPNG())
+  await writeFile(file, frame.bytes ? Buffer.from(frame.bytes) : format === 'jpg' ? image!.toJPEG(92) : image!.toPNG())
   return file
 })
 ipcMain.handle('shell:show-item', (_e, path: string) => shell.showItemInFolder(path))

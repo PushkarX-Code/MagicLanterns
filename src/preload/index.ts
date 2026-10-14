@@ -22,7 +22,7 @@ const bridge: LanternBridge = {
   onMinimized: listen('window:minimized'),
   pickFolder: () => ipcRenderer.invoke('dialog:open-folder'),
   pickFiles: () => ipcRenderer.invoke('dialog:open-files'),
-  snapshot: (rect, format, name) => ipcRenderer.invoke('player:snapshot', rect, format, name),
+  snapshot: (frame, format, name) => ipcRenderer.invoke('player:snapshot', frame, format, name),
   setLaunchPrefs: (prefs) => ipcRenderer.invoke('prefs:set', prefs)
 }
 
