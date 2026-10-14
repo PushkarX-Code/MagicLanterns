@@ -11,6 +11,8 @@ import { probeFile } from './probe.ts'
 import { scanFolder } from './scan.ts'
 import { buildSnapshot, hideFiles, saveProgress, setFavorite, setInList, setWatched } from './snapshot.ts'
 import { createWatcher } from './watch.ts'
+import { hasMetadata, tmdb } from '../keys'
+import { matchPending } from '../meta/index.ts'
 
 // The library lives in %APPDATA%/Magic Lanterns/library.db. Folders are scanned when added, at every launch
 // and whenever files arrive or leave while the app is open; only new or changed files are read again.
@@ -118,7 +120,11 @@ async function drain(): Promise<void> {
   }
   status = { scanning: false, folder: null, found: 0, toRead: 0, read: 0, current: null, queued: 0 }
   broadcast()
+  // Then fetch artwork and details for anything new; each title appears as soon as it's done.
+  if (hasMetadata()) await matchPending(open(), tmdb, changed).catch((e) => console.error('Metadata lookup failed', e))
   running = false
+  // Folders that changed while titles were being looked up.
+  if (queue.length) void drain()
 }
 
 function enqueue(paths: string[]): void {
@@ -157,6 +163,15 @@ export function initLibrary(): void {
     enqueue(folderRows(open()).map((f) => f.path))
   })
   ipcMain.handle('library:scan-status', (): ScanStatus => status)
+  ipcMain.handle('meta:status', () => {
+    const n = (sql: string): number => Number((open().prepare(sql).get() as { n: number }).n)
+    return {
+      enabled: hasMetadata(),
+      matched: n("SELECT COUNT(*) AS n FROM items WHERE match_state IN ('matched', 'low_confidence', 'manual')"),
+      pending: n("SELECT COUNT(*) AS n FROM items WHERE match_state = 'pending'"),
+      unmatched: n("SELECT COUNT(*) AS n FROM items WHERE match_state = 'unmatched'")
+    }
+  })
 
   // What the screens show, and the changes they make.
   ipcMain.handle('library:snapshot', (): MediaItem[] => buildSnapshot(open()))

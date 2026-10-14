@@ -149,12 +149,12 @@ The mouse works everywhere: hover focuses, click selects, the scrubber shows fra
 | 1 | Shell: design system, icon, splash, sidebar, Home, Detail, Player, motion, skeletons | Done |
 | 1.5 | Home, Favorites, Files, full player controls, Settings, themes | Done |
 | 2 | Library engine: database, scanning, file details, name parsing, folder watching, screens on your real library | Done |
-| 3 | Metadata: live lookups, image cache, Fix Match | Next |
+| 3 | Metadata: live lookups ✓, image cache, ratings, Fix Match | In progress |
 | 4 | Decoding engine: every format, real subtitles, passthrough | |
 | 4.5 | Casting to TVs and speakers on your network | |
 | 5 | Polish: onboarding, installer | |
 
-**Your library.** Home, Files, Favorites, search, the detail pages and the player all show the films and shows in the folders you add. Until metadata arrives (Phase 3), titles come from file names and each card shows a frame from the film itself. Everything else is real now:
+**Your library.** Home, Files, Favorites, search, the detail pages and the player all show the films and shows in the folders you add. Each title is looked up on TMDB as soon as it's found: poster, textless banner, titled card art and logo, overview, tagline, certification, runtime, rating, trailer, genres (Japanese animation gets its own Anime row), cast with photos, director or creator, and for shows every season's cover plus each episode's name, synopsis and still. Two copies of one film become one entry. Anything that can't be matched keeps its file-name title and a frame from the video, and offline lookups simply retry on the next scan. Also real now:
 
 - Each file's details: length, resolution, frame rate, HDR10 / HDR10+ / HLG / Dolby Vision, and every audio and subtitle track with its language.
 - Where you stopped watching, favourites and My List, saved in `%APPDATA%\Magic Lanterns\library.db`.
