@@ -1,5 +1,6 @@
 import { readdir, stat } from 'node:fs/promises'
 import { extname, join } from 'node:path'
+import { dropUnplayable, identifyFolder, pruneOrphans, type IdentifyResult } from './identify.ts'
 import { insertFile, knownFiles, markMissing, markScanned, saveProbe, touchFile, type Db, type ProbeRow } from '../db/index.ts'
 
 // Finds every video under a library folder, records new and changed files, and reads their details.
@@ -60,6 +61,7 @@ export interface ScanResult {
   missing: number
   read: number
   unreadable: number
+  identified?: IdentifyResult
   skipped?: 'offline'
 }
 
@@ -99,6 +101,8 @@ export async function scanFolder(
   const gone = [...known.values()].map((k) => k.id)
   markMissing(db, gone)
   result.missing = gone.length
+  // Names are enough to file things under films and shows, so the library fills in before files are read.
+  result.identified = identifyFolder(db, folder, t)
 
   let next = 0
   const report = (current: string | null): void =>
@@ -116,6 +120,8 @@ export async function scanFolder(
   }
   await Promise.all(Array.from({ length: Math.min(concurrency, toRead.length) }, worker))
 
+  dropUnplayable(db, folder.id)
+  pruneOrphans(db)
   markScanned(db, folder.id, now())
   onProgress({ folder: folder.path, phase: 'done', found: result.found, toRead: toRead.length, read: result.read, current: null })
   return result

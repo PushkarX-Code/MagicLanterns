@@ -4,11 +4,13 @@ import ffprobePath from '@ffprobe-installer/ffprobe'
 import { app, BrowserWindow, ipcMain } from 'electron'
 import type { LibraryFolder, ScanStatus } from '@shared/types'
 import { addFolder, folderRows, listFolders, openDb, removeFolder, type Db } from '../db/index.ts'
+import { pruneOrphans } from './identify.ts'
 import { probeFile } from './probe.ts'
 import { scanFolder } from './scan.ts'
+import { createWatcher } from './watch.ts'
 
-// The library lives in %APPDATA%/Magic Lanterns/library.db. Folders are scanned when added and at every
-// launch; only new or changed files are read again.
+// The library lives in %APPDATA%/Magic Lanterns/library.db. Folders are scanned when added, at every launch
+// and whenever files arrive or leave while the app is open; only new or changed files are read again.
 
 let db: Db | null = null
 const open = (): Db => (db ??= openDb(join(app.getPath('userData'), 'library.db')))
@@ -66,6 +68,9 @@ function enqueue(paths: string[]): void {
   void drain()
 }
 
+const watcher = createWatcher((folder) => enqueue([folder]))
+const rewatch = (): void => watcher.sync(folderRows(open()).map((f) => f.path))
+
 export function initLibrary(): void {
   open()
   ipcMain.handle('library:folders', (): LibraryFolder[] => listFolders(open()))
@@ -73,6 +78,7 @@ export function initLibrary(): void {
     const clean = checkedFolder(path)
     addFolder(open(), clean)
     enqueue([clean])
+    rewatch()
     return listFolders(open())
   })
   ipcMain.handle('library:remove-folder', (_e, path: unknown): LibraryFolder[] => {
@@ -80,14 +86,21 @@ export function initLibrary(): void {
       const i = queue.indexOf(path)
       if (i >= 0) queue.splice(i, 1)
       removeFolder(open(), path)
+      pruneOrphans(open())
+      rewatch()
     }
     return listFolders(open())
   })
-  ipcMain.handle('library:rescan', () => enqueue(folderRows(open()).map((f) => f.path)))
+  ipcMain.handle('library:rescan', () => {
+    rewatch()
+    enqueue(folderRows(open()).map((f) => f.path))
+  })
   ipcMain.handle('library:scan-status', (): ScanStatus => status)
   // Catch up on anything that changed while the app was closed.
   enqueue(folderRows(open()).map((f) => f.path))
+  rewatch()
   app.on('will-quit', () => {
+    watcher.close()
     db?.close()
     db = null
   })
