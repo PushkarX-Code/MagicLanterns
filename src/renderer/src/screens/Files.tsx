@@ -505,7 +505,7 @@ export function FilesScreen() {
             {groups.map((g) => (
               <section key={g.name || 'all'} className="files-group">
                 {g.name && <h2 className="files-group-title">{g.name}</h2>}
-                <div className={tile ? `files-grid ${prefs.view}` : 'files-rows'}>
+                <div className={tile ? `files-grid is-${prefs.view}` : 'files-rows'}>
                   {!tile && prefs.view === 'list' && (
                     <div className="frow-head">
                       <span>Title</span>

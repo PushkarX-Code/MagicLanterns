@@ -33,7 +33,7 @@
   height: 54px;
   margin: -27px 0 0 -27px;
   border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.14);
+  border: 3px solid rgb(var(--ink) / 0.14);
   border-top-color: var(--amber);
   animation: ml-spin 1s linear infinite;
   box-shadow: 0 0 40px var(--amber-glow);
@@ -208,7 +208,7 @@
   width: 100%;
   height: 6px;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgb(var(--ink) / 0.18);
   overflow: hidden;
   transition: height 0.25s ease;
 }
@@ -220,7 +220,7 @@
 .pl-buffer {
   position: absolute;
   inset: 0 auto 0 0;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgb(var(--ink) / 0.18);
 }
 .pl-fill {
   position: absolute;
@@ -242,7 +242,7 @@
   margin: -8px 0 0 -8px;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18), 0 4px 16px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 4px rgb(var(--ink) / 0.18), 0 4px 16px rgba(0, 0, 0, 0.5);
   opacity: 0;
   transform: scale(0.5);
   transition: opacity 0.2s ease, transform 0.25s ease;
@@ -266,7 +266,7 @@
   border-radius: 14px;
   overflow: hidden;
   background: #111;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 0 1.5px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 0 1.5px rgb(var(--ink) / 0.5);
 }
 .pl-thumb-frame video {
   width: 100%;
@@ -403,7 +403,7 @@
 }
 .pl-next-ring circle {
   fill: rgba(0, 0, 0, 0.45);
-  stroke: rgba(255, 255, 255, 0.25);
+  stroke: rgb(var(--ink) / 0.25);
   stroke-width: 2.5;
 }
 .pl-next-ring .fg {
@@ -509,7 +509,7 @@
   width: 120px;
   height: 5px;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgb(var(--ink) / 0.2);
   overflow: hidden;
 }
 .pl-hud-bar span {

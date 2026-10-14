@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-/** The focused item's dominant color, bled softly into the page background (Apple TV behavior). */
+/** The focused item's dominant color, bled softly into the page background. */
 interface AmbientState {
   color: string
   set: (color: string | null | undefined) => void

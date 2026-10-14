@@ -1,12 +1,12 @@
 import { gsap, reduceMotion } from './motion'
 
-// Apple-style press feedback for everything you can select: it sinks under the finger, then springs back
+// Press feedback for everything you can select: it sinks under the finger, then springs back
 // with a little overshoot. Driven by a CSS variable on the independent `scale` property, so it stacks on
 // top of the focus lift (which owns `transform`) instead of fighting it.
 
 const PRESSABLE = 'button:not(:disabled), [data-focus-leaf], .seg-btn'
 
-/** Bigger surfaces travel less, like a card versus a button on tvOS. */
+/** Bigger surfaces travel less: a card dips gently, a small button dips deeper. */
 function depth(el: HTMLElement): number {
   const w = el.offsetWidth
   return w > 420 ? 0.975 : w > 160 ? 0.955 : 0.9

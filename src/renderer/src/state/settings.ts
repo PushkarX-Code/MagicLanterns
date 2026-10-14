@@ -3,6 +3,12 @@ import type { Settings } from '@shared/types'
 import { api } from '../lib/api'
 import { setReduceMotion } from '../design/motion'
 
+/** Look-and-feel settings that live on <html>: motion and colour theme. */
+function applyLook(s: Settings): void {
+  setReduceMotion(s.reduceMotion)
+  document.documentElement.dataset.theme = s.theme ?? 'default'
+}
+
 interface SettingsState {
   settings: Settings | null
   load: () => Promise<void>
@@ -13,7 +19,7 @@ export const useSettings = create<SettingsState>((set, get) => ({
   settings: null,
   load: async () => {
     const s = await api.getSettings()
-    setReduceMotion(s.reduceMotion)
+    applyLook(s)
     set({ settings: s })
   },
   // Optimistic: the UI (sliders especially) moves at once; persistence follows in the background.
@@ -21,12 +27,12 @@ export const useSettings = create<SettingsState>((set, get) => ({
     const cur = get().settings
     if (cur) {
       const next = { ...cur, ...patch }
-      setReduceMotion(next.reduceMotion)
+      applyLook(next)
       set({ settings: next })
     }
     const saved = await api.setSettings(patch)
     if (!cur) {
-      setReduceMotion(saved.reduceMotion)
+      applyLook(saved)
       set({ settings: saved })
     }
   }

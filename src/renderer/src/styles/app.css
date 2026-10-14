@@ -146,7 +146,7 @@
   transform: none;
 }
 .sb-item.is-focused {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgb(var(--ink) / 0.14);
   color: var(--text);
 }
 .sb-item.is-selected {
@@ -155,7 +155,7 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 .sb-item.is-selected.is-focused {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.22), 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 3px rgb(var(--ink) / 0.22), 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 .sb-item.is-selected .sb-label {
   font-weight: 600;
@@ -203,11 +203,11 @@
   box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.5);
 }
 .pill-solid.is-focused {
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18), 0 0 44px rgba(255, 190, 110, 0.35), 0 18px 40px -10px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 0 4px rgb(var(--ink) / 0.18), 0 0 44px rgba(255, 190, 110, 0.35), 0 18px 40px -10px rgba(0, 0, 0, 0.6);
 }
 .pill-glass {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.12);
+  background: rgb(var(--ink) / 0.12);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   box-shadow: var(--glass-edge), var(--glass-highlight);
@@ -269,7 +269,7 @@
   white-space: nowrap;
   color: var(--text);
   background: rgba(24, 24, 28, 0.94);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgb(var(--ink) / 0.08);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease, transform 0.25s ease;
@@ -313,7 +313,7 @@
 }
 .badge-outline {
   color: var(--text-2);
-  box-shadow: inset 0 0 0 1.2px rgba(255, 255, 255, 0.32);
+  box-shadow: inset 0 0 0 1.2px rgb(var(--ink) / 0.32);
 }
 .badge-solid {
   color: #0a0a0b;
@@ -542,5 +542,5 @@
 .pop-divider {
   height: 1px;
   margin: 6px 10px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(var(--ink) / 0.1);
 }

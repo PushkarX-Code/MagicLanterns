@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ChevronRight, ChevronsUpDown, ExternalLink, KeyRound } from 'lucide-react'
+import { useRef, useState, type ReactNode } from 'react'
+import { ChevronRight, ChevronsUpDown } from 'lucide-react'
 import type { UseFocusableConfig } from '@noriginmedia/norigin-spatial-navigation'
 import { FocusContext, useFocus } from '../focus/focus'
 import { scrollPageTo } from './Row'
 import { Popover } from './Popover'
-import { api } from '../lib/api'
 
 /** The settings page's scroller, so a focused row can bring itself into view. */
 export const settingsPage: { current: HTMLDivElement | null } = { current: null }
@@ -176,42 +175,6 @@ export function Slider({
         </div>
         <span className="slider-value">{format(value)}</span>
       </div>
-    </div>
-  )
-}
-
-export function KeyField({ value, onChange, link, ...text }: RowText & { value: string; onChange: (v: string) => void; link: string }) {
-  const input = useRef<HTMLInputElement>(null)
-  const [draft, setDraft] = useState(value)
-  useEffect(() => setDraft(value), [value])
-  const { ref, focused, pointer } = useRow({ onEnterPress: () => input.current?.focus() })
-  return (
-    <div ref={ref} className={`set-row ${focused ? 'is-focused' : ''}`} {...pointer} onClick={() => input.current?.focus()}>
-      <div className="set-text">
-        <div className="set-label">
-          <KeyRound size={16} strokeWidth={1.7} /> {text.label}
-        </div>
-        <div className="set-hint">
-          {text.hint}{' '}
-          <button className="set-link" onClick={() => api.openExternal(link)}>
-            Get a free key <ExternalLink size={12} strokeWidth={1.8} />
-          </button>
-        </div>
-      </div>
-      <input
-        ref={input}
-        className="set-input"
-        type="password"
-        value={draft}
-        placeholder="Not set"
-        spellCheck={false}
-        onChange={(e) => setDraft(e.target.value)}
-        onBlur={() => draft !== value && onChange(draft.trim())}
-        onKeyDown={(e) => {
-          e.stopPropagation()
-          if (e.key === 'Enter' || e.key === 'Escape') input.current?.blur()
-        }}
-      />
     </div>
   )
 }

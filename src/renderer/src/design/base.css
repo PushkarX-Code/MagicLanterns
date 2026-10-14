@@ -97,14 +97,14 @@ input {
 .skeleton {
   position: relative;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.045);
+  background: rgb(var(--ink) / 0.045);
 }
 .skeleton::after {
   content: '';
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.06) 50%, transparent 80%);
+  background: linear-gradient(100deg, transparent 20%, rgb(var(--ink) / 0.06) 50%, transparent 80%);
   animation: ml-shimmer 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 @keyframes ml-shimmer {

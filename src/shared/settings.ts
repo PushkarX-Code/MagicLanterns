@@ -3,7 +3,7 @@
 
 export const EQ_BANDS = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000] as const
 
-/** VLC's equalizer presets, in dB per band. */
+/** Equalizer presets, in dB per band. */
 export const EQ_PRESETS: Record<string, number[]> = {
   Flat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   Classical: [0, 0, 0, 0, 0, 0, -7.2, -7.2, -7.2, -9.6],
@@ -23,9 +23,7 @@ export const EQ_PRESETS: Record<string, number[]> = {
 }
 
 export interface Settings {
-  // Library
-  tmdbKey: string
-  omdbKey: string
+  // Library (API keys are build-time secrets in the main process, not settings)
   metadataLanguage: string
   // Playback
   resumeMode: 'ask' | 'always' | 'never'
@@ -74,14 +72,13 @@ export interface Settings {
   // Snapshots
   snapshotFormat: 'png' | 'jpg'
   // Interface
+  theme: 'default' | 'dark' | 'light'
   reduceMotion: boolean
   heroPreviews: boolean
   showClock: boolean
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  tmdbKey: '',
-  omdbKey: '',
   metadataLanguage: 'en-US',
   resumeMode: 'ask',
   autoplayNext: true,
@@ -123,6 +120,7 @@ export const DEFAULT_SETTINGS: Settings = {
   volumeStep: 5,
   showRemaining: true,
   snapshotFormat: 'png',
+  theme: 'default',
   reduceMotion: false,
   heroPreviews: true,
   showClock: true

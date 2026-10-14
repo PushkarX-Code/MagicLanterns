@@ -77,7 +77,7 @@ export function App() {
     load()
   }, [load])
 
-  // Esc / Backspace: back one level; at a section root, return to the sidebar like the Menu button on tvOS.
+  // Esc / Backspace: back one level; at a section root, return to the sidebar.
   // "/" or Ctrl+F opens search from anywhere outside the player.
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {

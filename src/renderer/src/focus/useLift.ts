@@ -3,7 +3,7 @@ import { gsap, EASE, DUR, reduceMotion } from '../design/motion'
 
 /**
  * The focus treatment shared by every card: scale up, lift on a deep soft shadow,
- * a glass sheen sweep, and a parallax tilt that follows the cursor like tvOS.
+ * a glass sheen sweep, and a parallax tilt that follows the cursor.
  */
 export function useLift(
   ref: RefObject<HTMLElement | null>,

@@ -103,7 +103,7 @@
 .poster.is-focused .poster-frame,
 .episode.is-focused .card-frame,
 .collection.is-focused .collection-frame {
-  box-shadow: var(--lift), 0 0 0 1px rgba(255, 255, 255, 0.16);
+  box-shadow: var(--lift), 0 0 0 1px rgb(var(--ink) / 0.16);
 }
 .card-art {
   position: absolute !important;
@@ -131,7 +131,7 @@
   bottom: 10px;
   height: 4px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.24);
+  background: rgb(var(--ink) / 0.24);
   overflow: hidden;
 }
 .card-progress span {
@@ -146,7 +146,7 @@
   inset: 0;
   pointer-events: none;
   opacity: 0;
-  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 0%), rgba(255, 255, 255, 0.22), transparent 55%);
+  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 0%), rgb(var(--ink) / 0.22), transparent 55%);
   transition: opacity 0.4s ease;
   mix-blend-mode: soft-light;
 }
@@ -160,7 +160,7 @@
   inset: -20% -40%;
   pointer-events: none;
   opacity: 0;
-  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.18) 47%, rgba(255, 255, 255, 0.05) 53%, transparent 62%);
+  background: linear-gradient(105deg, transparent 38%, rgb(var(--ink) / 0.18) 47%, rgb(var(--ink) / 0.05) 53%, transparent 62%);
 }
 .card-fallback {
   position: absolute;
@@ -171,8 +171,8 @@
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: rgba(255, 255, 255, 0.9);
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), transparent 60%);
+  color: rgb(var(--ink) / 0.9);
+  background: linear-gradient(160deg, rgb(var(--ink) / 0.08), transparent 60%);
 }
 .card-meta {
   padding: 14px 4px 0;
@@ -269,7 +269,7 @@
   aspect-ratio: 16 / 9;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgb(var(--ink) / 0.1);
 }
 .collection-slide.s0 {
   left: 6%;
@@ -330,7 +330,7 @@
   transition: box-shadow 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .genre.is-focused .genre-frame {
-  box-shadow: var(--lift), 0 0 0 1px rgba(255, 255, 255, 0.16);
+  box-shadow: var(--lift), 0 0 0 1px rgb(var(--ink) / 0.16);
 }
 .genre-slide {
   position: absolute;
@@ -339,7 +339,7 @@
   aspect-ratio: 16 / 9;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgb(var(--ink) / 0.1);
 }
 .genre-slide.s0 {
   right: 6%;

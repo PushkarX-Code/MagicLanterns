@@ -35,7 +35,7 @@
   padding: 4px;
   gap: 2px;
   border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.07);
+  background: rgb(var(--ink) / 0.07);
   box-shadow: var(--glass-edge);
 }
 .seg-btn {
@@ -70,7 +70,7 @@
 }
 .folder.is-focused {
   transform: scale(1.015);
-  box-shadow: var(--glass-edge), var(--glass-highlight), 0 0 0 2px rgba(255, 255, 255, 0.35), var(--glass-shadow);
+  box-shadow: var(--glass-edge), var(--glass-highlight), 0 0 0 2px rgb(var(--ink) / 0.35), var(--glass-shadow);
 }
 .folder-icon {
   width: 48px;
@@ -128,7 +128,7 @@
   transition: box-shadow 0.3s ease;
 }
 .search-field.is-focused {
-  box-shadow: var(--glass-edge), var(--glass-highlight), 0 0 0 2px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 181, 71, 0.12);
+  box-shadow: var(--glass-edge), var(--glass-highlight), 0 0 0 2px rgb(var(--ink) / 0.5), 0 0 40px rgba(255, 181, 71, 0.12);
 }
 .search-field input {
   flex: 1;
@@ -206,7 +206,7 @@
 }
 .set-tab.is-selected {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(var(--ink) / 0.08);
   box-shadow: var(--glass-edge);
 }
 .set-tab.is-selected svg {
@@ -248,11 +248,11 @@
   transition: background 0.22s ease, color 0.22s ease, transform 0.3s ease;
 }
 .set-row + .set-row {
-  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: 0 -1px 0 rgb(var(--ink) / 0.05);
 }
 .set-row.is-focused {
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  background: rgb(var(--ink) / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.14);
 }
 .set-text {
   flex: 1;
@@ -291,7 +291,7 @@
   border-radius: 14px;
   border: 0;
   background: rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.1);
   font-size: 14px;
   letter-spacing: 0.1em;
   user-select: text;
@@ -309,7 +309,7 @@
   height: 31px;
   flex: none;
   border-radius: 19px;
-  background: rgba(255, 255, 255, 0.16);
+  background: rgb(var(--ink) / 0.16);
   transition: background 0.3s ease;
 }
 .switch span {
@@ -352,7 +352,7 @@
   transition: box-shadow 0.35s ease;
 }
 .about.is-focused {
-  box-shadow: var(--glass-edge), var(--glass-highlight), 0 0 0 2px rgba(255, 255, 255, 0.3), 0 0 60px rgba(255, 170, 70, 0.12);
+  box-shadow: var(--glass-edge), var(--glass-highlight), 0 0 0 2px rgb(var(--ink) / 0.3), 0 0 60px rgba(255, 170, 70, 0.12);
 }
 .about-mark {
   flex: none;
@@ -428,7 +428,7 @@
 .files-search.is-focused {
   width: 320px;
   color: var(--text);
-  box-shadow: var(--glass-edge), 0 0 0 2px rgba(255, 255, 255, 0.4);
+  box-shadow: var(--glass-edge), 0 0 0 2px rgb(var(--ink) / 0.4);
 }
 .files-search input {
   flex: 1;
@@ -478,7 +478,7 @@
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 34px 26px;
 }
-.files-grid.posters {
+.files-grid.is-posters {
   grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
 }
 .files-rows {
@@ -519,11 +519,11 @@
   transition: background 0.2s ease, box-shadow 0.25s ease, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .frow:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgb(var(--ink) / 0.04);
 }
 .frow.is-focused {
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: var(--glass-edge), var(--glass-highlight), 0 0 0 2px rgba(255, 255, 255, 0.28);
+  background: rgb(var(--ink) / 0.1);
+  box-shadow: var(--glass-edge), var(--glass-highlight), 0 0 0 2px rgb(var(--ink) / 0.28);
   transform: scale(1.008);
 }
 .frow.is-selected {
@@ -556,7 +556,7 @@
   bottom: 6px;
   height: 3px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgb(var(--ink) / 0.25);
   overflow: hidden;
 }
 .frow-progress span {
@@ -660,7 +660,7 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 0 2px rgb(var(--ink) / 0.5);
   background: rgba(0, 0, 0, 0.3);
   color: #1a1004;
 }
@@ -685,8 +685,8 @@
   padding: 14px;
   font-size: 14px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.1), transparent 70%);
+  color: rgb(var(--ink) / 0.85);
+  background: linear-gradient(160deg, rgb(var(--ink) / 0.1), transparent 70%);
 }
 .ftile {
   cursor: pointer;
@@ -705,7 +705,7 @@
   aspect-ratio: 2 / 3;
 }
 .ftile.is-focused .ftile-frame {
-  box-shadow: var(--lift), 0 0 0 1px rgba(255, 255, 255, 0.16);
+  box-shadow: var(--lift), 0 0 0 1px rgb(var(--ink) / 0.16);
 }
 .ftile.is-selected .ftile-frame {
   box-shadow: 0 0 0 3px var(--amber), var(--rest);
@@ -759,11 +759,11 @@
   font: inherit;
   font-size: 16px;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(var(--ink) / 0.08);
   box-shadow: var(--glass-edge);
 }
 .stream-input:focus {
-  box-shadow: var(--glass-edge), 0 0 0 2px rgba(255, 255, 255, 0.4);
+  box-shadow: var(--glass-edge), 0 0 0 2px rgb(var(--ink) / 0.4);
 }
 .stream-hint {
   margin-top: 12px;
@@ -785,8 +785,8 @@
   font-weight: 650;
   letter-spacing: 0.03em;
   color: var(--text-3);
-  background: rgba(255, 255, 255, 0.07);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  background: rgb(var(--ink) / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.08);
 }
 .set-row.is-focused .set-note {
   color: var(--text-2);
@@ -842,7 +842,7 @@
 .slider-rail {
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgb(var(--ink) / 0.14);
 }
 .slider-fill {
   background: linear-gradient(90deg, var(--amber-deep), var(--amber));
@@ -855,7 +855,7 @@
   height: 14px;
   margin: -7px 0 0 -1px;
   border-radius: 1px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgb(var(--ink) / 0.3);
 }
 .slider-knob {
   position: absolute;
@@ -901,8 +901,8 @@
   transition: background 0.22s ease;
 }
 .eq-band.is-focused {
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  background: rgb(var(--ink) / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.14);
 }
 .eq-db,
 .eq-hz {
@@ -932,7 +932,7 @@
 .eq-rail {
   top: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgb(var(--ink) / 0.12);
 }
 .eq-track::after {
   content: '';
@@ -941,7 +941,7 @@
   right: 4px;
   top: 50%;
   height: 1px;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgb(var(--ink) / 0.25);
 }
 .eq-fill {
   background: linear-gradient(0deg, var(--amber-deep), var(--amber));
@@ -1003,8 +1003,8 @@ kbd {
   font-size: 12.5px;
   font-weight: 650;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  background: rgb(var(--ink) / 0.08);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgb(var(--ink) / 0.12);
 }
 .set-panel.about {
   display: flex;

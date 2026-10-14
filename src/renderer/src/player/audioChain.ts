@@ -11,7 +11,7 @@ export function needsChain(s: Settings): boolean {
 type SinkContext = AudioContext & { setSinkId?: (id: string) => Promise<void> }
 
 /**
- * VLC-style audio processing for one <video>: delay → 10-band EQ → normaliser → boost → output.
+ * Audio processing for one <video>: delay → 10-band EQ → normaliser → boost → output.
  * A media element can only be wired into WebAudio once, so the graph lives as long as the element.
  */
 export class AudioChain {

@@ -4,7 +4,7 @@ import type { LibraryFolder } from '@shared/types'
 import { EQ_BANDS, EQ_PRESETS, type Settings } from '@shared/settings'
 import { Screen } from '../components/Screen'
 import { Lantern, Wordmark } from '../components/Lantern'
-import { Action, Choice, KeyField, Panel, Picker, Section, Slider, Toggle, settingsPage } from '../components/SettingControls'
+import { Action, Choice, Panel, Picker, Section, Slider, Toggle, settingsPage } from '../components/SettingControls'
 import { FocusContext, setFocus, useFocus } from '../focus/focus'
 import { useSettings } from '../state/settings'
 import { api } from '../lib/api'
@@ -280,7 +280,7 @@ function Equalizer({ s, update }: PaneProps) {
   const presets = [...Object.keys(EQ_PRESETS), ...(s.eqPreset === 'Custom' ? ['Custom'] : [])].map((p) => ({ id: p, label: p }))
   return (
     <Section title="Equalizer" footer="Up and down move a band, Enter resets it to 0 dB.">
-      <Toggle label="Equalizer" hint="Ten bands, shaped like VLC's." note="Local files" value={s.eqEnabled} onChange={(v) => update({ eqEnabled: v })} />
+      <Toggle label="Equalizer" hint="Ten bands from deep bass to air." note="Local files" value={s.eqEnabled} onChange={(v) => update({ eqEnabled: v })} />
       <Picker
         label="Preset"
         value={s.eqPreset}
@@ -483,6 +483,17 @@ function InterfacePane({ s, set }: PaneProps) {
   return (
     <>
       <Section title="Look and Feel">
+        <Choice
+          label="Theme"
+          hint="Default glows with the colours of what you're browsing. Films always play on black."
+          value={s.theme}
+          onChange={set('theme')}
+          options={[
+            { id: 'default', label: 'Default' },
+            { id: 'dark', label: 'Dark' },
+            { id: 'light', label: 'Light' }
+          ]}
+        />
         <Toggle label="Hero Previews" hint="Let the Home carousel play a muted clip after a few idle seconds." value={s.heroPreviews} onChange={set('heroPreviews')} />
         <Toggle label="Show Clock" hint="In the sidebar." value={s.showClock} onChange={set('showClock')} />
         <Toggle label="Reduce Motion" hint="Swaps lifts, springs and zooms for gentle fades. Follows your system setting too." value={s.reduceMotion} onChange={set('reduceMotion')} />
@@ -528,10 +539,9 @@ function LibraryPane({ s, set }: PaneProps) {
         <Action label="Add Folder…" hint="Films, shows or a whole drive." onPress={add} />
       </Section>
       <Section title="Metadata">
-        <KeyField label="TMDB API Key" hint="Posters, backdrops, title logos, cast and episodes." value={s.tmdbKey} onChange={set('tmdbKey')} link="https://www.themoviedb.org/settings/api" />
-        <KeyField label="OMDb API Key" hint="IMDb, Rotten Tomatoes and Metacritic scores." value={s.omdbKey} onChange={set('omdbKey')} link="https://www.omdbapi.com/apikey.aspx" />
         <Picker
           label="Metadata Language"
+          hint="Titles, overviews and artwork are fetched in this language when available."
           value={s.metadataLanguage}
           onChange={set('metadataLanguage')}
           options={[
@@ -566,14 +576,14 @@ function AboutPane() {
         </div>
         <div className="about-body">
           <Wordmark />
-          <div className="about-version">Version 0.1.0 · Electron {window.lantern?.versions.electron ?? 'preview'}</div>
+          <div className="about-version">Version 0.1.0</div>
           <p className="about-story">
             The magic lantern was the first projector: a light, a painted glass slide, and a dark room turned into a story. Magic Lanterns does the same
             to a folder of files. Every film in your library becomes a lit glass slide waiting to be projected.
           </p>
           <div className="about-credits">
-            Metadata and artwork from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB. Ratings via OMDb. Playback powered
-            by FFmpeg (GPL).
+            {/* Attribution required by the metadata provider's terms and the decoder's licence. */}
+            This product uses the TMDB API but is not endorsed or certified by TMDB. Includes FFmpeg, licensed under the GPL.
           </div>
           <div className="about-sign">Made by Pushkar</div>
         </div>
@@ -587,7 +597,7 @@ function TabButton({ tab, selected, onSelect }: { tab: (typeof TABS)[number]; se
   const Icon = tab.icon
   const { ref, focused, pointer } = useFocus<HTMLButtonElement>({
     focusKey: `SET-TAB-${tab.id}`,
-    onFocus: () => onSelect(tab.id), // tvOS: focusing a tab shows it
+    onFocus: () => onSelect(tab.id), // focusing a tab shows it
     onEnterPress: () => setFocus('SET-PANE')
   })
   return (

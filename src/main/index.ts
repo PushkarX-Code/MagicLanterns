@@ -134,7 +134,7 @@ ipcMain.handle('dialog:open-files', async (e) => {
   return r.filePaths.map((path) => ({ path, url: `ml-file://local/${encodeURIComponent(path)}`, size: statSync(path).size }))
 })
 
-// VLC-style snapshot, saved to Pictures\Magic Lanterns. The renderer sends the full-resolution frame
+// Snapshot, saved to Pictures\Magic Lanterns. The renderer sends the full-resolution frame
 // when it can read the pixels; otherwise (protected streams) we capture the video area of the window.
 ipcMain.handle('player:snapshot', async (e, frame: { bytes?: Uint8Array; rect?: Electron.Rectangle }, format: 'png' | 'jpg', name: string) => {
   const image = frame.bytes ? null : await e.sender.capturePage(frame.rect)
