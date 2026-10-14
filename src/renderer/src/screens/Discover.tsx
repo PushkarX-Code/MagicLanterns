@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, Clapperboard, Star } from 'lucide-react'
 import type { DiscoverDetails, DiscoverList, TrendingTitle } from '@shared/types'
 import { BlurImage } from '../components/BlurImage'
+import { backdropSize } from '../lib/img'
 import { GlassIconButton, PillButton } from '../components/Buttons'
 import { OpenOutIcon } from '../components/Icons'
 import { Row, scrollPageTo } from '../components/Row'
@@ -55,7 +56,7 @@ export function DiscoverScreen({ title: t, list, entryKey }: { title: TrendingTi
   return (
     <Screen id={`discover-${entryKey}`} className="detail" ref={page} initialFocus={`DISC-WATCH-${entryKey}`} onScroll={(e) => setScrolled(e.currentTarget.scrollTop)}>
       <div className="detail-backdrop" style={{ transform: `scale(${1 + fold * 0.04})` }}>
-        <BlurImage path={t.backdrop} size="w1280" tiny="w300" color="#1c1c20" />
+        <BlurImage path={t.backdrop} size={backdropSize()} tiny="w300" color="#1c1c20" />
         <div className="detail-scrim" />
         <div className="detail-fold-dim" style={{ opacity: fold * 0.85 }} />
       </div>
