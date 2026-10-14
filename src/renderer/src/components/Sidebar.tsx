@@ -24,7 +24,7 @@ function Item({ id, label, icon: Icon, selected, disabled, onSelect }: { id: Sec
       {...pointer}
     >
       <span className="sb-icon">
-        <Icon size={24} strokeWidth={selected ? 1.9 : 1.55} />
+        <Icon size={18} strokeWidth={selected ? 2.1 : 1.8} />
       </span>
       <span className="sb-label">{label}</span>
     </button>
@@ -76,21 +76,27 @@ export function Sidebar({ hidden }: { hidden: boolean }) {
     <FocusContext.Provider value={focusKey}>
       <div ref={ref} className={`sidebar-wrap ${open ? 'is-open' : ''}`}>
         <div className="sidebar-dim" />
-        <nav ref={panel} className="sidebar glass" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+        <nav ref={panel} className="sidebar" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+          {/* Closed, the sidebar is just its icons over the picture; the frosted panel only forms when it opens. */}
+          <div className="sb-panel" />
           <div className="sb-brand">
             <div className="sb-mark">
-              <Lantern size={30} />
+              <Lantern size={26} />
             </div>
             <div className="sb-who">
               <div className="sb-name">Magic Lanterns</div>
             </div>
           </div>
           <div className="sb-items">
-            {ITEMS.map((it) => (
+            <div className="sb-section">Library</div>
+            {ITEMS.filter((it) => it.id !== 'settings').map((it) => (
               <Item key={it.id} {...it} selected={section === it.id} disabled={hidden} onSelect={select} />
             ))}
           </div>
           <div className="sb-items sb-bottom">
+            {ITEMS.filter((it) => it.id === 'settings').map((it) => (
+              <Item key={it.id} {...it} selected={section === it.id} disabled={hidden} onSelect={select} />
+            ))}
             <Item id="about" label="More Info" icon={Info} selected={section === 'about'} disabled={hidden} onSelect={select} />
           </div>
         </nav>
