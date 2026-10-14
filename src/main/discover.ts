@@ -75,6 +75,15 @@ async function rawList(list: DiscoverList): Promise<(RawTitle & { media_type: 'm
       .sort((a, b) => b.popularity - a.popularity)
       .slice(0, 10)
   }
+  if (list === 'series' || list === 'anime') {
+    // Must-watch: the best-rated series with enough votes to trust. Anime is Japanese animation; series excludes animation.
+    const q =
+      list === 'anime'
+        ? '/discover/tv?with_genres=16&with_original_language=ja&sort_by=vote_average.desc&vote_count.gte=800&language=en-US'
+        : '/discover/tv?without_genres=16,10764,10767&sort_by=vote_average.desc&vote_count.gte=3000&language=en-US'
+    const { results } = await tmdb<{ results: RawTitle[] }>(q)
+    return results.slice(0, 10).map((r) => ({ ...r, media_type: 'tv' as const }))
+  }
   // Greatest of all time: the highest-rated films with a large number of votes.
   const { results } = await tmdb<{ results: RawTitle[] }>('/discover/movie?sort_by=vote_average.desc&vote_count.gte=12000&language=en-US')
   return results.slice(0, 10).map((r) => ({ ...r, media_type: 'movie' as const }))
