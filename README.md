@@ -66,7 +66,7 @@ Every screenshot is the running app. Artwork and details are real film data; the
 - **More** sorts by date added, name, size, length or last played, flips the order, selects several files at once (star, mark watched or unwatched, remove), and filters to starred or unwatched.
 
 **Player**
-- Resume (ask, always or never), repeat (off, one, all), autoplay next episode, speed from 0.25× to 4×.
+- Always resumes where you left off, repeat (off, one, all), autoplay next episode, speed from 0.25× to 4×.
 - Fit, fill or stretch, forced aspect ratios, brightness, contrast, saturation and hue.
 - 10-band equalizer with presets, volume boost to 200%, normalize, audio delay, stereo downmix and output device. These apply to files on your drives.
 - Snapshots at full resolution (Shift+S), saved to `Pictures\Magic Lanterns`.

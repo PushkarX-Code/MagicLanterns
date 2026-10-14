@@ -24,8 +24,9 @@ import { PipIcon } from '../components/Icons'
 import { api } from '../lib/api'
 import { timecode } from '../lib/format'
 import { BlurImage } from '../components/BlurImage'
+import { backdropSize } from '../lib/img'
 import { Popover, type PopoverOption } from '../components/Popover'
-import { FocusContext, ScreenActive, pauseFocus, resumeFocus, setFocus, useFocus } from '../focus/focus'
+import { FocusContext, ScreenActive, pauseFocus, resumeFocus, useFocus } from '../focus/focus'
 import { useNav } from '../state/nav'
 import { useSettings } from '../state/settings'
 import { gsap, d, EASE } from '../design/motion'
@@ -187,7 +188,6 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const [subtitle, setSubtitle] = useState<number | null>(null)
   const [visible, setVisible] = useState(true)
   const [menu, setMenu] = useState<Menu>(null)
-  const [resumePrompt, setResumePrompt] = useState(false)
   const [scrub, setScrub] = useState<{ x: number; t: number; dragging: boolean } | null>(null)
   const [hud, setHud] = useState<string | null>(null)
   const [cuePreview, setCuePreview] = useState(false)
@@ -228,8 +228,6 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
         const first = candidates.current.shift() ?? null
         setUrl(first)
         if (!first) setFailed(true)
-        const resumable = !fresh && s.resumeFraction > 0.01 && s.resumeFraction < 0.95
-        setResumePrompt(resumable && (useSettings.getState().settings?.resumeMode ?? 'ask') === 'ask')
         const lang = useSettings.getState().settings?.audioLanguage
         const tracks = s.file?.audio ?? []
         const preferred = lang && lang !== 'orig' ? tracks.findIndex((a) => a.language === lang) : -1
@@ -247,9 +245,9 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     return () => resumeFocus()
   }, [])
   useEffect(() => {
-    if (menu || resumePrompt) resumeFocus()
+    if (menu) resumeFocus()
     else pauseFocus()
-  }, [menu, resumePrompt])
+  }, [menu])
 
   useEffect(() => window.lantern?.onFullscreen(setFullscreen), [])
 
@@ -344,11 +342,11 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   // ---------- Transport ----------
   const toggle = useCallback(() => {
     const v = video.current
-    if (!v || resumePrompt) return
+    if (!v) return
     if (v.paused) v.play().catch(() => undefined)
     else v.pause()
     poke()
-  }, [poke, resumePrompt])
+  }, [poke])
 
   const seekTo = useCallback(
     (t: number) => {
@@ -546,10 +544,6 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     const onKey = (e: KeyboardEvent): void => {
       if (menu) return // the open popover handles keys
       const v = video.current
-      if (resumePrompt) {
-        if (e.key === 'Escape') exit()
-        return
-      }
       let handled = true
       switch (e.key) {
         case ' ':
@@ -644,12 +638,10 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     setDuration(Number.isFinite(v.duration) ? v.duration : Infinity)
     setReady(true)
     v.playbackRate = speed
-    if (!resumePrompt) {
-      // "Always resume" picks up silently; "Never" (and fresh plays) start from the top.
-      const f = src.resumeFraction
-      if (!fresh && cfg.resumeMode === 'always' && f > 0.01 && f < 0.95 && Number.isFinite(v.duration)) v.currentTime = f * v.duration
-      v.play().catch(() => undefined)
-    }
+    // Always pick up where you left off; scrub back to the start if you want it. Fresh plays (next episode) start at 0.
+    const f = src.resumeFraction
+    if (!fresh && f > 0.01 && f < 0.95 && Number.isFinite(v.duration)) v.currentTime = f * v.duration
+    v.play().catch(() => undefined)
     poke()
   }
 
@@ -659,15 +651,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     else setFailed(true)
   }
 
-  const resume = (fromStart: boolean): void => {
-    const v = video.current
-    setResumePrompt(false)
-    if (!v || !src) return
-    v.currentTime = fromStart ? 0 : src.resumeFraction * (v.duration || 0)
-    v.playbackRate = speed
-    v.play().catch(() => undefined)
-    poke()
-  }
+
 
   // Drop any local video file onto the player to preview with real media.
   const onDrop = (e: React.DragEvent): void => {
@@ -834,7 +818,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
           onClick={(e) => e.target === e.currentTarget && toggle()}
           onDoubleClick={(e) => cfg.doubleClickFullscreen && e.target === e.currentTarget && toggleFullscreen()}
           onWheel={(e) => {
-            if (menu || resumePrompt || cfg.wheelAction === 'off') return
+            if (menu || cfg.wheelAction === 'off') return
             if ((e.target as HTMLElement).closest('.popover')) return
             // Trackpads send many tiny deltas; act once per wheel notch.
             wheel.current += e.deltaY
@@ -851,7 +835,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
           {/* Poster frame while the stream spins up: never a black void. */}
           {!ready && (
             <div className="pl-loading">
-              <BlurImage path={src?.backdrop ?? null} size="w1280" tiny="w300" color={src?.color ?? '#1c1c20'} />
+              <BlurImage path={src?.backdrop ?? null} size={backdropSize()} tiny="w300" color={src?.color ?? '#1c1c20'} />
               <div className="pl-loading-scrim" />
               {!failed && <div className="pl-spinner" />}
               {failed && (
@@ -922,17 +906,19 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                 <button className="pl-close glass" onClick={exit} aria-label="Close">
                   <X size={22} strokeWidth={1.8} />
                 </button>
-                <button className="pl-close glass" onClick={toggleFullscreen} aria-label={fullscreen ? 'Exit Full Screen' : 'Full Screen'}>
-                  {fullscreen ? <Minimize size={20} strokeWidth={1.8} /> : <Maximize size={20} strokeWidth={1.8} />}
-                </button>
-                <button className="pl-close glass" onClick={togglePip} aria-label="Picture in Picture">
-                  <PipIcon size={20} strokeWidth={1.8} />
-                </button>
-                <div className="popover-anchor">
-                  <button className={`pl-close glass ${menu === 'share' ? 'is-active' : ''}`} onClick={() => setMenu(menu === 'share' ? null : 'share')} aria-label="Share">
-                    <Share size={19} strokeWidth={1.8} />
+                <div className="pl-tools glass">
+                  <button className="pl-btn" onClick={toggleFullscreen} aria-label={fullscreen ? 'Exit Full Screen' : 'Full Screen'}>
+                    {fullscreen ? <Minimize size={21} strokeWidth={1.7} /> : <Maximize size={21} strokeWidth={1.7} />}
                   </button>
-                  {menu === 'share' && <Popover title="Share" align="left" options={menuOptions()} onClose={() => setMenu(null)} />}
+                  <button className="pl-btn" onClick={togglePip} aria-label="Picture in Picture">
+                    <PipIcon size={21} strokeWidth={1.7} />
+                  </button>
+                  <div className="popover-anchor">
+                    <button className={`pl-btn ${menu === 'share' ? 'is-active' : ''}`} onClick={() => setMenu(menu === 'share' ? null : 'share')} aria-label="Share">
+                      <Share size={20} strokeWidth={1.7} />
+                    </button>
+                    {menu === 'share' && <Popover title="Share" align="left" options={menuOptions()} onClose={() => setMenu(null)} />}
+                  </div>
                 </div>
               </div>
               <div className="pl-volume glass" onClick={(e) => e.stopPropagation()}>
@@ -1036,7 +1022,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
             </div>
           </div>
 
-          {inIntro && !resumePrompt && intro && (
+          {inIntro && intro && (
             <FocusPill focusKey="SKIP-INTRO" className="pl-skip glass-strong" onPress={() => seekTo(intro.end)}>
               <SkipForward size={16} strokeWidth={1.8} /> Skip Intro
             </FocusPill>
@@ -1087,44 +1073,8 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
             </div>
           )}
 
-          {resumePrompt && src && (
-            <ResumePrompt
-              title={src.title}
-              subtitle={src.subtitle}
-              at={timecode(src.resumeFraction * (duration || 0))}
-              ready={ready}
-              onResume={() => resume(false)}
-              onRestart={() => resume(true)}
-            />
-          )}
         </div>
       </FocusContext.Provider>
     </ScreenActive.Provider>
-  )
-}
-
-function ResumePrompt({ title, subtitle, at, ready, onResume, onRestart }: { title: string; subtitle: string; at: string; ready: boolean; onResume: () => void; onRestart: () => void }) {
-  const { ref: panel, focusKey } = useFocus<HTMLDivElement>({ focusKey: 'RESUME', isFocusBoundary: true, trackChildren: true })
-  useEffect(() => {
-    if (panel.current) gsap.fromTo(panel.current, { opacity: 0, scale: 0.96, y: 10 }, { opacity: 1, scale: 1, y: 0, duration: d(0.5), ease: EASE.settle })
-    requestAnimationFrame(() => setFocus('RESUME-YES'))
-  }, [])
-  return (
-    <FocusContext.Provider value={focusKey}>
-      <div className="modal-scrim">
-        <div ref={panel} className="resume glass-strong">
-          <div className="resume-kicker">{subtitle}</div>
-          <div className="resume-title">{title}</div>
-          <div className="resume-actions">
-            <FocusPill focusKey="RESUME-YES" className="pill pill-solid" onPress={onResume}>
-              <Play size={18} fill="currentColor" strokeWidth={0} /> {ready ? `Resume from ${at}` : 'Resume'}
-            </FocusPill>
-            <FocusPill focusKey="RESUME-NO" className="pill pill-glass" onPress={onRestart}>
-              <RotateCcw size={18} strokeWidth={1.8} /> Start from Beginning
-            </FocusPill>
-          </div>
-        </div>
-      </div>
-    </FocusContext.Provider>
   )
 }

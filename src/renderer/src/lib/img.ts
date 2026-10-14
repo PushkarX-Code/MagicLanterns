@@ -9,7 +9,8 @@ export function img(path: string | null | undefined, size: ImgSize): string | nu
 }
 
 /** Full-bleed backdrops: TMDB originals only when the screen can actually show the extra pixels. */
-export const backdropSize = (): ImgSize => (window.innerWidth * (window.devicePixelRatio || 1) > 1920 ? 'original' : 'w1280')
+/** Banners are always the full-resolution original; the blur-up placeholder covers the load. */
+export const backdropSize = (): ImgSize => 'original'
 
 /** URLs that have fully decoded once. Cards that remount skip the fade so revisits are instant. */
 const loaded = new Set<string>()

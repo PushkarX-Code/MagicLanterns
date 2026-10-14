@@ -65,17 +65,6 @@ function PlaybackPane({ s, set }: PaneProps) {
   return (
     <>
       <Section title="Starting a Film">
-        <Choice
-          label="Resume Playback"
-          hint="What happens when you open something you've started."
-          value={s.resumeMode}
-          onChange={set('resumeMode')}
-          options={[
-            { id: 'ask', label: 'Ask' },
-            { id: 'always', label: 'Always' },
-            { id: 'never', label: 'Never' }
-          ]}
-        />
         <Picker label="Default Speed" value={s.defaultSpeed} options={SPEEDS} onChange={set('defaultSpeed')} />
         <Toggle label="Start in Full Screen" value={s.startFullscreen} onChange={set('startFullscreen')} />
       </Section>
