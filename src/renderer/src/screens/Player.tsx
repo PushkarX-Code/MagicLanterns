@@ -906,17 +906,19 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                 <button className="pl-close glass" onClick={exit} aria-label="Close">
                   <X size={22} strokeWidth={1.8} />
                 </button>
-                <button className="pl-close glass" onClick={toggleFullscreen} aria-label={fullscreen ? 'Exit Full Screen' : 'Full Screen'}>
-                  {fullscreen ? <Minimize size={20} strokeWidth={1.8} /> : <Maximize size={20} strokeWidth={1.8} />}
-                </button>
-                <button className="pl-close glass" onClick={togglePip} aria-label="Picture in Picture">
-                  <PipIcon size={20} strokeWidth={1.8} />
-                </button>
-                <div className="popover-anchor">
-                  <button className={`pl-close glass ${menu === 'share' ? 'is-active' : ''}`} onClick={() => setMenu(menu === 'share' ? null : 'share')} aria-label="Share">
-                    <Share size={19} strokeWidth={1.8} />
+                <div className="pl-tools glass">
+                  <button className="pl-btn" onClick={toggleFullscreen} aria-label={fullscreen ? 'Exit Full Screen' : 'Full Screen'}>
+                    {fullscreen ? <Minimize size={21} strokeWidth={1.7} /> : <Maximize size={21} strokeWidth={1.7} />}
                   </button>
-                  {menu === 'share' && <Popover title="Share" align="left" options={menuOptions()} onClose={() => setMenu(null)} />}
+                  <button className="pl-btn" onClick={togglePip} aria-label="Picture in Picture">
+                    <PipIcon size={21} strokeWidth={1.7} />
+                  </button>
+                  <div className="popover-anchor">
+                    <button className={`pl-btn ${menu === 'share' ? 'is-active' : ''}`} onClick={() => setMenu(menu === 'share' ? null : 'share')} aria-label="Share">
+                      <Share size={20} strokeWidth={1.7} />
+                    </button>
+                    {menu === 'share' && <Popover title="Share" align="left" options={menuOptions()} onClose={() => setMenu(null)} />}
+                  </div>
                 </div>
               </div>
               <div className="pl-volume glass" onClick={(e) => e.stopPropagation()}>
