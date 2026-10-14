@@ -173,7 +173,7 @@ export function SettingsScreen() {
       </header>
 
       <Section title="Library">
-        <Action label="Library Folders" hint="Where Magic Lanterns looks for films and shows." value="2 folders" onPress={() => go('folders')} />
+        <Action label="Library Folders" hint="Where Magic Lanterns looks for films and shows." value="Manage in Files" onPress={() => go('files')} />
         <Action label="Rescan Library" hint="Look for new, moved and removed files now." onPress={() => undefined} />
         <Action label="Refresh All Metadata" hint="Fetch artwork, ratings and episode data again." onPress={() => undefined} />
       </Section>

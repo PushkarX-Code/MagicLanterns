@@ -211,7 +211,7 @@ function FileItem({ f, first, view, selecting, selected, onActivate, onStar, onF
 function StreamModal({ onClose, onPlay }: { onClose: () => void; onPlay: (url: string) => void }) {
   const [url, setUrl] = useState('')
   const input = useRef<HTMLInputElement>(null)
-  const panel = useRef<HTMLDivElement>(null)
+  const panel = useRef<HTMLDivElement | null>(null)
   const { ref, focusKey } = useFocus<HTMLDivElement>({ focusKey: 'STREAM', isFocusBoundary: true, trackChildren: true })
   const valid = /^(https?|rtsp|rtmp):\/\/\S+/i.test(url.trim())
   useEffect(() => {
@@ -556,7 +556,7 @@ export function FilesScreen() {
           onClose={() => setStream(false)}
           onPlay={(url) => {
             setStream(false)
-            push({ name: 'player', url, title: decodeURIComponent(url.split('/').pop()?.split('?')[0] || url) })
+            push({ name: 'player', url })
           }}
         />
       )}

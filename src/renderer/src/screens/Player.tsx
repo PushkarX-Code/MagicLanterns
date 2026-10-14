@@ -59,7 +59,47 @@ function FocusPill({ children, onPress, focusKey, className = '' }: { children: 
   )
 }
 
-export function Player({ itemId, episodeId, fresh }: { itemId: string; episodeId?: string; fresh?: boolean }) {
+/** A pasted stream link has no library entry; describe it from the URL alone. */
+function streamSource(url: string, title?: string): PlaybackSource {
+  let host = url
+  let name = ''
+  try {
+    const u = new URL(url)
+    host = u.host
+    // "Some.Film_2024.m3u8" → "Some Film 2024"
+    name = decodeURIComponent(u.pathname.split('/').pop() ?? '')
+      .replace(/\.[a-z0-9]{2,5}$/i, '')
+      .replace(/[._]+/g, ' ')
+      .trim()
+  } catch {
+    /* keep the raw text */
+  }
+  return {
+    url,
+    itemId: null,
+    title: title || name || host,
+    logo: null,
+    subtitle: `Network Stream · ${host}`,
+    overview: url,
+    backdrop: null,
+    color: '#1c1c20',
+    resumeFraction: 0,
+    file: null
+  }
+}
+
+interface PlayerProps {
+  itemId?: string
+  episodeId?: string
+  /** A file from the Files screen (library match or a loose file). */
+  fileId?: string
+  /** A network stream URL. */
+  url?: string
+  title?: string
+  fresh?: boolean
+}
+
+export function Player({ itemId, episodeId, fileId, url: streamUrl, title: streamTitle, fresh }: PlayerProps) {
   const back = useNav((s) => s.back)
   const replace = useNav((s) => s.replace)
   const settings = useSettings((s) => s.settings)
@@ -104,19 +144,30 @@ export function Player({ itemId, episodeId, fresh }: { itemId: string; episodeId
   // Load the playback plan.
   useEffect(() => {
     let alive = true
-    api.getPlayback(itemId, episodeId).then((s) => {
-      if (!alive) return
-      setSrc(s)
-      candidates.current = [s.url, ...(s.alternates ?? [])]
-      setUrl(candidates.current.shift() ?? null)
-      setResumePrompt(!fresh && s.resumeFraction > 0.01 && s.resumeFraction < 0.95)
-      const def = s.file.audio.findIndex((a) => a.default)
-      setAudio(Math.max(0, def))
-    })
+    const load: Promise<PlaybackSource> = fileId
+      ? api.getFilePlayback(fileId)
+      : streamUrl
+        ? Promise.resolve(streamSource(streamUrl, streamTitle))
+        : itemId
+          ? api.getPlayback(itemId, episodeId)
+          : Promise.reject(new Error('Nothing to play'))
+    load
+      .then((s) => {
+        if (!alive) return
+        setSrc(s)
+        candidates.current = [s.url, ...(s.alternates ?? [])].filter(Boolean)
+        const first = candidates.current.shift() ?? null
+        setUrl(first)
+        if (!first) setFailed(true)
+        setResumePrompt(!fresh && s.resumeFraction > 0.01 && s.resumeFraction < 0.95)
+        const def = s.file?.audio.findIndex((a) => a.default) ?? -1
+        setAudio(Math.max(0, def))
+      })
+      .catch(() => alive && setFailed(true))
     return () => {
       alive = false
     }
-  }, [itemId, episodeId, fresh])
+  }, [itemId, episodeId, fileId, streamUrl, streamTitle, fresh])
 
   // The player owns the keyboard; the focus engine only drives open menus.
   useEffect(() => {
@@ -132,7 +183,8 @@ export function Player({ itemId, episodeId, fresh }: { itemId: string; episodeId
 
   const save = useCallback(() => {
     const v = video.current
-    if (!v || !src || !v.duration) return
+    // Loose files and streams have no library entry to remember progress on.
+    if (!v || !src?.itemId || !v.duration || !Number.isFinite(v.duration)) return
     lastSaved.current = Date.now()
     api.saveProgress(src.itemId, src.episodeId, v.currentTime, v.duration)
   }, [src])
@@ -224,8 +276,11 @@ export function Player({ itemId, episodeId, fresh }: { itemId: string; episodeId
   }
 
   const cycleSubs = (): void => {
-    if (!src) return
-    const list = src.file.subtitles
+    const list = src?.file?.subtitles ?? []
+    if (!list.length) {
+      flash('No Subtitles')
+      return
+    }
     const i = subtitle === null ? 0 : list.findIndex((s) => s.index === subtitle) + 1
     const next = i < list.length ? list[i].index : null
     setSubtitle(next)
@@ -319,7 +374,7 @@ export function Player({ itemId, episodeId, fresh }: { itemId: string; episodeId
   const onLoaded = (): void => {
     const v = video.current
     if (!v || !src) return
-    setDuration(v.duration)
+    setDuration(Number.isFinite(v.duration) ? v.duration : Infinity)
     setReady(true)
     if (!resumePrompt) {
       if (fresh || src.resumeFraction <= 0.01) v.play().catch(() => undefined)
@@ -370,6 +425,7 @@ export function Player({ itemId, episodeId, fresh }: { itemId: string; episodeId
   }, [scrub])
 
   const onBarDown = (e: React.PointerEvent): void => {
+    if (!Number.isFinite(duration) || !duration) return // live streams can't be scrubbed
     ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
     setScrub({ ...posFromEvent(e.clientX), dragging: true })
   }
@@ -388,8 +444,11 @@ export function Player({ itemId, episodeId, fresh }: { itemId: string; episodeId
   const cycle = <T extends string>(list: T[], v: T): T => list[(list.indexOf(v) + 1) % list.length]
   const menuOptions = (): PopoverOption[] => {
     if (!src) return []
+    const tracks = src.file?.audio ?? []
     if (menu === 'audio')
-      return src.file.audio.map((a, i) => ({ label: a.title, checked: i === audio, onSelect: () => setAudio(i) }))
+      return tracks.length
+        ? tracks.map((a, i) => ({ label: a.title, checked: i === audio, onSelect: () => setAudio(i) }))
+        : [{ label: 'Default Track', checked: true, onSelect: () => undefined }]
     if (menu === 'speed')
       return SPEEDS.map((s) => ({
         label: s === 1 ? 'Normal' : `${s}×`,
@@ -405,7 +464,7 @@ export function Player({ itemId, episodeId, fresh }: { itemId: string; episodeId
     }
     return [
       { label: 'Off', checked: subtitle === null, onSelect: () => setSubtitle(null) },
-      ...src.file.subtitles.map((s) => ({
+      ...(src.file?.subtitles ?? []).map((s) => ({
         label: s.title,
         hint: s.external ? 'SRT' : undefined,
         checked: subtitle === s.index,
@@ -435,11 +494,13 @@ export function Player({ itemId, episodeId, fresh }: { itemId: string; episodeId
     ]
   }
 
-  const remaining = Math.max(0, duration - time)
-  const pct = duration ? (time / duration) * 100 : 0
-  const bufPct = duration ? (buffered / duration) * 100 : 0
+  const finite = Number.isFinite(duration) && duration > 0
+  const remaining = finite ? Math.max(0, duration - time) : 0
+  const pct = finite ? (time / duration) * 100 : 0
+  const bufPct = finite ? (buffered / duration) * 100 : 0
   const VolumeIcon = muted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2
-  const subTrack = src?.file.subtitles.find((s) => s.index === subtitle)
+  const subTrack = src?.file?.subtitles.find((s) => s.index === subtitle)
+  const live = !Number.isFinite(duration) // live HLS streams report an infinite duration
 
   return (
     <ScreenActive.Provider value={true}>
@@ -459,15 +520,21 @@ export function Player({ itemId, episodeId, fresh }: { itemId: string; episodeId
           onDrop={onDrop}
         >
           {/* Poster frame while the stream spins up: never a black void. */}
-          {src && !ready && (
+          {!ready && (
             <div className="pl-loading">
-              <BlurImage path={src.backdrop} size="w1280" tiny="w300" color={src.color} />
+              <BlurImage path={src?.backdrop ?? null} size="w1280" tiny="w300" color={src?.color ?? '#1c1c20'} />
               <div className="pl-loading-scrim" />
               {!failed && <div className="pl-spinner" />}
               {failed && (
                 <div className="pl-failed">
                   <div className="pl-failed-title">This one won't light up</div>
-                  <div className="pl-failed-line">The preview film couldn't be reached. Drop any video file here to play it.</div>
+                  <div className="pl-failed-line">
+                    {streamUrl
+                      ? "This stream couldn't be reached, or its format needs the FFmpeg engine. Check the link and try again."
+                      : fileId && !src?.itemId
+                        ? "This file couldn't be opened. It may have moved, or its format needs the FFmpeg engine."
+                        : "The preview film couldn't be reached. Drop any video file here to play it."}
+                  </div>
                 </div>
               )}
             </div>
@@ -619,7 +686,7 @@ export function Player({ itemId, episodeId, fresh }: { itemId: string; episodeId
                   />
                   <BarButton icon={fullscreen ? Minimize : Maximize} label={fullscreen ? 'Exit Full Screen' : 'Full Screen'} onPress={toggleFullscreen} />
                 </div>
-                <span className="pl-time right">-{timecode(remaining)}</span>
+                <span className="pl-time right">{live ? 'LIVE' : `-${timecode(remaining)}`}</span>
               </div>
             </div>
           </div>
