@@ -507,7 +507,7 @@ function LibraryPane({ s, set }: PaneProps) {
   }, [])
   const add = async (): Promise<void> => {
     const path = window.lantern ? await window.lantern.pickFolder() : window.prompt('Folder path')
-    if (path) setFolders(await api.addFolder(path))
+    if (path) setFolders(await api.addFolder(path).catch(() => folders))
   }
   return (
     <>
@@ -516,7 +516,7 @@ function LibraryPane({ s, set }: PaneProps) {
           <Action
             key={f.path}
             label={f.path}
-            hint={`${f.items} items · ${bytes(f.size)} · scanned ${timeAgo(f.lastScan)}`}
+            hint={f.lastScan ? `${f.items} items · ${bytes(f.size)} · scanned ${timeAgo(f.lastScan)}` : 'Not scanned yet'}
             value="Remove"
             danger
             onPress={async () => setFolders(await api.removeFolder(f.path))}

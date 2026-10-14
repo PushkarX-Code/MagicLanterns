@@ -1,0 +1,25 @@
+# Deploys the metadata proxy (worker/) that keeps the API keys on the server.
+# Needs repository secrets CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID and TMDB_API_KEY.
+# The OMDb key joins in Phase 3, when ratings lookups start.
+name: Metadata proxy
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['worker/**']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: worker
+          secrets: |
+            TMDB_API_KEY
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}

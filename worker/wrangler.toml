@@ -1,0 +1,5 @@
+# Deployed by .github/workflows/proxy.yml to the free Workers plan (100,000 requests a day).
+name = "magic-lanterns-meta"
+main = "index.js"
+compatibility_date = "2025-01-01"
+workers_dev = true

@@ -240,7 +240,7 @@
   padding: 6px var(--gutter) 80px var(--content-left);
 }
 .grid:has(.card) {
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(296px, 1fr));
 }
 .grid .card {
   width: auto !important;

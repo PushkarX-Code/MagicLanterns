@@ -74,6 +74,8 @@ export interface Episode {
 export interface Season {
   number: number
   name: string
+  /** The season's own cover art; falls back to the show poster. */
+  poster: string | null
   episodes: Episode[]
 }
 
@@ -91,6 +93,8 @@ export interface MediaItem {
   ratings: Ratings
   poster: string | null
   backdrop: string | null
+  /** Compact key art for cards (title included); falls back to the backdrop. */
+  thumb: string | null
   logo: string | null
   color: string // cached dominant backdrop color, drives the ambient layer
   trailerKey: string | null
