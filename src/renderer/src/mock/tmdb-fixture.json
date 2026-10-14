@@ -347,73 +347,6 @@
   "director": "Denis Villeneuve"
  },
  {
-  "tmdbId": 872585,
-  "kind": "movie",
-  "title": "Oppenheimer",
-  "year": 2023,
-  "certification": "R",
-  "genres": [
-   "Drama",
-   "History"
-  ],
-  "runtime": 181,
-  "tmdbScore": 8.0,
-  "tagline": "The world forever changes.",
-  "overview": "The story of J. Robert Oppenheimer's role in the development of the atomic bomb during World War II.",
-  "poster": "/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
-  "backdrop": "/neeNHeXjMF5fXoCJRsOmkNGC7q.jpg",
-  "logo": "/b07VisHvZb0WzUpA8VB77wfMXwg.png",
-  "trailerKey": "qiuSBWVdgLI",
-  "cast": [
-   {
-    "name": "Cillian Murphy",
-    "character": "J. Robert Oppenheimer",
-    "profile": "/2lKs67r7FI4bPu0AXxMUJZxmUXn.jpg"
-   },
-   {
-    "name": "Emily Blunt",
-    "character": "Kitty Oppenheimer",
-    "profile": "/5nCSG5TL1bP1geD8aaBfaLnLLCD.jpg"
-   },
-   {
-    "name": "Matt Damon",
-    "character": "Leslie Groves",
-    "profile": "/aCvBXTAR9B1qRjIRzMBYhhbm1fR.jpg"
-   },
-   {
-    "name": "Robert Downey Jr.",
-    "character": "Lewis Strauss",
-    "profile": "/5qHNjhtjMD4YWH3UP0rm4tKwxCL.jpg"
-   },
-   {
-    "name": "Florence Pugh",
-    "character": "Jean Tatlock",
-    "profile": "/2URrZb95t3kY6pLroKny3Enmabp.jpg"
-   },
-   {
-    "name": "Josh Hartnett",
-    "character": "Ernest Lawrence",
-    "profile": "/5eMo8D7h1XrSu6ZN4UXhPcS6YNG.jpg"
-   },
-   {
-    "name": "Casey Affleck",
-    "character": "Boris Pash",
-    "profile": "/304ilSygaCRWykoBWAL67TOw8g9.jpg"
-   },
-   {
-    "name": "Rami Malek",
-    "character": "David Hill",
-    "profile": "/drLMI978uj3Rpc1TcIJarKf3Jfi.jpg"
-   },
-   {
-    "name": "Kenneth Branagh",
-    "character": "Niels Bohr",
-    "profile": "/AbCqqFxNi5w3nDUFdQt0DGMFh5H.jpg"
-   }
-  ],
-  "director": "Christopher Nolan"
- },
- {
   "tmdbId": 126308,
   "kind": "show",
   "title": "Shōgun",
@@ -1543,5 +1476,405 @@
    }
   ],
   "director": "Colin Levy"
+ },
+ {
+  "tmdbId": 1429,
+  "kind": "show",
+  "title": "Attack on Titan",
+  "year": 2013,
+  "certification": "TV-MA",
+  "genres": [
+   "Anime",
+   "Animation",
+   "Action & Adventure",
+   "Sci-Fi & Fantasy"
+  ],
+  "runtime": null,
+  "tmdbScore": 8.7,
+  "tagline": "Home was a pen. Humanity, cattle.",
+  "overview": "100 years ago, the last remnants of humanity were forced to retreat behind the towering walls of a fortified city to escape the massive, man-eating Titans that roamed the land outside their fortress. Only the members of the Scouting Legion dared to stray beyond the safety of the walls – but even those brave warriors seldom returned alive. Those within the city clung to the illusion of a peaceful existence until the day that dream was shattered, and their slim chance at survival was reduced to one horrifying choice: kill – or be devoured!",
+  "poster": "/hTP1DtLGFamjfu8WqjnuQdP1n4i.jpg",
+  "backdrop": "/rqbCbjB19amtOtFQbb3K2lgm2zv.jpg",
+  "logo": "/eHMfVTIwen9anB4HuvQlFRGZFms.png",
+  "trailerKey": null,
+  "cast": [
+   {
+    "name": "Yuki Kaji",
+    "character": "Eren Yeager (voice)",
+    "profile": "/8wKdPV11IwowfwoqGqMMNt9hmp6.jpg"
+   },
+   {
+    "name": "Yui Ishikawa",
+    "character": "Mikasa Ackerman (voice)",
+    "profile": "/zptGIN1iklKJL1xrfHKOpxR2qJ9.jpg"
+   },
+   {
+    "name": "Marina Inoue",
+    "character": "Armin Arlert (voice)",
+    "profile": "/f7PuEx1h2g4FLgMzk9wCrWuS9Eu.jpg"
+   },
+   {
+    "name": "Hiro Shimono",
+    "character": "Connie Springer (voice)",
+    "profile": "/yrSDcgFefHtWkFmLnTrcw2t0MV.jpg"
+   },
+   {
+    "name": "Kisho Taniyama",
+    "character": "Jean Kirstein (voice)",
+    "profile": "/9lOnUF6C6xEhZ0FQmYNzNZhcUpd.jpg"
+   },
+   {
+    "name": "Yoshimasa Hosoya",
+    "character": "Reiner Braun (voice)",
+    "profile": "/lUR5oN1LrqGgp25IOcI1qOH1Ud5.jpg"
+   }
+  ],
+  "creator": null,
+  "seasons": [
+   {
+    "number": 1,
+    "episodes": [
+     {
+      "number": 1,
+      "title": "To You, in 2000 Years: The Fall of Shiganshina (1)",
+      "overview": "After one hundred years of peace, humanity is suddenly reminded of the terror of being at the Titans' mercy.",
+      "still": "/e363TDn4uP8jP7kHAXQfHAs6HTR.jpg",
+      "runtime": 24
+     },
+     {
+      "number": 2,
+      "title": "That Day: The Fall of Shiganshina (2)",
+      "overview": "After the Titans break through the wall, the citizens of Shiganshina must run for their lives. However, those that do make it to safety find a harsh life waiting for them.",
+      "still": "/3l0CkbEdnBeYvpEm9nSVIQXs237.jpg",
+      "runtime": 24
+     },
+     {
+      "number": 3,
+      "title": "A Dim Light Amid Despair: Humanity's Comeback (1)",
+      "overview": "Eren begins his training with the Cadet Corps, but questions about his painful past overwhelm him. When he struggles with a maneuvering exercise, Bertolt and Reiner offer kindly advice.",
+      "still": "/eBDbxFioIZQx7Nu0vOEQVP4cCIq.jpg",
+      "runtime": 24
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "tmdbId": 120089,
+  "kind": "show",
+  "title": "SPY x FAMILY",
+  "year": 2022,
+  "certification": "TV-14",
+  "genres": [
+   "Anime",
+   "Animation",
+   "Action & Adventure",
+   "Comedy"
+  ],
+  "runtime": null,
+  "tmdbScore": 8.5,
+  "tagline": "The father... a spy. The mother... an assassin. The daughter... a telepath.",
+  "overview": "A spy, an assassin and a telepath come together to pose as a family, each for their own reasons, while hiding their true identities from each other.",
+  "poster": "/7NAvPYPAu7MeHwP8E9sn81PqsRh.jpg",
+  "backdrop": "/lysUnU6V0VfcthDbviuVlIqgHOR.jpg",
+  "logo": null,
+  "trailerKey": null,
+  "cast": [
+   {
+    "name": "Takuya Eguchi",
+    "character": "Loid Forger (voice)",
+    "profile": "/hPPhUp0mM65Lc87Q8WXUEmGQAXx.jpg"
+   },
+   {
+    "name": "Atsumi Tanezaki",
+    "character": "Anya Forger (voice)",
+    "profile": "/6tM8GU7QvrdUCvR4kxqVUZivtvO.jpg"
+   },
+   {
+    "name": "Saori Hayami",
+    "character": "Yor Forger (voice)",
+    "profile": "/gLv9lO7dlUbIsmyJUvgegqAAXki.jpg"
+   },
+   {
+    "name": "Kenichirou Matsuda",
+    "character": "Narration (voice), Bond Forger (voice)",
+    "profile": "/YCEXgyl763zg62qhsjhWHRzGkL.jpg"
+   }
+  ],
+  "creator": null,
+  "seasons": [
+   {
+    "number": 1,
+    "episodes": [
+     {
+      "number": 1,
+      "title": "OPERATION STRIX",
+      "overview": "Twilight, an agent of Westalis's intelligence agency, disguises himself as the psychiatrist Loid Forger and adopts a girl named Anya to get closer to his target. Unbeknownst to him, Anya can read minds.",
+      "still": "/3EwkiSokUJRkAwB3b3bFG3J8IoA.jpg",
+      "runtime": 25
+     },
+     {
+      "number": 2,
+      "title": "SECURE A WIFE",
+      "overview": "Civil servant Yor Briar has a secret identity: an assassin named the Thorn Princess. Meanwhile, Loid is searching for someone to play Anya's mother for the interview at Eden College.",
+      "still": "/doSXhn8nksQiEMadwjPboPpqMih.jpg",
+      "runtime": 25
+     },
+     {
+      "number": 3,
+      "title": "PREPARE FOR THE INTERVIEW",
+      "overview": "Yor moves in with Loid and Anya. Now that they are a family, they need to prepare for the interview, so Loid decides they should all go out as a family.",
+      "still": "/fnU8bxU1WFGD8PBmpK5g9pVqvnO.jpg",
+      "runtime": 25
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "tmdbId": 85937,
+  "kind": "show",
+  "title": "Demon Slayer: Kimetsu no Yaiba",
+  "year": 2019,
+  "certification": "TV-MA",
+  "genres": [
+   "Anime",
+   "Animation",
+   "Action & Adventure",
+   "Sci-Fi & Fantasy"
+  ],
+  "runtime": null,
+  "tmdbScore": 8.6,
+  "tagline": "The love of a brother transcends everything.",
+  "overview": "After a demon attack leaves his family slain and his sister cursed, Tanjiro embarks upon a perilous journey to find a cure and avenge those he's lost.",
+  "poster": "/xUfRZu2mi8jH6SzQEJGP6tjBuYj.jpg",
+  "backdrop": "/3GQKYh6Trm8pxd2AypovoYQf4Ay.jpg",
+  "logo": "/ecghlDeabR3X3Vv8tXIOeXHQvQe.png",
+  "trailerKey": null,
+  "cast": [
+   {
+    "name": "Natsuki Hanae",
+    "character": "Tanjirō Kamado (voice)",
+    "profile": "/alTb0DlcPIbcwM08WSmxFai58sd.jpg"
+   },
+   {
+    "name": "Akari Kito",
+    "character": "Nezuko Kamado (voice)",
+    "profile": "/AoRQOZRC0yINB0WeKnM569rV1wF.jpg"
+   },
+   {
+    "name": "Hiro Shimono",
+    "character": "Zenitsu Agatsuma (voice)",
+    "profile": "/yrSDcgFefHtWkFmLnTrcw2t0MV.jpg"
+   },
+   {
+    "name": "Yoshitsugu Matsuoka",
+    "character": "Inosuke Hashibira (voice)",
+    "profile": "/ugDwdWEXnmv43jcbnfAi4XwiQ8C.jpg"
+   },
+   {
+    "name": "Katsuyuki Konishi",
+    "character": "Tengen Uzui (voice)",
+    "profile": "/nYM5cH6U7cp4x9dIzW0enmEKmeV.jpg"
+   },
+   {
+    "name": "Saori Hayami",
+    "character": "Shinobu Kocho (voice)",
+    "profile": "/gLv9lO7dlUbIsmyJUvgegqAAXki.jpg"
+   }
+  ],
+  "creator": null,
+  "seasons": [
+   {
+    "number": 1,
+    "episodes": [
+     {
+      "number": 1,
+      "title": "Cruelty",
+      "overview": "Tanjiro Kamado returns from selling charcoal in town to find his family slaughtered by a demon. He rushes down the snowy mountain with the sole survivor, his sister Nezuko, on his back.",
+      "still": "/l2C38X6RsbD5gom4iGvFe6yuPEy.jpg",
+      "runtime": 23
+     },
+     {
+      "number": 2,
+      "title": "Trainer Sakonji Urokodaki",
+      "overview": "At Giyu Tomioka's urging, Tanjiro heads for Mt. Sagiri with Nezuko, and comes face to face with a man-eating demon on the way.",
+      "still": "/r2MZH3snLABIpqUPj8YOF9HIaBf.jpg",
+      "runtime": 23
+     },
+     {
+      "number": 3,
+      "title": "Sabito and Makomo",
+      "overview": "Sakonji Urokodaki trains Tanjiro for Final Selection, the test for joining the Demon Slayer Corps, and sets him one last hurdle in front of a giant boulder.",
+      "still": "/m9sWQLtoU1G5jdHOYUnykin0xxw.jpg",
+      "runtime": 23
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "tmdbId": 95479,
+  "kind": "show",
+  "title": "JUJUTSU KAISEN",
+  "year": 2020,
+  "certification": "TV-MA",
+  "genres": [
+   "Anime",
+   "Animation",
+   "Action & Adventure",
+   "Sci-Fi & Fantasy"
+  ],
+  "runtime": null,
+  "tmdbScore": 8.6,
+  "tagline": "A boy fights... for \"the right death.\"",
+  "overview": "Yuji Itadori is a boy with tremendous physical strength, though he lives a completely ordinary high school life. One day, to save a classmate who has been attacked by curses, he eats the finger of Ryomen Sukuna, taking the curse into his own soul. From then on, he shares one body with Ryomen Sukuna. Guided by the most powerful of sorcerers, Satoru Gojo, Itadori is admitted to Tokyo Jujutsu High School, an organization that fights the curses... and thus begins the heroic tale of a boy who became a curse to exorcise a curse, a life from which he could never turn back.",
+  "poster": "/6qQzMJG27XOJsyAEEIisoJB45j2.jpg",
+  "backdrop": "/qpin8cASXEVtwhzNsprHYFiOAGk.jpg",
+  "logo": "/tEmqJ1k4MdjuaKaetn8wGyZGcyC.png",
+  "trailerKey": null,
+  "cast": [
+   {
+    "name": "Junya Enoki",
+    "character": "Yuji Itadori (voice)",
+    "profile": "/vBnNL3Jqy0zkS3ZgsXZmvDM9Dfz.jpg"
+   },
+   {
+    "name": "Yuma Uchida",
+    "character": "Megumi Fushiguro (voice)",
+    "profile": "/2otstbLfQ7MXuFt1X8MFOb4OIgd.jpg"
+   },
+   {
+    "name": "Yuichi Nakamura",
+    "character": "Satoru Gojo (voice)",
+    "profile": "/wb8behVKjBHX9XXrEydvNINCYwH.jpg"
+   },
+   {
+    "name": "Asami Seto",
+    "character": "Nobara Kugisaki (voice)",
+    "profile": "/iKKCPgKrNd4pJ0iBOC1SBZy2Y4Y.jpg"
+   },
+   {
+    "name": "Takahiro Sakurai",
+    "character": "Suguru Geto (voice)",
+    "profile": "/8s8owcKmpRAuhzEGjSdRpztthUg.jpg"
+   },
+   {
+    "name": "Kenjiro Tsuda",
+    "character": "Kento Nanami (voice)",
+    "profile": "/yFpSPNHqYN4rdRiVpVaYmqXMkmi.jpg"
+   }
+  ],
+  "creator": null,
+  "seasons": [
+   {
+    "number": 1,
+    "episodes": [
+     {
+      "number": 1,
+      "title": "Ryomen Sukuna",
+      "overview": "After visiting his beloved grandfather in the hospital, Yuji Itadori encounters an apprentice sorcerer who demands that Yuji hand over a cursed relic.",
+      "still": "/3wymoL9HYpllpFrcD8VCvemktGg.jpg",
+      "runtime": 24
+     },
+     {
+      "number": 2,
+      "title": "For Myself",
+      "overview": "Yuji manages to control the curse of Ryomen Sukuna. Later, he awakens in a room with Jujutsu High teacher Satoru Gojo, who offers him a deadly choice.",
+      "still": "/k5U9vkpy31UiqCkEc6x6OPBBB0R.jpg",
+      "runtime": 24
+     },
+     {
+      "number": 3,
+      "title": "Girl of Steel",
+      "overview": "Nobara Kugisaki joins the class on a trip to Roppongi where Gojo gives her and Yuji their first test: dispel a curse from an abandoned building.",
+      "still": "/foMCHRzZVfCTvrmfWWeWViBzvZH.jpg",
+      "runtime": 24
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "tmdbId": 31910,
+  "kind": "show",
+  "title": "Naruto Shippūden",
+  "year": 2007,
+  "certification": "TV-PG",
+  "genres": [
+   "Anime",
+   "Animation",
+   "Action & Adventure",
+   "Sci-Fi & Fantasy"
+  ],
+  "runtime": null,
+  "tmdbScore": 8.5,
+  "tagline": "",
+  "overview": "After 2 and a half years Naruto finally returns to his village of Konoha, and sets about putting his ambitions to work. It will not be easy though as he has amassed a few more dangerous enemies, in the likes of the shinobi organization; Akatsuki.",
+  "poster": "/kV27j3Nz4d5z8u6mN3EJw9RiLg2.jpg",
+  "backdrop": "/z0YhJvomqedHF85bplUJEotkN5l.jpg",
+  "logo": "/qopvxH4C4YIoeJWss0EVLv13rgW.png",
+  "trailerKey": null,
+  "cast": [
+   {
+    "name": "Junko Takeuchi",
+    "character": "Naruto Uzumaki (voice)",
+    "profile": "/zNjrblq3xS1idpCsmSl5P5eTon7.jpg"
+   },
+   {
+    "name": "Noriaki Sugiyama",
+    "character": "Sasuke Uchiha (voice)",
+    "profile": "/szqqQ8T0gzuSxjU2rnWcthsaSJT.jpg"
+   },
+   {
+    "name": "Chie Nakamura",
+    "character": "Sakura Haruno (voice)",
+    "profile": "/evB6vKUbm0CKgBcgikPeFXdwd29.jpg"
+   },
+   {
+    "name": "Kazuhiko Inoue",
+    "character": "Kakashi Hatake (voice)",
+    "profile": "/3BpYtYRiLAmTNbCm2LXlXnkMRit.jpg"
+   },
+   {
+    "name": "Akira Ishida",
+    "character": "Gaara (voice)",
+    "profile": "/jnW2Gn2NlR2uwOCeyOuzypnTmkH.jpg"
+   },
+   {
+    "name": "Hideo Ishikawa",
+    "character": "Itachi Uchiha (voice)",
+    "profile": "/gEjEDNGt3CHsyzFQdNqewZVbh0.jpg"
+   }
+  ],
+  "creator": null,
+  "seasons": [
+   {
+    "number": 1,
+    "episodes": [
+     {
+      "number": 1,
+      "title": "Homecoming",
+      "overview": "A figure passes through the gates. It's an older Naruto, who has returned from a long training journey with Jiraiya. Naruto Uzumaki is back!",
+      "still": "/lFg0YnHI7sJkPSv38a8ctE96sqr.jpg",
+      "runtime": 23
+     },
+     {
+      "number": 2,
+      "title": "The Akatsuki Makes Its Move",
+      "overview": "Naruto and Sakura team up and challenge Kakashi to a survival challenge to show off their progress.",
+      "still": "/A9cFPkHjWoipVwyvk1W8Oj601n0.jpg",
+      "runtime": 23
+     },
+     {
+      "number": 3,
+      "title": "The Results of Training",
+      "overview": "Naruto's and Sakura's combined skills force Kakashi to use his Sharingan right off the bat. Naruto masterfully unleashes his jutsu one after another.",
+      "still": "/3ZhyOj5btCsLximupjKCBvNgNnd.jpg",
+      "runtime": 23
+     }
+    ]
+   }
+  ]
  }
 ]

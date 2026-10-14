@@ -26,13 +26,20 @@ Every screenshot is the running app. Artwork and details are real film data; the
 **Every title gets a cinematic page**
 ![Dune: Part Two](docs/screenshots/detail.jpg)
 
+**Anime, front and centre**
+![Attack on Titan on Home](docs/screenshots/home-anime.jpg)
+
+![Attack on Titan](docs/screenshots/detail-aot.jpg)
+
+![Demon Slayer](docs/screenshots/detail-demonslayer.jpg)
+
+![SPY x FAMILY](docs/screenshots/detail-spyfamily.jpg)
+
 **Animation**
 ![Spider-Man: Across the Spider-Verse](docs/screenshots/detail-spiderverse.jpg)
 
 **Series, picking up where you left off**
 ![Arcane](docs/screenshots/detail-arcane.jpg)
-
-![Oppenheimer](docs/screenshots/detail-oppenheimer.jpg)
 
 ![Blade Runner 2049](docs/screenshots/detail-bladerunner.jpg)
 
@@ -140,7 +147,7 @@ The mouse works everywhere: hover focuses, click selects, the scrubber shows fra
 | 4.5 | Casting to TVs and speakers on your network | |
 | 5 | Polish: onboarding, installer | |
 
-Until Phase 2 the library is a fixed demo of 13 films and 4 series. Every title plays the *Sintel* trailer as a stand-in; drop any video file onto the player to watch your own.
+Until Phase 2 the library is a fixed demo of 12 films, 4 series and 5 anime. Every title plays the *Sintel* trailer as a stand-in; drop any video file onto the player to watch your own.
 
 See [PLAN.md](PLAN.md) for the architecture.
 
