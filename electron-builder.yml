@@ -23,3 +23,8 @@ nsis:
   uninstallerIcon: build/icon.ico
   # Fixed name so "releases/latest/download/MagicLanterns-Setup.exe" always points at the newest build.
   artifactName: MagicLanterns-Setup.${ext}
+# Update feed: installed copies check this repository's GitHub Releases at launch.
+publish:
+  provider: github
+  owner: PushkarX-Code
+  repo: MagicLanterns

@@ -3,12 +3,15 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { extname, join } from 'node:path'
 import { Readable } from 'node:stream'
 import { app, BrowserWindow, dialog, ipcMain, nativeTheme, protocol, session, shell } from 'electron'
+import { initUpdater } from './updater'
+import { initDiscover } from './discover'
 
 const isDev = !app.isPackaged && !!process.env['ELECTRON_RENDERER_URL']
 
 // ---------- Launch preferences (read before the GPU process starts) ----------
 interface Prefs {
   hwDecode: 'auto' | 'off'
+  skippedVersion?: string
 }
 const prefsPath = (): string => join(app.getPath('userData'), 'prefs.json')
 function readPrefs(): Prefs {
@@ -160,6 +163,11 @@ app.whenReady().then(() => {
     })
   }
   createWindow()
+  initDiscover()
+  initUpdater(
+    () => readPrefs().skippedVersion,
+    (v) => writeFileSync(prefsPath(), JSON.stringify({ ...readPrefs(), skippedVersion: v }))
+  )
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })

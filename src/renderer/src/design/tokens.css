@@ -1,3 +1,10 @@
+/* Registered so the page margin can animate when the sidebar opens. */
+@property --content-left {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 140px;
+}
+
 :root {
   /* Surfaces */
   --bg: #0a0a0b;
@@ -44,6 +51,7 @@
   --rail-open: 252px;
   --gutter: 64px;
   --content-left: calc(var(--rail) + 16px + 48px);
+  --content-left-open: calc(var(--rail-open) + 16px + 48px);
   --titlebar: 36px;
 }
 
@@ -113,4 +121,16 @@
 /* Light: lit controls (focused pills, active segments) get a soft shadow so white still reads on paper. */
 :root[data-theme='light'] :is(.seg-btn.is-active, .gib.is-focused, .pill-glass.is-focused, .set-tab.is-focused, .pop-opt.is-focused) {
   box-shadow: 0 6px 18px -6px rgba(30, 30, 40, 0.35), inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+/* Opening the sidebar widens the page margin instead of covering content. */
+.stage {
+  --content-left: calc(var(--rail) + 16px + 48px);
+  transition: --content-left 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.app.sidebar-open .stage {
+  --content-left: var(--content-left-open);
+}
+.reduce-motion .stage {
+  transition-duration: 0.15s;
 }

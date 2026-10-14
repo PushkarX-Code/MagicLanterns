@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   AudioLines,
+  Share2,
   Camera,
   Captions,
   Gauge,
@@ -93,7 +94,7 @@ function pictureRect(v: HTMLVideoElement): { x: number; y: number; width: number
 
 const REPEAT_LABEL: Record<Settings['repeat'], string> = { off: 'Repeat Off', one: 'Repeat One', all: 'Repeat All' }
 
-type Menu = null | 'audio' | 'subs' | 'speed'
+type Menu = null | 'audio' | 'subs' | 'speed' | 'share'
 
 function CircleButton({ icon: Icon, label, onPress, big }: { icon: typeof Play; label: string; onPress: () => void; big?: boolean }) {
   return (
@@ -196,7 +197,6 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const video = useRef<HTMLVideoElement>(null)
   const preview = useRef<HTMLVideoElement>(null)
   const chrome = useRef<HTMLDivElement>(null)
-  const pauseCard = useRef<HTMLDivElement>(null)
   const nextCard = useRef<HTMLDivElement>(null)
   const bar = useRef<HTMLDivElement>(null)
   const hideTimer = useRef(0)
@@ -341,14 +341,6 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     if (root.current) root.current.style.cursor = visible || !playing ? 'default' : 'none'
   }, [visible, playing, menu])
 
-  // Paused: the frame dims and a glass card tells you where you are.
-  useEffect(() => {
-    const el = pauseCard.current
-    if (!el) return
-    const show = ready && !playing && !resumePrompt && !scrub
-    gsap.to(el, { autoAlpha: show ? 1 : 0, y: show ? 0 : 12, duration: d(show ? 0.6 : 0.3), ease: EASE.settle, delay: show ? 0.25 : 0, overwrite: true })
-  }, [ready, playing, resumePrompt, !!scrub])
-
   // ---------- Transport ----------
   const toggle = useCallback(() => {
     const v = video.current
@@ -466,6 +458,30 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
       flash("Couldn't save the snapshot")
     }
   }
+
+  const togglePip = (): void => {
+    const v = video.current
+    if (!v) return
+    if (document.pictureInPictureElement) document.exitPictureInPicture()
+    else v.requestPictureInPicture?.().catch(() => undefined)
+  }
+  /** The current frame as PNG, or null when the stream's pixels can't be read. */
+  const frameBlob = async (): Promise<Blob | null> => {
+    const v = video.current
+    if (!v?.videoWidth) return null
+    try {
+      const c = document.createElement('canvas')
+      c.width = v.videoWidth
+      c.height = v.videoHeight
+      const ctx = c.getContext('2d')!
+      ctx.filter = videoStyle(cfg).filter ?? 'none'
+      ctx.drawImage(v, 0, 0)
+      return await new Promise<Blob | null>((ok) => c.toBlob(ok, 'image/png'))
+    } catch {
+      return null
+    }
+  }
+  const shareText = (): string => `${src?.title ?? 'Magic Lanterns'}${src?.subtitle ? ` (${src.subtitle})` : ''} · ${timecode(time)}`
 
   const cycleFit = (): void => {
     const next = FIT_ORDER[(FIT_ORDER.indexOf(cfg.videoFit) + 1) % FIT_ORDER.length]
@@ -700,6 +716,29 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const cycle = <T extends string>(list: T[], v: T): T => list[(list.indexOf(v) + 1) % list.length]
   const menuOptions = (): PopoverOption[] => {
     if (!src) return []
+    if (menu === 'share') {
+      const nav = navigator as Navigator & { share?: (d: ShareData) => Promise<void> }
+      return [
+        {
+          label: 'Copy Frame',
+          hint: 'Image',
+          onSelect: async () => {
+            const blob = await frameBlob()
+            if (!blob) return flash("This stream's frames can't be copied")
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).catch(() => undefined)
+            flash('Frame copied')
+          }
+        },
+        {
+          label: 'Copy Title and Time',
+          onSelect: async () => {
+            await navigator.clipboard.writeText(shareText()).catch(() => undefined)
+            flash('Copied')
+          }
+        },
+        ...(nav.share ? [{ label: 'Share…', divider: true, onSelect: () => nav.share!({ title: src.title, text: shareText() }).catch(() => undefined) }] : [])
+      ]
+    }
     const tracks = src.file?.audio ?? []
     if (menu === 'audio') {
       const effects = local ? undefined : 'Local files'
@@ -877,27 +916,6 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
             </div>
           )}
 
-          {/* Pause info card */}
-          {src && (
-            <div ref={pauseCard} className="pl-pause glass" style={{ opacity: 0, visibility: 'hidden' }}>
-              <BlurImage
-                path={src.logo}
-                size="w500"
-                tiny={false}
-                color="transparent"
-                fit="contain"
-                position="left center"
-                className="pl-pause-logo"
-                fallback={<div className="t-title pl-pause-title">{src.title}</div>}
-              />
-              <div className="pl-pause-sub">{src.subtitle}</div>
-              <p className="pl-pause-overview">{src.overview}</p>
-              <div className="pl-pause-pos">
-                {timecode(time)} of {timecode(duration)}
-              </div>
-            </div>
-          )}
-
           <div ref={chrome} className="pl-chrome">
             <div className="pl-top">
               <div className="pl-top-left">
@@ -907,6 +925,15 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                 <button className="pl-close glass" onClick={toggleFullscreen} aria-label={fullscreen ? 'Exit Full Screen' : 'Full Screen'}>
                   {fullscreen ? <Minimize size={20} strokeWidth={1.8} /> : <Maximize size={20} strokeWidth={1.8} />}
                 </button>
+                <button className="pl-close glass" onClick={togglePip} aria-label="Picture in Picture">
+                  <PictureInPicture2 size={20} strokeWidth={1.8} />
+                </button>
+                <div className="popover-anchor">
+                  <button className={`pl-close glass ${menu === 'share' ? 'is-active' : ''}`} onClick={() => setMenu(menu === 'share' ? null : 'share')} aria-label="Share">
+                    <Share2 size={19} strokeWidth={1.8} />
+                  </button>
+                  {menu === 'share' && <Popover title="Share" align="left" options={menuOptions()} onClose={() => setMenu(null)} />}
+                </div>
               </div>
               <div className="pl-volume glass" onClick={(e) => e.stopPropagation()}>
                 <input
@@ -970,16 +997,6 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                     {menu === 'speed' && <Popover title="Playback Speed" placement="above" align="right" options={menuOptions()} onClose={() => setMenu(null)} />}
                   </div>
                   <BarButton icon={Camera} label="Snapshot (Shift+S)" onPress={snapshot} />
-                  <BarButton
-                    icon={PictureInPicture2}
-                    label="Picture in Picture"
-                    onPress={() => {
-                      const v = video.current
-                      if (!v) return
-                      if (document.pictureInPictureElement) document.exitPictureInPicture()
-                      else v.requestPictureInPicture?.().catch(() => undefined)
-                    }}
-                  />
                 </div>
               </div>
               <div className="pl-scrub glass">

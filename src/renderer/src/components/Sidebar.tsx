@@ -58,6 +58,8 @@ export function Sidebar({ hidden }: { hidden: boolean }) {
       overwrite: 'auto'
     })
     el.classList.toggle('is-open', open)
+    // The page makes room instead of being covered: its left margin grows with the sidebar (see .stage).
+    document.querySelector('.app')?.classList.toggle('sidebar-open', open)
   }, [open])
 
   useEffect(() => {

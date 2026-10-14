@@ -382,3 +382,36 @@
   font-weight: 500;
   color: var(--text-3);
 }
+
+/* ---------- Top 10 This Week ---------- */
+.rank {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  width: 270px;
+  cursor: pointer;
+}
+.rank-num {
+  flex: none;
+  width: 104px;
+  margin-right: -26px;
+  font-size: 168px;
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.08em;
+  text-align: right;
+  color: transparent;
+  -webkit-text-stroke: 2px rgb(var(--ink) / 0.28);
+  transition: -webkit-text-stroke-color 0.3s ease;
+}
+.rank.is-focused .rank-num {
+  -webkit-text-stroke-color: rgb(var(--ink) / 0.7);
+}
+.rank-frame {
+  width: 166px;
+  flex: none;
+}
+.rank.is-focused .poster-frame {
+  box-shadow: var(--lift), 0 0 0 1px rgb(var(--ink) / 0.16);
+}

@@ -23,7 +23,17 @@ const bridge: LanternBridge = {
   pickFolder: () => ipcRenderer.invoke('dialog:open-folder'),
   pickFiles: () => ipcRenderer.invoke('dialog:open-files'),
   snapshot: (frame, format, name) => ipcRenderer.invoke('player:snapshot', frame, format, name),
-  setLaunchPrefs: (prefs) => ipcRenderer.invoke('prefs:set', prefs)
+  setLaunchPrefs: (prefs) => ipcRenderer.invoke('prefs:set', prefs),
+  getTrending: () => ipcRenderer.invoke('discover:trending'),
+  updateState: () => ipcRenderer.invoke('update:state'),
+  onUpdate: (cb) => {
+    const listener = (_e: unknown, state: Parameters<typeof cb>[0]): void => cb(state)
+    ipcRenderer.on('update:state', listener)
+    return () => ipcRenderer.removeListener('update:state', listener)
+  },
+  downloadUpdate: () => ipcRenderer.invoke('update:download'),
+  installUpdate: () => ipcRenderer.invoke('update:install'),
+  skipUpdate: (version) => ipcRenderer.invoke('update:skip', version)
 }
 
 contextBridge.exposeInMainWorld('lantern', bridge)

@@ -60,7 +60,7 @@
 .sidebar-dim {
   position: fixed;
   inset: 0;
-  background: linear-gradient(90deg, rgba(5, 5, 6, 0.82) 0%, rgba(5, 5, 6, 0.55) 22%, transparent 48%);
+  background: linear-gradient(90deg, rgba(5, 5, 6, 0.6) 0%, rgba(5, 5, 6, 0.22) 18%, transparent 34%);
   opacity: 0;
   transition: opacity 0.5s ease;
 }
@@ -543,4 +543,169 @@
   height: 1px;
   margin: 6px 10px;
   background: rgb(var(--ink) / 0.1);
+}
+
+/* Modals rendered into <body> cover the window, not their screen. */
+.modal-scrim.is-fixed {
+  position: fixed;
+  z-index: 900;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Top 10 title sheet */
+.sheet {
+  width: min(760px, calc(100vw - 64px));
+  max-height: calc(100vh - 80px);
+  overflow: hidden auto;
+  border-radius: var(--r-panel);
+}
+.sheet-art {
+  position: relative;
+  aspect-ratio: 16 / 7;
+}
+.sheet-art .bimg,
+.sheet-art > div:first-child {
+  position: absolute !important;
+  inset: 0;
+}
+.sheet-art-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, var(--glass-fill-strong) 0%, transparent 55%);
+}
+.sheet-rank {
+  position: absolute;
+  left: 28px;
+  top: 22px;
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+  color: #1a1004;
+  background: var(--amber);
+}
+.sheet-body {
+  padding: 4px 32px 28px;
+}
+.sheet-title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+.sheet-meta {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--text-3);
+}
+.sheet-overview {
+  margin: 16px 0 0;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+.sheet-where {
+  margin-top: 22px;
+}
+.sheet-label {
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.sheet-providers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.provider {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 40px;
+  padding: 0 14px 0 6px;
+  border-radius: var(--r-pill);
+  font-size: 13.5px;
+  font-weight: 550;
+  background: rgb(var(--ink) / 0.07);
+  box-shadow: var(--glass-edge);
+}
+.provider-logo {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.sheet-none {
+  font-size: 14px;
+  color: var(--text-3);
+}
+.sheet-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 26px;
+}
+.sheet-attrib {
+  margin-top: 16px;
+  font-size: 11.5px;
+  color: var(--text-4);
+}
+
+/* Software update */
+.update {
+  width: min(560px, calc(100vw - 48px));
+  padding: 30px 32px 28px;
+  border-radius: var(--r-panel);
+}
+.update-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.update-title {
+  margin-top: 2px;
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.update-sub {
+  margin-top: 3px;
+  font-size: 13.5px;
+  color: var(--text-3);
+}
+.update-notes {
+  margin-top: 20px;
+  max-height: 220px;
+  overflow-y: auto;
+  white-space: pre-line;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+.update-progress {
+  margin-top: 22px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgb(var(--ink) / 0.12);
+  overflow: hidden;
+}
+.update-progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--amber-deep), var(--amber));
+  transition: width 0.3s ease;
+}
+.update-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
+}
+.update-actions .pill {
+  height: 46px;
+  padding: 0 20px;
+  font-size: 15px;
 }

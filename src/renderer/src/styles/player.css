@@ -701,3 +701,7 @@ button.pl-time:hover {
   min-width: 52px;
   font-size: 12.5px;
 }
+.pl-close.is-active {
+  background: rgba(255, 255, 255, 0.92);
+  color: #0a0a0b;
+}

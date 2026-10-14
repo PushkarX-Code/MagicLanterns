@@ -4,6 +4,7 @@ import { useAsync } from '../lib/useAsync'
 import { Hero, HeroSkeleton } from '../components/Hero'
 import { Card, CardSkeleton } from '../components/Card'
 import { GenreTile } from '../components/GenreTile'
+import { TopTen } from '../components/TopTen'
 import { Row, RowSkeleton, scrollPageTo } from '../components/Row'
 import { Screen } from '../components/Screen'
 import { useNav } from '../state/nav'
@@ -58,6 +59,7 @@ export function Home() {
               </Row>
             ))
           : [0, 1, 2].map((r) => <RowSkeleton key={r}>{(i) => <CardSkeleton key={i} />}</RowSkeleton>)}
+        {data && <TopTen onRowFocus={(el) => scrollPageTo(page.current, el, 96)} />}
       </div>
     </Screen>
   )
