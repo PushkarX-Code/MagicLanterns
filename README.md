@@ -5,7 +5,7 @@ A premium local media player for Windows. Point it at your folders and it turns 
 > The magic lantern was the first projector: a light, a painted glass slide, and a dark room turned into a story.
 > Magic Lanterns does the same to a folder of files.
 
-![Magic Lanterns](docs/showcase/home.jpg)
+![Magic Lanterns](docs/showcase/home.webp)
 
 ## Download (Windows 10 / 11)
 
@@ -24,18 +24,18 @@ This downloads the latest release and opens the installer. The app isn't code-si
 Every image is the running app, with real film data and artwork.
 
 **A cinematic page for every title**
-![Attack on Titan](docs/showcase/detail-aot.jpg)
+![Attack on Titan](docs/showcase/detail-aot.webp)
 
-![Spider-Man: Across the Spider-Verse](docs/showcase/detail-spiderverse.jpg)
+![Spider-Man: Across the Spider-Verse](docs/showcase/detail-spiderverse.webp)
 
 **Every season with its own cover, every episode its own still**
-![Seasons](docs/showcase/seasons.jpg)
+![Seasons](docs/showcase/seasons.webp)
 
 **The player**
-![Player](docs/showcase/player.jpg)
+![Player](docs/showcase/player.webp)
 
 **Light theme**
-![Light theme](docs/showcase/light.jpg)
+![Light theme](docs/showcase/light.webp)
 
 ## What's in it
 
