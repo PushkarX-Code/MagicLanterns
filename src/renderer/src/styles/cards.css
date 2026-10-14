@@ -126,18 +126,18 @@
 }
 .card-progress {
   position: absolute;
-  left: 18px;
-  right: 18px;
-  bottom: 10px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 4px;
-  border-radius: 2px;
+  border-radius: 0;
   background: rgb(var(--ink) / 0.24);
   overflow: hidden;
 }
 .card-progress span {
   display: block;
   height: 100%;
-  border-radius: 2px;
+  border-radius: 0 2px 2px 0;
   background: linear-gradient(90deg, var(--amber-deep), var(--amber));
   box-shadow: 0 0 10px var(--amber-glow);
 }

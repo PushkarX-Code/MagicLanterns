@@ -15,7 +15,6 @@ interface Common {
 export function PillButton({
   icon: Icon,
   children,
-  progress,
   onPress,
   focusKey,
   disabled,
@@ -41,11 +40,6 @@ export function PillButton({
     >
       {Icon && <Icon size={22} strokeWidth={2.2} fill={variant === 'solid' ? 'currentColor' : 'none'} />}
       <span>{children}</span>
-      {progress !== undefined && progress > 0 && (
-        <span className="pill-progress">
-          <span style={{ width: `${Math.min(100, progress * 100)}%` }} />
-        </span>
-      )}
     </button>
   )
 }

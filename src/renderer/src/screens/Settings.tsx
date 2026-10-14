@@ -495,7 +495,6 @@ function InterfacePane({ s, set }: PaneProps) {
           ]}
         />
         <Toggle label="Hero Previews" hint="Let the Home carousel play a muted clip after a few idle seconds." value={s.heroPreviews} onChange={set('heroPreviews')} />
-        <Toggle label="Show Clock" hint="In the sidebar." value={s.showClock} onChange={set('showClock')} />
         <Toggle label="Reduce Motion" hint="Swaps lifts, springs and zooms for gentle fades. Follows your system setting too." value={s.reduceMotion} onChange={set('reduceMotion')} />
       </Section>
       <Section title="Developer">

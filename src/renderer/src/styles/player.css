@@ -101,9 +101,10 @@
 }
 .pl-top {
   position: absolute;
-  top: 44px;
-  left: var(--gutter);
-  right: 200px;
+  top: 32px;
+  left: 32px;
+  right: 32px;
+  justify-content: space-between;
   display: flex;
   align-items: center;
   gap: 22px;
@@ -189,11 +190,9 @@
 
 .pl-bottom {
   position: absolute !important;
-  left: var(--gutter);
-  right: var(--gutter);
-  bottom: 36px;
-  padding: 18px 26px 14px;
-  border-radius: var(--r-panel);
+  left: 32px;
+  right: 32px;
+  bottom: 28px;
 }
 .pl-bar {
   position: relative;
@@ -453,8 +452,8 @@
 .pl-pause {
   position: absolute;
   z-index: 4;
-  left: var(--gutter);
-  bottom: 200px;
+  left: 32px;
+  bottom: 170px;
   width: min(520px, 42vw);
   padding: 26px 28px;
   border-radius: var(--r-panel);
@@ -573,7 +572,7 @@
 .resume {
   width: 520px;
   padding: 34px 34px 30px;
-  border-radius: 32px;
+  border-radius: var(--r-panel);
   text-align: left;
 }
 .resume-kicker {
@@ -616,4 +615,89 @@ button.pl-time:hover {
 }
 .color-cyan span {
   color: #8beeff;
+}
+
+/* ---------- Chrome layout: corner controls, title + tools above a separate scrub pill ---------- */
+.pl-top-left {
+  display: flex;
+  gap: 12px;
+}
+.pl-volume {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 46px;
+  padding: 0 8px 0 18px;
+  border-radius: var(--r-pill);
+}
+.pl-vol-btn {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--text);
+}
+.pl-vol-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 130px;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #fff var(--v), rgb(255 255 255 / 0.25) var(--v));
+  cursor: pointer;
+}
+.pl-vol-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.pl-meta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 12px;
+}
+.pl-meta .pl-title {
+  min-width: 0;
+}
+.pl-meta .pl-title-text {
+  position: static;
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
+}
+.pl-meta .pl-title-sub {
+  margin-top: 4px;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+}
+.pl-tools {
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  border-radius: var(--r-pill);
+}
+.pl-tools .pl-btn {
+  width: 44px;
+  height: 44px;
+}
+.pl-scrub {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 48px;
+  padding: 0 20px;
+  border-radius: var(--r-pill);
+}
+.pl-scrub .pl-bar {
+  flex: 1;
+}
+.pl-scrub .pl-time {
+  min-width: 52px;
+  font-size: 12.5px;
 }

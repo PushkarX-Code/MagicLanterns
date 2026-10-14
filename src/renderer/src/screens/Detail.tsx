@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { ArrowLeft, Check, CheckCheck, Clapperboard, Copy, Ellipsis, FileText, Heart, ListPlus, Play, Plus, Star } from 'lucide-react'
+import { ArrowLeft, Check, CheckCheck, Clapperboard, Copy, Ellipsis, FileText, Heart, Play, Plus, Star } from 'lucide-react'
 import type { Episode, MediaItem } from '@shared/types'
 import { api } from '../lib/api'
 import { useAsync } from '../lib/useAsync'
@@ -280,7 +280,7 @@ export function Detail({ id, origin, entryKey }: { id: string; origin?: Origin; 
   const [landed, setLanded] = useState(!origin)
   const [showFlight, setShowFlight] = useState(!!origin)
   const [scrolled, setScrolled] = useState(0)
-  const [menu, setMenu] = useState<null | 'more' | 'collect'>(null)
+  const [menu, setMenu] = useState<null | 'more'>(null)
   const back = useNav((s) => s.back)
   const push = useNav((s) => s.push)
   const setAmbient = useAmbient((s) => s.set)
@@ -346,13 +346,6 @@ export function Detail({ id, origin, entryKey }: { id: string; origin?: Origin; 
           {item.title}
         </div>
         <div className="detail-topbar-right">
-          <GlassIconButton
-            icon={item.inList ? Check : Plus}
-            label={item.inList ? 'In My List' : 'Add to My List'}
-            active={item.inList}
-            size={46}
-            onPress={() => api.toggleList(item.id).then(refresh)}
-          />
           <div className="popover-anchor">
             <GlassIconButton icon={Ellipsis} label="More" size={46} onPress={() => setMenu(menu === 'more' ? null : 'more')} />
             {menu === 'more' && (
@@ -405,10 +398,12 @@ export function Detail({ id, origin, entryKey }: { id: string; origin?: Origin; 
               onPress={() => item.trailerKey && api.openExternal(`https://www.youtube.com/watch?v=${item.trailerKey}`)}
             />
             <GlassIconButton icon={Heart} label={item.favorite ? 'Favorite' : 'Add to Favorites'} active={item.favorite} onPress={() => api.toggleFavorite(item.id).then(refresh)} />
-            <div className="popover-anchor">
-              <GlassIconButton icon={ListPlus} label="Add to Collection" onPress={() => setMenu(menu === 'collect' ? null : 'collect')} />
-              {menu === 'collect' && <CollectionPicker itemId={item.id} onClose={() => setMenu(null)} />}
-            </div>
+            <GlassIconButton
+              icon={item.inList ? Check : Plus}
+              label={item.inList ? 'In Watchlist' : 'Add to Watchlist'}
+              active={item.inList}
+              onPress={() => api.toggleList(item.id).then(refresh)}
+            />
           </div>
         </div>
 
@@ -469,31 +464,6 @@ export function Detail({ id, origin, entryKey }: { id: string; origin?: Origin; 
   )
 }
 
-function CollectionPicker({ itemId, onClose }: { itemId: string; onClose: () => void }) {
-  const { data } = useAsync(() => api.getCollections(), [])
-  const [picked, setPicked] = useState<Set<string>>(new Set())
-  useEffect(() => {
-    if (data) setPicked(new Set(data.filter((c) => c.itemIds.includes(itemId)).map((c) => c.id)))
-  }, [data, itemId])
-  return (
-    <Popover
-      onClose={onClose}
-      title="Add to Collection"
-      options={(data ?? []).map((c) => ({
-        label: c.name,
-        checked: picked.has(c.id),
-        keepOpen: true,
-        onSelect: () => {
-          const next = new Set(picked)
-          if (next.has(c.id)) next.delete(c.id)
-          else next.add(c.id)
-          setPicked(next)
-          if (c.id === 'my-list') api.toggleList(itemId)
-        }
-      }))}
-    />
-  )
-}
 
 function DetailSkeleton() {
   return (

@@ -65,7 +65,7 @@
   align-items: center;
   gap: 20px;
   padding: 20px 24px;
-  border-radius: 24px;
+  border-radius: var(--r-panel);
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 .folder.is-focused {
@@ -122,7 +122,7 @@
   margin: 72px var(--gutter) 30px var(--content-left);
   height: 66px;
   padding: 0 24px;
-  border-radius: 24px;
+  border-radius: var(--r-panel);
   max-width: 820px;
   color: var(--text-2);
   transition: box-shadow 0.3s ease;
@@ -235,7 +235,7 @@
   color: var(--text-3);
 }
 .set-group {
-  border-radius: 24px;
+  border-radius: var(--r-panel);
   padding: 6px;
 }
 .set-row {
@@ -551,11 +551,11 @@
 }
 .frow-progress {
   position: absolute;
-  left: 8px;
-  right: 8px;
-  bottom: 6px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 3px;
-  border-radius: 2px;
+  border-radius: 0;
   background: rgb(var(--ink) / 0.25);
   overflow: hidden;
 }
@@ -746,7 +746,7 @@
 .stream {
   width: min(620px, calc(100vw - 32px));
   padding: 34px 36px;
-  border-radius: 32px;
+  border-radius: var(--r-panel);
 }
 .stream-input {
   width: 100%;

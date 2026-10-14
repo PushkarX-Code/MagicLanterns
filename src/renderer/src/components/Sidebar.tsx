@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { FolderOpen, House, Settings, Star, type LucideIcon } from 'lucide-react'
-import { Clock } from './Clock'
 import { Lantern } from './Lantern'
 import { FocusContext, setFocus, useFocus } from '../focus/focus'
 import { useNav, type Section } from '../state/nav'
-import { useSettings } from '../state/settings'
 import { gsap, d, EASE } from '../design/motion'
 
 const ITEMS: { id: Section; label: string; icon: LucideIcon }[] = [
@@ -37,7 +35,6 @@ function Item({ id, label, icon: Icon, selected, disabled, onSelect }: { id: Sec
 export function Sidebar({ hidden }: { hidden: boolean }) {
   const section = useNav((s) => s.section)
   const go = useNav((s) => s.go)
-  const showClock = useSettings((s) => s.settings?.showClock ?? true)
   const [hover, setHover] = useState(false)
   const panel = useRef<HTMLElement>(null)
 
@@ -84,7 +81,6 @@ export function Sidebar({ hidden }: { hidden: boolean }) {
             </div>
             <div className="sb-who">
               <div className="sb-name">Magic Lanterns</div>
-              {showClock && <Clock className="sb-clock" />}
             </div>
           </div>
           <div className="sb-items">
@@ -92,11 +88,6 @@ export function Sidebar({ hidden }: { hidden: boolean }) {
               <Item key={it.id} {...it} selected={section === it.id} disabled={hidden} onSelect={select} />
             ))}
           </div>
-          {showClock && (
-            <div className="sb-foot">
-              <Clock />
-            </div>
-          )}
         </nav>
       </div>
     </FocusContext.Provider>

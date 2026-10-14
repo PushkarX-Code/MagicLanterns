@@ -900,25 +900,41 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
 
           <div ref={chrome} className="pl-chrome">
             <div className="pl-top">
-              <button className="pl-close glass" onClick={exit} aria-label="Close">
-                <X size={23} strokeWidth={1.8} />
-              </button>
-              {src && (
-                <div className="pl-title">
-                  <BlurImage
-                    path={src.logo}
-                    size="w500"
-                    tiny={false}
-                    color="transparent"
-                    fit="contain"
-                    position="left center"
-                    className="pl-title-logo"
-                    alt={src.title}
-                    fallback={<div className="pl-title-text">{src.title}</div>}
-                  />
-                  <div className="pl-title-sub">{src.subtitle}</div>
-                </div>
-              )}
+              <div className="pl-top-left">
+                <button className="pl-close glass" onClick={exit} aria-label="Close">
+                  <X size={22} strokeWidth={1.8} />
+                </button>
+                <button className="pl-close glass" onClick={toggleFullscreen} aria-label={fullscreen ? 'Exit Full Screen' : 'Full Screen'}>
+                  {fullscreen ? <Minimize size={20} strokeWidth={1.8} /> : <Maximize size={20} strokeWidth={1.8} />}
+                </button>
+              </div>
+              <div className="pl-volume glass" onClick={(e) => e.stopPropagation()}>
+                <input
+                  className="pl-vol-range no-press"
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  aria-label="Volume"
+                  value={muted ? 0 : volume}
+                  style={{ '--v': `${(muted ? 0 : volume) * 100}%` } as React.CSSProperties}
+                  onChange={(e) => {
+                    const v = video.current
+                    if (!v) return
+                    v.volume = Number(e.target.value)
+                    v.muted = false
+                  }}
+                />
+                <button
+                  className="pl-vol-btn"
+                  aria-label={muted ? 'Unmute' : 'Mute'}
+                  onClick={() => {
+                    if (video.current) video.current.muted = !video.current.muted
+                  }}
+                >
+                  <VolumeIcon size={21} strokeWidth={1.7} />
+                </button>
+              </div>
             </div>
 
             <div className="pl-center" style={{ display: ready ? undefined : 'none' }} onClick={(e) => e.stopPropagation()}>
@@ -927,42 +943,30 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
               <CircleButton icon={RotateCw} label={`Forward ${step} seconds`} onPress={() => skip(1)} />
             </div>
 
-            <div className="pl-bottom glass" onClick={(e) => e.stopPropagation()}>
-              <div
-                ref={bar}
-                className={`pl-bar ${scrub ? 'is-active' : ''}`}
-                onPointerDown={onBarDown}
-                onPointerMove={onBarMove}
-                onPointerUp={onBarUp}
-                onPointerLeave={() => setScrub((s) => (s?.dragging ? s : null))}
-              >
-                <div className="pl-track">
-                  <div className="pl-buffer" style={{ width: `${bufPct}%` }} />
-                  <div className="pl-fill" style={{ width: `${scrub?.dragging ? (scrub.t / (duration || 1)) * 100 : pct}%` }} />
-                  {intro && duration > 0 && (
-                    <div className="pl-chapter" style={{ left: `${(intro.start / duration) * 100}%`, width: `${((intro.end - intro.start) / duration) * 100}%` }} />
-                  )}
-                </div>
-                <div className="pl-knob" style={{ left: `${scrub?.dragging ? (scrub.t / (duration || 1)) * 100 : pct}%` }} />
-                <div className="pl-thumb" style={{ left: scrub?.x ?? 0, opacity: scrub ? 1 : 0 }}>
-                  <div className="pl-thumb-frame">{url && <video ref={preview} src={url} muted preload="metadata" />}</div>
-                  <div className="pl-thumb-time">{timecode(scrub?.t ?? 0)}</div>
-                </div>
-              </div>
-              <div className="pl-row">
-                <span className="pl-time">{timecode(time)}</span>
-                <span className="pl-row-title">{src?.subtitle}</span>
-                <div className="pl-buttons">
-                  <div className="popover-anchor">
-                    <BarButton icon={AudioLines} label="Audio" active={menu === 'audio'} onPress={() => setMenu(menu === 'audio' ? null : 'audio')} />
-                    {menu === 'audio' && <Popover title="Audio" placement="above" align="right" options={menuOptions()} onClose={() => setMenu(null)} />}
+            <div className="pl-bottom" onClick={(e) => e.stopPropagation()}>
+              <div className="pl-meta">
+                {src && (
+                  <div className="pl-title">
+                    <div className="pl-title-text">{src.title}</div>
+                    <div className="pl-title-sub">{src.subtitle}</div>
                   </div>
+                )}
+                <div className="pl-tools glass">
                   <div className="popover-anchor">
                     <BarButton icon={Captions} label="Subtitles" active={menu === 'subs' || subtitle !== null} onPress={() => setMenu(menu === 'subs' ? null : 'subs')} />
                     {menu === 'subs' && <Popover title="Subtitles" placement="above" align="right" options={menuOptions()} onClose={() => setMenu(null)} />}
                   </div>
                   <div className="popover-anchor">
-                    <BarButton icon={Gauge} label={speed === 1 ? 'Speed' : `Speed · ${speedLabel(speed)}`} active={menu === 'speed' || speed !== 1 || cfg.repeat !== 'off'} onPress={() => setMenu(menu === 'speed' ? null : 'speed')} />
+                    <BarButton icon={AudioLines} label="Audio" active={menu === 'audio'} onPress={() => setMenu(menu === 'audio' ? null : 'audio')} />
+                    {menu === 'audio' && <Popover title="Audio" placement="above" align="right" options={menuOptions()} onClose={() => setMenu(null)} />}
+                  </div>
+                  <div className="popover-anchor">
+                    <BarButton
+                      icon={Gauge}
+                      label={speed === 1 ? 'Speed' : `Speed · ${speedLabel(speed)}`}
+                      active={menu === 'speed' || speed !== 1 || cfg.repeat !== 'off'}
+                      onPress={() => setMenu(menu === 'speed' ? null : 'speed')}
+                    />
                     {menu === 'speed' && <Popover title="Playback Speed" placement="above" align="right" options={menuOptions()} onClose={() => setMenu(null)} />}
                   </div>
                   <BarButton icon={Camera} label="Snapshot (Shift+S)" onPress={snapshot} />
@@ -976,14 +980,30 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                       else v.requestPictureInPicture?.().catch(() => undefined)
                     }}
                   />
-                  <BarButton
-                    icon={VolumeIcon}
-                    label={muted ? 'Unmute' : 'Mute'}
-                    onPress={() => {
-                      if (video.current) video.current.muted = !video.current.muted
-                    }}
-                  />
-                  <BarButton icon={fullscreen ? Minimize : Maximize} label={fullscreen ? 'Exit Full Screen' : 'Full Screen'} onPress={toggleFullscreen} />
+                </div>
+              </div>
+              <div className="pl-scrub glass">
+                <span className="pl-time">{timecode(time)}</span>
+                <div
+                  ref={bar}
+                  className={`pl-bar no-press ${scrub ? 'is-active' : ''}`}
+                  onPointerDown={onBarDown}
+                  onPointerMove={onBarMove}
+                  onPointerUp={onBarUp}
+                  onPointerLeave={() => setScrub((s) => (s?.dragging ? s : null))}
+                >
+                  <div className="pl-track">
+                    <div className="pl-buffer" style={{ width: `${bufPct}%` }} />
+                    <div className="pl-fill" style={{ width: `${scrub?.dragging ? (scrub.t / (duration || 1)) * 100 : pct}%` }} />
+                    {intro && duration > 0 && (
+                      <div className="pl-chapter" style={{ left: `${(intro.start / duration) * 100}%`, width: `${((intro.end - intro.start) / duration) * 100}%` }} />
+                    )}
+                  </div>
+                  <div className="pl-knob" style={{ left: `${scrub?.dragging ? (scrub.t / (duration || 1)) * 100 : pct}%` }} />
+                  <div className="pl-thumb" style={{ left: scrub?.x ?? 0, opacity: scrub ? 1 : 0 }}>
+                    <div className="pl-thumb-frame">{url && <video ref={preview} src={url} muted preload="metadata" />}</div>
+                    <div className="pl-thumb-time">{timecode(scrub?.t ?? 0)}</div>
+                  </div>
                 </div>
                 <button
                   className="pl-time right"

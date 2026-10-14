@@ -81,6 +81,11 @@
   gap: 14px;
   margin-top: 30px;
 }
+.hero-actions .pill {
+  width: 220px;
+  justify-content: center;
+  padding: 0 24px;
+}
 .hero-dots {
   position: absolute;
   right: var(--gutter);
