@@ -26,6 +26,8 @@ export interface LanternBridge {
   rescan(): Promise<void>
   scanStatus(): Promise<ScanStatus>
   onScan(cb: (status: ScanStatus) => void): () => void
+  /** Whether this build can look up artwork and details, and how far it has got. */
+  metadataStatus(): Promise<{ enabled: boolean; matched: number; pending: number; unmatched: number }>
   /** Every film and show found in the library folders. */
   getLibrary(): Promise<MediaItem[]>
   /** The library changed on disk (a scan found something, a folder was removed). */

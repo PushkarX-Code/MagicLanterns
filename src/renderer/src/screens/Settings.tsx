@@ -7,6 +7,7 @@ import { Action, Choice, Panel, Picker, Section, Slider, Toggle, settingsPage } 
 import { FocusContext, setFocus, useFocus } from '../focus/focus'
 import { useSettings } from '../state/settings'
 import { api } from '../lib/api'
+import { useLibraryVersion } from '../state/library'
 import { bytes, timeAgo } from '../lib/format'
 import { SLOW_KEY } from '../mock/api'
 import { gsap, d, EASE } from '../design/motion'
@@ -503,6 +504,11 @@ function InterfacePane({ s, set }: PaneProps) {
 function LibraryPane({ s, set }: PaneProps) {
   const [folders, setFolders] = useState<LibraryFolder[] | null>(null)
   const [scan, setScan] = useState<ScanStatus | null>(null)
+  const [meta, setMeta] = useState<{ enabled: boolean; matched: number; pending: number; unmatched: number } | null>(null)
+  const version = useLibraryVersion((v) => v.version)
+  useEffect(() => {
+    window.lantern?.metadataStatus?.().then(setMeta)
+  }, [version])
   useEffect(() => {
     api.getFolders().then(setFolders)
     const bridge = window.lantern
@@ -548,6 +554,18 @@ function LibraryPane({ s, set }: PaneProps) {
         )}
       </Section>
       <Section title="Metadata">
+        {meta && (
+          <Panel>
+            <div className="set-text">
+              <div className="set-label">Artwork and Details</div>
+              <div className="set-hint">
+                {meta.enabled
+                  ? `Posters, banners, cast and episode names are found automatically. ${meta.matched} matched${meta.pending ? `, ${meta.pending} looking up` : ''}${meta.unmatched ? `, ${meta.unmatched} not found` : ''}.`
+                  : 'Off in this build: it was made without a metadata key, so titles come from file names. See the README, "Metadata keys".'}
+              </div>
+            </div>
+          </Panel>
+        )}
         <Picker
           label="Metadata Language"
           hint="Titles, overviews and artwork are fetched in this language when available."

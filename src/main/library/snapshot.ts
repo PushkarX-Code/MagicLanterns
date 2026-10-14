@@ -137,6 +137,21 @@ export function buildSnapshot(db: Db): MediaItem[] {
     listId ? db.prepare('SELECT item_id FROM collection_items WHERE collection_id = ?').all(listId).map((r) => Number(r.item_id)) : []
   )
 
+  const images = new Map(db.prepare('SELECT id, source_url FROM images').all().map((r) => [Number(r.id), String(r.source_url)]))
+  const image = (id: unknown): string | null => (id == null ? null : (images.get(Number(id)) ?? null))
+  const genres = new Map<number, string[]>()
+  for (const g of db.prepare('SELECT ig.item_id, g.name FROM item_genres ig JOIN genres g ON g.id = ig.genre_id ORDER BY g.name').all())
+    genres.set(Number(g.item_id), [...(genres.get(Number(g.item_id)) ?? []), String(g.name)])
+  // Anime leads, so its row and tiles come first.
+  for (const [k, v] of genres) genres.set(k, v.includes('Anime') ? ['Anime', ...v.filter((x) => x !== 'Anime')] : v)
+  const cast = new Map<number, MediaItem['cast']>()
+  const credit = new Map<number, MediaItem['credit']>()
+  for (const c of db.prepare('SELECT c.item_id, c.kind, c.character, c.job, p.name, p.profile_img FROM credits c JOIN people p ON p.id = c.person_id ORDER BY c.item_id, c.ord').all()) {
+    const id = Number(c.item_id)
+    if (c.kind === 'cast') cast.set(id, [...(cast.get(id) ?? []), { name: String(c.name), character: String(c.character ?? ''), profile: image(c.profile_img) }])
+    else if (!credit.has(id) && (c.job === 'Director' || c.job === 'Creator')) credit.set(id, { role: c.job, name: String(c.name) })
+  }
+
   const items: MediaItem[] = []
   const base = (r: Record<string, unknown>, kind: 'movie' | 'show'): MediaItem => ({
     id: `${kind === 'movie' ? 'm' : 's'}-${r.id}`,
@@ -148,16 +163,16 @@ export function buildSnapshot(db: Db): MediaItem[] {
     overview: String(r.overview ?? ''),
     runtime: Number(r.runtime ?? 0),
     certification: String(r.certification ?? ''),
-    genres: [],
-    ratings: {},
-    poster: null,
-    backdrop: null,
-    thumb: null,
-    logo: null,
+    genres: genres.get(Number(r.id)) ?? [],
+    ratings: r.rating_tmdb != null ? { tmdb: Number(r.rating_tmdb) } : {},
+    poster: image(r.poster_img),
+    backdrop: image(r.backdrop_img),
+    thumb: image(r.thumb_img),
+    logo: image(r.logo_img),
     color: hashColor(String(r.title)),
-    trailerKey: null,
-    cast: [],
-    credit: null,
+    trailerKey: r.trailer_key ? String(r.trailer_key) : null,
+    cast: cast.get(Number(r.id)) ?? [],
+    credit: credit.get(Number(r.id)) ?? null,
     preview: null,
     addedAt: Number(r.added_at),
     favorite: !!r.favorite,
@@ -179,7 +194,8 @@ export function buildSnapshot(db: Db): MediaItem[] {
     item.runtime ||= Math.round(Number(f.duration ?? 0) / 60)
     item.progress = progressOf(f)
     item.playCount = Number(f.play_count ?? 0)
-    item.backdrop = frameUrl(f)
+    // Before a match, the film's own frame stands in for its artwork.
+    item.backdrop ??= frameUrl(f)
     // Newest copy decides when the film "arrived".
     item.addedAt = Math.max(item.addedAt, ...files.filter((x) => Number(x.item_id) === Number(r.id)).map((x) => Number(x.added_at)))
     items.push(item)
@@ -193,7 +209,7 @@ export function buildSnapshot(db: Db): MediaItem[] {
     const id = Number(r.episode_id)
     epFiles.set(id, epFiles.has(id) ? better(epFiles.get(id)!, f) : f)
   }
-  const seasonRows = db.prepare('SELECT id, show_id, number, name FROM seasons ORDER BY show_id, number').all()
+  const seasonRows = db.prepare('SELECT id, show_id, number, name, poster_img FROM seasons ORDER BY show_id, number').all()
   const episodeRows = db.prepare('SELECT * FROM episodes ORDER BY show_id, season_number, number').all()
   for (const r of db.prepare("SELECT * FROM items WHERE kind = 'show'").all()) {
     const showId = Number(r.id)
@@ -211,22 +227,22 @@ export function buildSnapshot(db: Db): MediaItem[] {
           number: Number(e.number),
           title: e.title ? String(e.title) : `Episode ${e.number}`,
           overview: String(e.overview ?? ''),
-          still: frameUrl(f),
-          runtime: Math.round(Number(f.duration ?? 0) / 60),
+          still: image(e.still_img) ?? frameUrl(f),
+          runtime: Number(e.runtime ?? 0) || Math.round(Number(f.duration ?? 0) / 60),
           file: fileInfo(f, streams),
           progress: progressOf(f)
         })
         item.playCount += Number(f.play_count ?? 0)
         item.addedAt = Math.max(item.addedAt, Number(f.added_at))
       }
-      if (episodes.length) seasons.push({ number: Number(s.number), name: String(s.name ?? `Season ${s.number}`), poster: null, episodes })
+      if (episodes.length) seasons.push({ number: Number(s.number), name: String(s.name ?? `Season ${s.number}`), poster: image(s.poster_img), episodes })
     }
     if (!seasons.length) continue
     // Specials go last, after the real seasons.
     seasons.sort((a, b) => (a.number === 0 ? 1 : b.number === 0 ? -1 : a.number - b.number))
     item.seasons = seasons
     const first = seasons[0].episodes[0]
-    item.backdrop = first.still
+    item.backdrop ??= first.still
     item.runtime ||= first.runtime
     items.push(item)
   }
