@@ -216,3 +216,42 @@ Stop after every phase with: what was built + exact run steps.
 - Dev on Windows: `npm install` → `npm run dev`.
 - Installer: `npm run dist` on Windows (NSIS on Linux needs Wine, not worth it).
 - Data lives in `%APPDATA%/Magic Lanterns/` (db, image cache, generated media).
+
+---
+
+## Next up (planned 14 Oct)
+
+Mac version waits until everything else is done and fixed.
+
+### A. Remote updates for users
+
+Goal: installed copies find new versions and update in one click, while the code repo stays private.
+
+How: a second, **public** repo `PushkarX-Code/MagicLanterns-Releases` that holds only installers (no code, no keys). The app's update check and the download links read from it.
+
+**You do (5 min, once):**
+1. Create an empty public repo named `MagicLanterns-Releases`.
+2. Create a fine-grained token with *Contents: Read and write* on that one repo only.
+3. Add it to this private repo as the Actions secret `RELEASES_TOKEN`.
+
+**I do:**
+1. `electron-builder.yml`: point `publish` at `MagicLanterns-Releases`.
+2. `release.yml`: on a version tag, build, then publish the installer, `latest.yml` and blockmap to the releases repo using `RELEASES_TOKEN`. Smaller "only what changed" downloads come free from the blockmap.
+3. README and `install.ps1`: download links point at the releases repo; the releases repo gets a one-paragraph README.
+4. Test the whole loop: install v1.0.0, publish v1.0.1, confirm the app offers it, downloads, restarts on the new version.
+
+Cost: free. Flag: without paid code signing, Windows SmartScreen still warns on the first install (updates afterwards don't).
+
+### B. Cast pages
+
+Goal: click any cast member and see who they are and everything they're in.
+
+1. **Data:** the snapshot sends each cast member's TMDB id. A new IPC `meta:person(id)` fetches `/person/{id}` with combined credits, cached in the database for 7 days (migration 4: `person_cache`). The metadata proxy allowlist adds `/person/{id}`.
+2. **Screen:** large portrait, name, known for, short bio (expandable). Then two rows:
+   - **In your library:** titles you own that they're in, playable straight away.
+   - **Filmography:** everything else, newest and most popular first; opens the existing title preview with where to watch.
+3. **Feel:** cast cards become focusable and clickable; the portrait morphs into the page header with the same shared-element transition the title cards use; Escape returns to the title.
+4. **Demo/browser mode:** shows the "In your library" row from the demo data.
+5. **Tests:** credit mapping, library matching, cache expiry.
+
+Order: A first (unblocks downloads and updates), then B.
