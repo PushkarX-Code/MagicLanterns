@@ -10,7 +10,9 @@ import { useNav } from '../state/nav'
 const LISTS: { id: DiscoverList; title: string }[] = [
   { id: 'week', title: 'Top 10 This Week' },
   { id: 'month', title: 'Top 10 This Month' },
-  { id: 'alltime', title: 'Greatest of All Time' }
+  { id: 'alltime', title: 'Greatest of All Time' },
+  { id: 'series', title: 'Must-Watch Series' },
+  { id: 'anime', title: 'Must-Watch Anime' }
 ]
 
 function RankTile({ t, list, onFocused }: { t: TrendingTitle; list: DiscoverList; onFocused: (el: HTMLElement) => void }) {
@@ -68,4 +70,11 @@ export function TopTen({ onRowFocus }: { onRowFocus: (el: HTMLElement) => void }
   )
 }
 
-export const listLabel = (list: DiscoverList): string => (list === 'alltime' ? 'of all time' : list === 'month' ? 'this month' : 'this week')
+const LABEL: Record<DiscoverList, string> = {
+  week: 'this week',
+  month: 'this month',
+  alltime: 'of all time',
+  series: 'in must-watch series',
+  anime: 'in must-watch anime'
+}
+export const listLabel = (list: DiscoverList): string => LABEL[list]

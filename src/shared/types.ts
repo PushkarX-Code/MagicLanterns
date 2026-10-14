@@ -223,7 +223,7 @@ export interface TrendingTitle {
   watchLink: string | null
 }
 
-export type DiscoverList = 'week' | 'month' | 'alltime'
+export type DiscoverList = 'week' | 'month' | 'alltime' | 'series' | 'anime'
 
 /** The extra detail fetched when a discover title is opened full screen. */
 export interface DiscoverDetails {

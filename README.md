@@ -23,38 +23,33 @@ This downloads the latest release and opens the installer. The app isn't code-si
 
 Every screenshot is the running app. Artwork and details are real film data; the player is showing the open-licensed film *Sintel*.
 
+**Every title gets a cinematic page**
+![Dune: Part Two](docs/screenshots/detail.jpg)
+
+**Animation**
+![Spider-Man: Across the Spider-Verse](docs/screenshots/detail-spiderverse.jpg)
+
+**Series, picking up where you left off**
+![Arcane](docs/screenshots/detail-arcane.jpg)
+
+![Oppenheimer](docs/screenshots/detail-oppenheimer.jpg)
+
+![Blade Runner 2049](docs/screenshots/detail-bladerunner.jpg)
+
 **Home.** Recents, Recently Added, Picks of the Day
 ![Home rows](docs/screenshots/home-rows.jpg)
 
 **Film Genres, Unwatched and Most Watched**
 ![Genres](docs/screenshots/home-genres.jpg)
 
-**Detail page** with ratings, formats, resume and watchlist
-![Detail](docs/screenshots/detail.jpg)
-
-**Player**
+**The player**
 ![Player](docs/screenshots/player.jpg)
-
-**Paused**
-![Paused](docs/screenshots/player-paused.jpg)
-
-**Files.** List view, grouped by when files arrived
-![Files list](docs/screenshots/files-list.jpg)
-
-**Files.** Grid view
-![Files grid](docs/screenshots/files-grid.jpg)
-
-**Files.** The More menu: sort, select, starred, hide watched
-![Files menu](docs/screenshots/files-more.jpg)
 
 **Favorites**
 ![Favorites](docs/screenshots/favorites.jpg)
 
-**Settings.** Video
-![Video settings](docs/screenshots/settings-video.jpg)
-
-**Settings.** Audio, with the 10-band equalizer
-![Audio settings](docs/screenshots/settings-audio.jpg)
+**Files**
+![Files](docs/screenshots/files-grid.jpg)
 
 **Light theme**
 ![Light theme](docs/screenshots/theme-light.jpg)
@@ -63,7 +58,7 @@ Every screenshot is the running app. Artwork and details are real film data; the
 
 **Sections:** Home, Favorites, Files and Settings.
 
-**Home** opens on a hero carousel, then: your recents (no heading, just the films), Recently Added, Picks of the Day (a fresh shuffle every day), Film Genres, Unwatched, Most Watched, and three rows about the wider world: **Top 10 This Week**, **Top 10 This Month** and **Greatest of All Time**. They refresh automatically. Each title opens a full-screen page like your own films, with **Where to Watch** in place of Play: it shows the services carrying it in your country and links straight to them.
+**Home** opens on a hero carousel, then: your recents (no heading, just the films), Recently Added, Picks of the Day (a fresh shuffle every day), Film Genres, Unwatched, Most Watched, and five rows about the wider world: **Top 10 This Week**, **Top 10 This Month**, **Greatest of All Time**, **Must-Watch Series** and **Must-Watch Anime**. They refresh automatically. Each title opens a full-screen page like your own films, with **Where to Watch** in place of Play: it shows the services carrying it in your country and links straight to them.
 
 **Files** lists every file in your library folders, newest first.
 - **+** adds a folder, adds single files, or opens a network stream (HTTP, HTTPS, HLS).
