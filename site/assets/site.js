@@ -386,7 +386,7 @@
   // Scrolling away, the hero loses focus and the light dims.
   gsap
     .timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1.4 } })
-    .to(['.news', '.app-icon', '.hero-title', '.hero-sub', '.hero-cta'], { y: -90, opacity: 0, filter: 'blur(14px)', stagger: 0.04, ease: 'none' }, 0)
+    .to(['.news', '.hero .app-icon', '.hero-title', '.hero-sub', '.hero-cta'], { y: -90, opacity: 0, filter: 'blur(14px)', stagger: 0.04, ease: 'none' }, 0)
     .to(beam, { opacity: 0.15, '--spread': '48deg', ease: 'none' }, 0)
     .to('.scroll-cue', { opacity: 0, duration: 0.2 }, 0)
 
