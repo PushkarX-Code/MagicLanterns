@@ -379,7 +379,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     return Number.isFinite(d) ? d : 0
   }
   const streamAt = (t: number): string => `${engine.current!.plan.url}?t=${Math.max(0, t).toFixed(3)}`
-  /** Seconds to skip once a repackaged stream (which starts on a keyframe) has buffered past them. */
+  /** Seconds a repackaged stream (which starts on a keyframe) still has to play through, hidden, to reach the asked-for moment. */
   const pendingSkip = useRef<number | null>(null)
   /** Starts the stream as close to `to` as it can begin, then lets the player cover the gap. */
   const streamFrom = async (to: number): Promise<void> => {
@@ -1122,9 +1122,9 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
               onTimeUpdate={(e) => {
                 const v = e.currentTarget
                 const skip = pendingSkip.current
-                if (skip != null && (v.currentTime >= skip - 0.05 || (v.buffered.length && v.buffered.end(v.buffered.length - 1) > skip + 0.3))) {
+                // Live streams can't be seeked, so the gap is played through (fast and hidden) rather than jumped.
+                if (skip != null && v.currentTime >= skip - 0.05) {
                   pendingSkip.current = null
-                  if (v.currentTime < skip) v.currentTime = skip
                   v.playbackRate = speed
                   v.muted = muted
                   setCatchingUp(false)
