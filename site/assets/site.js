@@ -1,8 +1,8 @@
 /* Magic Lanterns · the site's motion and sound.
  * The page is one slow film: the Beacon draws itself, the app rises out of the dark, and every chapter is
  * pinned and scrubbed by the scroll, so the visitor sets the pace. Fast scrolling smears the pictures a little,
- * the way a camera pan does. Sound is part of the film: the visitor walks in with it on (one tap at the door,
- * which is what browsers ask before a page may make a sound), and the score changes chord with each chapter. */
+ * the way a camera pan does. Sound is off until the visitor turns it on; then the score changes chord with
+ * each chapter. */
 ;(() => {
   'use strict'
 
@@ -221,25 +221,14 @@
     soundBtn.setAttribute('aria-label', sound.on ? 'Turn sound off' : 'Turn sound on')
   }
   soundBtn.addEventListener('click', () => {
-    sound.on ? sound.stop() : sound.start()
-    showSound()
-  })
-
-  /* ---------------- The entrance ---------------- */
-  // The film starts when the visitor walks in; with sound unless they choose silence.
-  let begin = () => {}
-  const gate = $('.gate')
-  const enter = (withSound) => {
-    if (withSound) {
+    if (sound.on) sound.stop()
+    else {
       sound.start()
       sound.play('projector', 0.8)
     }
     showSound()
-    gsap.to(gate, { opacity: 0, duration: 0.9, ease: 'power1.inOut', onComplete: () => gate.remove() })
-    begin()
-  }
-  $('.gate-enter').addEventListener('click', () => enter(true))
-  $('.gate-quiet').addEventListener('click', () => enter(false))
+  })
+
   // The score follows the chapters. Called after every pinned scene exists, so the cues land where the
   // chapters really are.
   const scoreCues = () =>
@@ -252,7 +241,6 @@
       ['#day', 'day']
     ].forEach(([sel, key]) => ScrollTrigger.create({ trigger: sel, start: 'top 60%', end: 'bottom 40%', onToggle: (st) => st.isActive && sound.chord(key) }))
 
-  gsap.fromTo('.gate-inner > *', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1, delay: 0.2 })
 
   /* ---------------- Links ---------------- */
   $$('[data-store]').forEach((a) => {
@@ -331,8 +319,7 @@
   addEventListener('resize', aim)
   gsap.set(beam, { opacity: 0, '--spread': '3deg' })
 
-  const opening = gsap.timeline({ paused: true, delay: 0.35, onComplete: () => smoother.paused(false) })
-  begin = () => opening.play()
+  const opening = gsap.timeline({ delay: 0.35, onComplete: () => smoother.paused(false) })
   opening
     .fromTo('.b-arch', { drawSVG: '50% 50%' }, { drawSVG: '0% 100%', duration: 1.5, ease: 'power3.inOut', stagger: { each: 0.2, from: 'end' } })
     .to('.b-core', { scaleY: 1, duration: 0.9, ease: 'back.out(1.5)' }, 0.75)
