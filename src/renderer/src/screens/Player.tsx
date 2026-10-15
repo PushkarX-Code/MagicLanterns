@@ -1284,7 +1284,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
             </div>
           </div>
 
-          {inIntro && intro && (
+          {inIntro && intro && !showNext && (
             <FocusPill focusKey="SKIP-INTRO" className="pl-skip glass-strong" onPress={() => seekTo(intro.end)}>
               <SkipForward size={16} strokeWidth={1.8} /> Skip Intro
             </FocusPill>
