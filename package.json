@@ -11,7 +11,7 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "typecheck": "tsc --noEmit -p src/tsconfig.node.json && tsc --noEmit -p src/tsconfig.web.json",
     "test": "node --test \"src/main/**/*.test.ts\"",
     "icons": "node build/build-icons.mjs",
     "dist": "electron-vite build && electron-builder --win"
@@ -40,5 +40,48 @@
     "sharp": "^0.35.5",
     "typescript": "~5.9",
     "vite": "^7.3.7"
+  },
+  "build": {
+    "appId": "com.pushkar.magiclanterns",
+    "productName": "Magic Lanterns",
+    "copyright": "Made by Pushkar",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "out/**",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/@ffprobe-installer/**",
+      "node_modules/ffmpeg-static/**"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Magic Lanterns",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "artifactName": "MagicLanterns-Setup.${ext}"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "PushkarX-Code",
+      "repo": "MagicLanterns-Releases"
+    }
   }
 }

@@ -14,7 +14,7 @@ A premium local media player for Windows. Point it at your folders and it turns 
 Or install from PowerShell in one line:
 
 ```powershell
-irm https://raw.githubusercontent.com/PushkarX-Code/MagicLanterns/main/install.ps1 | iex
+irm https://github.com/PushkarX-Code/MagicLanterns-Releases/releases/latest/download/install.ps1 | iex
 ```
 
 This downloads the latest release and opens the installer. The app isn't code-signed yet, so Windows SmartScreen may say *"Windows protected your PC"*: click **More info → Run anyway**.
@@ -110,7 +110,7 @@ Posters, banners and film details work out of the box. The Top 10 and Must-Watch
 3. Run **Actions → Metadata proxy → Run workflow**. It prints the proxy address (`https://magic-lanterns-meta.<you>.workers.dev`).
 4. Save that address as the repository secret `META_PROXY_URL`. Every release after that is built against the proxy.
 
-**Without the proxy** (local builds), copy `.env.example` to `.env` and fill in the keys. They're built in scrambled, which stops casual snooping but not a determined person, so use the proxy for anything you publish.
+**Without the proxy** (local builds), copy `docs/env.example` to `.env` in the project folder and fill in the keys. They're built in scrambled, which stops casual snooping but not a determined person, so use the proxy for anything you publish.
 
 ## Keyboard
 

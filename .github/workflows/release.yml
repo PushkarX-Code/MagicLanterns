@@ -68,6 +68,7 @@ jobs:
             release/MagicLanterns-Setup.exe
             release/MagicLanterns-Setup.exe.blockmap
             release/latest.yml
+            docs/install.ps1
       - name: Publish here (no RELEASES_TOKEN yet)
         if: steps.target.outputs.public != 'true'
         uses: softprops/action-gh-release@v2
@@ -81,3 +82,4 @@ jobs:
             release/MagicLanterns-Setup.exe
             release/MagicLanterns-Setup.exe.blockmap
             release/latest.yml
+            docs/install.ps1
