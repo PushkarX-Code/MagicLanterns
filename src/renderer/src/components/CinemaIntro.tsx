@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin'
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin'
 import { gsap, reduceMotion } from '../design/motion'
+import { cinemaSound } from '../lib/cinemaSound'
 
 gsap.registerPlugin(DrawSVGPlugin, MorphSVGPlugin)
 
@@ -41,6 +42,7 @@ export function CinemaIntro({ onDone }: { onDone: () => void }) {
     }
     const q = gsap.utils.selector(el)
     const tl = gsap.timeline({ onComplete: onDone })
+    cinemaSound.intro()
     gsap.set(q('.ci-right'), { opacity: 0 })
     gsap.set(q('.ci-wave'), { opacity: 0, scale: 0.6, transformOrigin: (i: number) => (i % 2 ? '0% 50%' : '100% 50%') })
 
@@ -67,6 +69,7 @@ export function CinemaIntro({ onDone }: { onDone: () => void }) {
       e.preventDefault()
       e.stopImmediatePropagation()
       tl.timeScale(4)
+      cinemaSound.hush()
     }
     window.addEventListener('keydown', skip, true)
     el.addEventListener('pointerdown', skip)

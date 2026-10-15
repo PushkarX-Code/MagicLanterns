@@ -58,6 +58,7 @@ export interface Settings {
   // Cinema Mode
   cinemaMode: boolean // shown in the sidebar
   cinemaIntro: boolean // the opening animation
+  cinemaSounds: boolean // opening music and lobby sounds
   ambientLight: boolean // the film's own light fills the letterbox bars
   spatialHeadphones: boolean // a virtual 7.1 room around the head
   dialogueLift: boolean
@@ -118,6 +119,7 @@ export const DEFAULT_SETTINGS: Settings = {
   passthrough: false,
   cinemaMode: true,
   cinemaIntro: true,
+  cinemaSounds: true,
   ambientLight: true,
   spatialHeadphones: false,
   dialogueLift: false,

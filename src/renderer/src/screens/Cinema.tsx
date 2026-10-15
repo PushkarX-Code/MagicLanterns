@@ -6,6 +6,7 @@ import { MetaLine, primaryFile } from '../components/Meta'
 import { SoundStage } from '../components/SoundStage'
 import { CinemaIntro } from '../components/CinemaIntro'
 import { useSettings } from '../state/settings'
+import { cinemaSound } from '../lib/cinemaSound'
 import { ScreenActive } from '../focus/focus'
 import { api } from '../lib/api'
 import { useAsync } from '../lib/useAsync'
@@ -65,16 +66,18 @@ function Lobby({ items }: { items: MediaItem[] }) {
   const back = useNav((s) => s.back)
   const item = items[index]
 
-  // Lights down: the screen opens from a thin line of light, then the lobby rises into place.
+  // The lights come up: the picture develops out of black, then the lobby settles in around it.
+  // (Posters fade through their artwork, not their own opacity, which the strip animates on its own.)
   useEffect(() => {
     const q = gsap.utils.selector(root)
     const tl = gsap.timeline()
-    tl.fromTo(root.current, { opacity: 0 }, { opacity: 1, duration: d(0.6), ease: 'power1.out' })
-      .fromTo(q('.cine-backdrop'), { clipPath: 'inset(49.6% 0 49.6% 0)', filter: 'brightness(2.2)' }, { clipPath: 'inset(0% 0 0% 0)', filter: 'brightness(1)', duration: d(1.8), ease: 'expo.inOut' })
-      .fromTo(q('.cine-top'), { opacity: 0 }, { opacity: 1, duration: d(1.2), ease: 'power1.out' }, '-=0.3')
-      .fromTo(q('.cine-feature > *'), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: d(1.2), ease: 'power3.out', stagger: 0.12 }, '<')
-      .fromTo(q('.cine-poster'), { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: d(1.2), ease: 'power3.out', stagger: 0.07, clearProps: 'opacity' }, '<0.2')
-      .fromTo(q('.cine-keys'), { opacity: 0 }, { opacity: 1, duration: d(1), ease: 'power1.out' }, '<0.5')
+    tl.fromTo(root.current, { opacity: 0 }, { opacity: 1, duration: d(0.8), ease: 'power1.out' })
+      .fromTo(q('.cine-backdrop'), { opacity: 0, scale: 1.06 }, { opacity: 1, scale: 1, duration: d(2.2), ease: 'power2.out' }, 0)
+      .fromTo(q('.cine-top'), { opacity: 0 }, { opacity: 1, duration: d(1.2), ease: 'power1.out' }, 0.5)
+      .fromTo(q('.cine-feature > *'), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: d(1.2), ease: 'power3.out', stagger: 0.12 }, 0.6)
+      .fromTo(q('.cine-poster'), { y: 40 }, { y: 0, duration: d(1.2), ease: 'power3.out', stagger: 0.07 }, 0.8)
+      .fromTo(q('.cine-poster img'), { opacity: 0 }, { opacity: 1, duration: d(1), ease: 'power1.out', stagger: 0.07 }, 0.8)
+      .fromTo(q('.cine-keys'), { opacity: 0 }, { opacity: 1, duration: d(1), ease: 'power1.out' }, 1.4)
     return () => {
       tl.kill()
     }
@@ -97,6 +100,7 @@ function Lobby({ items }: { items: MediaItem[] }) {
         .timeline()
         .to(poster, { scale: pressed ? 0.92 : 1.03, duration: pressed ? 0.12 : 0.18, ease: 'power2.out' })
         .to(poster, { scale: 1, duration: 0.9, ease: 'elastic.out(1, 0.5)' })
+      cinemaSound.switchFilm()
       gsap.fromTo(poster.querySelector('.cine-sheen'), { xPercent: -140, opacity: 0.7 }, { xPercent: 140, opacity: 0, duration: 0.9, ease: 'power2.out', delay: pressed ? 0.1 : 0 })
     }
     setIndex(i)
@@ -118,7 +122,16 @@ function Lobby({ items }: { items: MediaItem[] }) {
     busy.current = true
     gsap.to(root.current, { opacity: 0, duration: d(1), ease: 'power1.inOut', onComplete: then })
   }
-  const start = (): void => fadeOut(() => push({ name: 'player', itemId: item.id, cinema: true }))
+  const start = (): void => {
+    if (busy.current) return
+    cinemaSound.startShow()
+    fadeOut(() => push({ name: 'player', itemId: item.id, cinema: true }))
+  }
+  const leave = (): void => {
+    if (busy.current) return
+    cinemaSound.leave()
+    fadeOut(back)
+  }
 
   useEffect(() => {
     if (!active || sound) return
@@ -126,7 +139,7 @@ function Lobby({ items }: { items: MediaItem[] }) {
       if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') pick((index + (e.key === 'ArrowRight' ? 1 : -1) + items.length) % items.length)
       else if (e.key === 'Enter') start()
       else if (e.key.toLowerCase() === 's') setSound(true)
-      else if (e.key === 'Escape' || e.key === 'Backspace') fadeOut(back)
+      else if (e.key === 'Escape' || e.key === 'Backspace') leave()
       else return
       e.preventDefault()
       e.stopImmediatePropagation()
