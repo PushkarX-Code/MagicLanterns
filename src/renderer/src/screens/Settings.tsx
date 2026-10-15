@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { AudioLines, Captions, Clapperboard, FolderOpen, Keyboard, Play, Sparkles, type LucideIcon } from 'lucide-react'
+import { AudioLines, Captions, Clapperboard, FolderOpen, Keyboard, Play, Projector, Sparkles, type LucideIcon } from 'lucide-react'
 import type { LibraryFolder, ScanStatus } from '@shared/types'
-import { EQ_BANDS, EQ_PRESETS, type Settings } from '@shared/settings'
+import { DEFAULT_SETTINGS, EQ_BANDS, EQ_PRESETS, type Settings } from '@shared/settings'
 import { Screen } from '../components/Screen'
 import { Action, Choice, Panel, Picker, Section, Slider, Toggle, settingsPage } from '../components/SettingControls'
 import { FocusContext, setFocus, useFocus } from '../focus/focus'
@@ -12,11 +12,12 @@ import { bytes, timeAgo } from '../lib/format'
 import { SLOW_KEY } from '../mock/api'
 import { gsap, d, EASE } from '../design/motion'
 
-type Tab = 'playback' | 'video' | 'audio' | 'subtitles' | 'controls' | 'interface' | 'library'
+type Tab = 'playback' | 'video' | 'audio' | 'cinema' | 'subtitles' | 'controls' | 'interface' | 'library'
 const TABS: { id: Tab; label: string; icon: LucideIcon }[] = [
   { id: 'playback', label: 'Playback', icon: Play },
   { id: 'video', label: 'Video', icon: Clapperboard },
   { id: 'audio', label: 'Audio', icon: AudioLines },
+  { id: 'cinema', label: 'Cinema Mode', icon: Projector },
   { id: 'subtitles', label: 'Subtitles', icon: Captions },
   { id: 'controls', label: 'Controls', icon: Keyboard },
   { id: 'interface', label: 'Interface', icon: Sparkles },
@@ -57,6 +58,47 @@ interface PaneProps {
   s: Settings
   set: Set
   update: (patch: Partial<Settings>) => void
+}
+
+// ---------- Cinema Mode ----------
+const CINEMA_KEYS = ['cinemaMode', 'ambientLight', 'spatialHeadphones', 'downmix', 'dialogueLift', 'nightListening'] as const
+type Sound = 'theatre' | 'spatial' | 'stereo'
+
+function CinemaPane({ s, set, update }: PaneProps) {
+  const sound: Sound = s.downmix ? 'stereo' : s.spatialHeadphones ? 'spatial' : 'theatre'
+  const defaults = CINEMA_KEYS.every((k) => s[k] === DEFAULT_SETTINGS[k])
+  return (
+    <>
+      <Section title="Cinema Mode">
+        <Toggle label="Show in Sidebar" hint="The big-screen lobby, opened from the sidebar." value={s.cinemaMode} onChange={set('cinemaMode')} />
+        <Toggle label="Ambient Light" hint="The film's own light fills the black bars around the picture." value={s.ambientLight} onChange={set('ambientLight')} />
+      </Section>
+      <Section title="Sound Stage" footer="Sound Stage applies to every film from your drives, in Cinema Mode or not.">
+        <Choice<Sound>
+          label="Sound"
+          hint="Where the soundtrack goes."
+          value={sound}
+          options={[
+            { id: 'theatre', label: 'Speakers' },
+            { id: 'spatial', label: 'Headphones' },
+            { id: 'stereo', label: 'Stereo' }
+          ]}
+          onChange={(v) => update({ downmix: v === 'stereo', spatialHeadphones: v === 'spatial' })}
+        />
+        <Toggle label="Dialogue Lift" hint="Voices stay clear over music and effects." value={s.dialogueLift} onChange={set('dialogueLift')} />
+        <Toggle label="Night Listening" hint="Explosions come down, whispers come up." value={s.nightListening} onChange={set('nightListening')} />
+      </Section>
+      {!defaults && (
+        <Section>
+          <Action
+            label="Restore Defaults"
+            hint="Cinema Mode and Sound Stage as they came."
+            onPress={() => update(Object.fromEntries(CINEMA_KEYS.map((k) => [k, DEFAULT_SETTINGS[k]])) as Partial<Settings>)}
+          />
+        </Section>
+      )}
+    </>
+  )
 }
 
 // ---------- Playback ----------
@@ -650,6 +692,7 @@ export function SettingsScreen() {
           {tab === 'playback' && <PlaybackPane {...props} />}
           {tab === 'video' && <VideoPane {...props} />}
           {tab === 'audio' && <AudioPane {...props} />}
+          {tab === 'cinema' && <CinemaPane {...props} />}
           {tab === 'subtitles' && <SubtitlesPane {...props} />}
           {tab === 'controls' && <ControlsPane {...props} />}
           {tab === 'interface' && <InterfacePane {...props} />}

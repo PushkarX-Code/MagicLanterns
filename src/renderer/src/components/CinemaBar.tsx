@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { AudioLines, Sparkles } from 'lucide-react'
 
 /**
- * Cinema Mode's own controls, at the top of the picture: Ambient Light and Sound Stage. They show for a moment
+ * Cinema Mode's own controls, at the top of the picture: Ambient Light (click to switch; its icon lights when on)
+ * and Sound Stage. They show for a moment
  * when the film starts, then wait out of sight; resting the pointer in their area brings them back. Every
  * change is a slow fade.
  */
@@ -28,9 +29,6 @@ export function CinemaBar({ ambient, onAmbient, onSound }: { ambient: boolean; o
         <button className={`cinema-chip ${ambient ? 'is-on' : ''}`} onClick={onAmbient} aria-pressed={ambient}>
           <Sparkles size={16} strokeWidth={1.9} />
           <span>Ambient Light</span>
-          <span className={`switch ${ambient ? 'is-on' : ''}`}>
-            <span />
-          </span>
         </button>
         <button className="cinema-chip" onClick={onSound}>
           <AudioLines size={16} strokeWidth={1.9} />

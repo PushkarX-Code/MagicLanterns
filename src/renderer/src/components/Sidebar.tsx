@@ -3,6 +3,7 @@ import { FolderOpen, House, Info, Projector, Settings, Star, type LucideIcon } f
 import { Lantern } from './Lantern'
 import { FocusContext, setFocus, useFocus } from '../focus/focus'
 import { useNav, type Section } from '../state/nav'
+import { useSettings } from '../state/settings'
 import { gsap, d, EASE } from '../design/motion'
 
 const ITEMS: { id: Section; label: string; icon: LucideIcon }[] = [
@@ -36,6 +37,7 @@ export function Sidebar({ hidden }: { hidden: boolean }) {
   const section = useNav((s) => s.section)
   const go = useNav((s) => s.go)
   const [hover, setHover] = useState(false)
+  const cinema = useSettings((s) => s.settings?.cinemaMode ?? true)
   const panel = useRef<HTMLElement>(null)
 
   const { ref, focusKey, hasFocusedChild } = useFocus<HTMLDivElement>({
@@ -93,8 +95,12 @@ export function Sidebar({ hidden }: { hidden: boolean }) {
             {ITEMS.filter((it) => it.id !== 'settings').map((it) => (
               <Item key={it.id} {...it} selected={section === it.id} disabled={hidden} onSelect={select} />
             ))}
-            <div className="sb-section">Experience</div>
-            <Item id="cinema" label="Cinema Mode" icon={Projector} selected={false} disabled={hidden} onSelect={select} />
+            {cinema && (
+              <>
+                <div className="sb-section">Experience</div>
+                <Item id="cinema" label="Cinema Mode" icon={Projector} selected={false} disabled={hidden} onSelect={select} />
+              </>
+            )}
           </div>
           <div className="sb-items sb-bottom">
             {ITEMS.filter((it) => it.id === 'settings').map((it) => (
