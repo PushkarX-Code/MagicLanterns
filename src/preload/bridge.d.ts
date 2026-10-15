@@ -38,6 +38,8 @@ export interface LanternBridge {
     opts: { audio?: number; caps: PlayerCaps; settings: { downmix: boolean; deinterlace: 'off' | 'auto' | 'on'; toneMapping: 'auto' | 'off' }; session?: string; forceStream?: boolean }
   ): Promise<PlaybackPlan>
   closePlayback(session: string): Promise<void>
+  /** Where a repackaged stream can actually start for a moment (its keyframe), in seconds. */
+  snapPlayback(session: string, at: number): Promise<number>
   /** Subtitle files sitting beside the film. */
   listSubtitleFiles(target: { fileId?: string; path?: string }): Promise<SubtitleTrack[]>
   /** One subtitle track as timed lines; null if it can't be read. */

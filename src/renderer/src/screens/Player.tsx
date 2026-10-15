@@ -365,13 +365,32 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
 
   const isStream = (): boolean => !!engine.current && engine.current.plan.mode !== 'native'
   /** Where we are in the film, in seconds, whichever way it's playing. */
-  const position = (): number => (isStream() ? engine.current!.offset : 0) + (video.current?.currentTime ?? 0)
+  // While a stream covers the gap to the asked-for moment, that moment is where we are.
+  const position = (): number => {
+    const t = video.current?.currentTime ?? 0
+    if (!isStream()) return t
+    const gap = pendingSkip.current
+    return engine.current!.offset + (gap != null ? Math.max(gap, t) : t)
+  }
   const length = (): number => {
     if (isStream()) return engine.current!.plan.duration
     const d = video.current?.duration ?? 0
     return Number.isFinite(d) ? d : 0
   }
   const streamAt = (t: number): string => `${engine.current!.plan.url}?t=${Math.max(0, t).toFixed(2)}`
+  /** Seconds to skip once a repackaged stream (which starts on a keyframe) has buffered past them. */
+  const pendingSkip = useRef<number | null>(null)
+  /** Starts the stream as close to `to` as it can begin, then lets the player cover the gap. */
+  const streamFrom = async (to: number): Promise<void> => {
+    const e = engine.current
+    if (!e) return
+    const begin = (await window.lantern?.snapPlayback?.(e.plan.session ?? '', to).catch(() => to)) ?? to
+    if (engine.current !== e) return
+    e.offset = Math.min(begin, to)
+    pendingSkip.current = to - e.offset > 0.25 ? to - e.offset : null
+    // A hair past the keyframe, so rounding can never send the engine back to the one before it.
+    setUrl(`${e.plan.url}?t=${(e.offset + (begin < to ? 0.01 : 0)).toFixed(3)}`)
+  }
 
   /** Asks the engine how to play this file, then starts it (part-way in when resuming or switching sound). */
   async function openEngine(
@@ -398,7 +417,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
       if (plan.mode === 'native') {
         resumeAt.current = at ?? null
         setUrl(plan.url)
-      } else setUrl(streamAt(start))
+      } else await streamFrom(start)
       if (plan.mode === 'transcode') flash(plan.encoder?.startsWith('libx') ? 'Converting for playback' : 'Converting for playback · graphics card')
     } catch {
       setFailed(true)
@@ -463,7 +482,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
         engine.current!.offset = to
         setTime(to)
         window.clearTimeout(seekTimer.current)
-        seekTimer.current = window.setTimeout(() => setUrl(streamAt(to)), 180)
+        seekTimer.current = window.setTimeout(() => void streamFrom(to), 180)
       } else {
         v.currentTime = to
         setTime(v.currentTime)
@@ -1097,6 +1116,11 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
               }}
               onTimeUpdate={(e) => {
                 const v = e.currentTarget
+                const skip = pendingSkip.current
+                if (skip != null && v.buffered.length && v.buffered.end(v.buffered.length - 1) > skip + 0.3) {
+                  pendingSkip.current = null
+                  v.currentTime = skip
+                }
                 setTime(position())
                 if (v.buffered.length) setBuffered((isStream() ? engine.current!.offset : 0) + v.buffered.end(v.buffered.length - 1))
                 if (Date.now() - lastSaved.current > 5000) save()

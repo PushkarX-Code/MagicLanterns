@@ -104,6 +104,16 @@ export async function readFacts(ffprobe: string, path: string): Promise<Facts> {
   }
 }
 
+/** The last keyframe at or before a moment (where a copied stream can start), or the moment itself if unsure. */
+export async function keyframeBefore(ffprobe: string, path: string, t: number): Promise<number> {
+  const out = await run(ffprobe, ['-v', 'error', '-select_streams', 'v:0', '-skip_frame', 'nokey', '-read_intervals', `${Math.max(0, t - 20).toFixed(2)}%${(t + 0.05).toFixed(2)}`, '-show_entries', 'frame=best_effort_timestamp_time', '-of', 'csv=p=0', path], 10_000).catch(() => '')
+  const keys = out
+    .split(/\s+/)
+    .map(Number)
+    .filter((x) => Number.isFinite(x) && x <= t + 0.02)
+  return keys.length ? Math.max(0, Math.max(...keys)) : t
+}
+
 function stop(s: Session): void {
   if (s.proc && s.proc.exitCode == null) s.proc.kill('SIGKILL')
   s.proc = null
@@ -232,6 +242,15 @@ export function initPlayer(deps: PlayerDeps): void {
       if (frames.size > 400) frames.delete(frames.keys().next().value!)
     }
     return url
+  })
+  // Repackaged streams can only begin on a keyframe. The player asks where that is, starts there and
+  // skips the last few seconds itself, so its clock (and the subtitles) match the picture exactly.
+  ipcMain.handle('player:snap', async (_e, id: unknown, at: unknown): Promise<number> => {
+    const t = Math.max(0, Number(at) || 0)
+    const s = typeof id === 'string' ? sessions.get(id) : undefined
+    if (!s || t < 0.5) return t
+    const p = plan(s.facts, s.caps, s.choice, await detectMachine(deps.ffmpeg))
+    return p.mode === 'transcode' ? t : keyframeBefore(deps.ffprobe, s.path, t)
   })
   ipcMain.handle('player:close', (_e, id: unknown) => {
     const s = typeof id === 'string' ? sessions.get(id) : undefined

@@ -35,6 +35,7 @@ const bridge: LanternBridge = {
   getLibrary: () => ipcRenderer.invoke('library:snapshot'),
   openPlayback: (target, opts) => ipcRenderer.invoke('player:open', target, opts),
   closePlayback: (session) => ipcRenderer.invoke('player:close', session),
+  snapPlayback: (session, at) => ipcRenderer.invoke('player:snap', session, at),
   listSubtitleFiles: (target) => ipcRenderer.invoke('player:subtitles', target),
   loadSubtitles: (target, track, encoding) => ipcRenderer.invoke('player:subtitle', target, track, encoding),
   scrubFrame: (target, at) => ipcRenderer.invoke('player:frame', target, at),
