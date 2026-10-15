@@ -15,7 +15,7 @@ import { runtime } from '../lib/format'
 import { gsap, d, EASE, reduceMotion } from '../design/motion'
 
 /** Full-screen page for a title you don't own: same layout as a library title, but Where to Watch instead of Play. */
-export function DiscoverScreen({ title: t, list, entryKey }: { title: TrendingTitle; list: DiscoverList; entryKey: number }) {
+export function DiscoverScreen({ title: t, list, entryKey }: { title: TrendingTitle; list?: DiscoverList; entryKey: number }) {
   const back = useNav((s) => s.back)
   const setAmbient = useAmbient((s) => s.set)
   const [info, setInfo] = useState<DiscoverDetails | null>(null)
@@ -42,8 +42,11 @@ export function DiscoverScreen({ title: t, list, entryKey }: { title: TrendingTi
     )
   }, [])
 
+  // Titles opened from a cast page arrive without availability; the details call fills it in.
+  const providers = t.providers.length ? t.providers : (info?.providers ?? [])
+  const watchLink = t.watchLink ?? info?.watchLink ?? null
   const watch = (): void => {
-    if (t.watchLink) window.lantern?.openExternal(t.watchLink)
+    if (watchLink) window.lantern?.openExternal(watchLink)
   }
   const fold = Math.min(1, scrolled / (window.innerHeight * 0.6))
   const meta = [
@@ -78,7 +81,7 @@ export function DiscoverScreen({ title: t, list, entryKey }: { title: TrendingTi
             )}
           </div>
           <div className="detail-actions reveal">
-            <PillButton icon={OpenOutIcon} focusKey={`DISC-WATCH-${entryKey}`} disabled={!t.watchLink} onPress={watch}>
+            <PillButton icon={OpenOutIcon} focusKey={`DISC-WATCH-${entryKey}`} disabled={!watchLink} onPress={watch}>
               Where to Watch
             </PillButton>
             {info?.trailerKey && (
@@ -89,9 +92,11 @@ export function DiscoverScreen({ title: t, list, entryKey }: { title: TrendingTi
 
         <div className="detail-right">
           <div className="reveal">
-            <div className="disc-rank">
-              No. {t.rank} {listLabel(list)}
-            </div>
+            {list && t.rank > 0 && (
+              <div className="disc-rank">
+                No. {t.rank} {listLabel(list)}
+              </div>
+            )}
             <div className="metaline">
               {meta.map((m) => (
                 <span key={String(m)}>{m}</span>
@@ -104,17 +109,19 @@ export function DiscoverScreen({ title: t, list, entryKey }: { title: TrendingTi
           </div>
           <div className="reveal sheet-where">
             <div className="sheet-label">Where to watch</div>
-            {t.providers.length ? (
+            {providers.length ? (
               <div className="sheet-providers">
-                {t.providers.map((p) => (
+                {providers.map((p) => (
                   <button key={p.name} className="provider" onClick={watch} title={`Open ${p.name}`}>
                     {p.logo && <BlurImage path={p.logo} size="w92" tiny={false} color="transparent" className="provider-logo" />}
                     <span>{p.name}</span>
                   </button>
                 ))}
               </div>
-            ) : (
+            ) : info || t.providers.length ? (
               <div className="sheet-none">Not streaming in your country yet.</div>
+            ) : (
+              <div className="sheet-none">Checking…</div>
             )}
           </div>
           {info?.credit && (

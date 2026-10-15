@@ -113,7 +113,7 @@ interface RawDetails {
   genres?: { name: string }[]
   created_by?: { name: string }[]
   images?: { logos?: { file_path: string; iso_639_1: string | null }[] }
-  credits?: { cast?: { name: string; character: string; profile_path: string | null }[]; crew?: { name: string; job: string }[] }
+  credits?: { cast?: { id: number; name: string; character: string; profile_path: string | null }[]; crew?: { name: string; job: string }[] }
   videos?: { results?: { key: string; site: string; type: string }[] }
 }
 
@@ -130,8 +130,9 @@ async function details(kind: 'movie' | 'tv', id: number): Promise<DiscoverDetail
     runtime: d.runtime ?? d.episode_run_time?.[0] ?? null,
     genres: (d.genres ?? []).map((g) => g.name),
     credit: director ? { role: 'Director', name: director.name } : creator ? { role: 'Created by', name: creator.name } : null,
-    cast: (d.credits?.cast ?? []).slice(0, 12).map((c) => ({ name: c.name, character: c.character, profile: c.profile_path })),
-    trailerKey: trailer?.key ?? null
+    cast: (d.credits?.cast ?? []).slice(0, 12).map((c) => ({ id: c.id, name: c.name, character: c.character, profile: c.profile_path })),
+    trailerKey: trailer?.key ?? null,
+    ...(await providersFor(kind, id, (app.getLocaleCountryCode() || 'US').toUpperCase()))
   }
 }
 

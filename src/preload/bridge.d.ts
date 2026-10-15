@@ -1,4 +1,4 @@
-import type { DiscoverDetails, DiscoverList, LibraryFolder, MatchCandidate, MediaItem, PlaybackPlan, PlayerCaps, ScanStatus, TrendingTitle, UpdateState } from '../shared/types'
+import type { DiscoverDetails, DiscoverList, LibraryFolder, MatchCandidate, MediaItem, PlaybackPlan, PersonDetails, PlayerCaps, ScanStatus, TrendingTitle, UpdateState } from '../shared/types'
 
 export interface PickedFile {
   path: string
@@ -53,6 +53,8 @@ export interface LanternBridge {
   /** A discover row; empty when no metadata key was built in or offline. */
   getDiscover(list: DiscoverList): Promise<TrendingTitle[]>
   getDiscoverDetails(kind: 'movie' | 'tv', id: number): Promise<DiscoverDetails | null>
+  /** A cast member's page; null without a metadata key or offline with nothing saved. */
+  getPerson(id: number): Promise<PersonDetails | null>
   updateState(): Promise<UpdateState | null>
   onUpdate(cb: (state: UpdateState) => void): () => void
   downloadUpdate(): Promise<void>

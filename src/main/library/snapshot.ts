@@ -154,9 +154,9 @@ export function buildSnapshot(db: Db): MediaItem[] {
   for (const [k, v] of genres) genres.set(k, v.includes('Anime') ? ['Anime', ...v.filter((x) => x !== 'Anime')] : v)
   const cast = new Map<number, MediaItem['cast']>()
   const credit = new Map<number, MediaItem['credit']>()
-  for (const c of db.prepare('SELECT c.item_id, c.kind, c.character, c.job, p.name, p.profile_img FROM credits c JOIN people p ON p.id = c.person_id ORDER BY c.item_id, c.ord').all()) {
+  for (const c of db.prepare('SELECT c.item_id, c.kind, c.character, c.job, p.tmdb_id, p.name, p.profile_img FROM credits c JOIN people p ON p.id = c.person_id ORDER BY c.item_id, c.ord').all()) {
     const id = Number(c.item_id)
-    if (c.kind === 'cast') cast.set(id, [...(cast.get(id) ?? []), { name: String(c.name), character: String(c.character ?? ''), profile: image(c.profile_img) }])
+    if (c.kind === 'cast') cast.set(id, [...(cast.get(id) ?? []), { ...(c.tmdb_id != null && { id: Number(c.tmdb_id) }), name: String(c.name), character: String(c.character ?? ''), profile: image(c.profile_img) }])
     else if (!credit.has(id) && (c.job === 'Director' || c.job === 'Creator')) credit.set(id, { role: c.job, name: String(c.name) })
   }
 

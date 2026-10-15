@@ -16,6 +16,7 @@ import { cacheImages } from '../meta/images.ts'
 import { fixMatch, matchPending, searchCandidates } from '../meta/index.ts'
 import { download, processImage } from '../meta/native.ts'
 import { refreshRatings } from '../meta/ratings.ts'
+import { personDetails } from '../meta/person.ts'
 
 // The library lives in %APPDATA%/Magic Lanterns/library.db. Folders are scanned when added, at every launch
 // and whenever files arrive or leave while the app is open; only new or changed files are read again.
@@ -200,6 +201,9 @@ export function initLibrary(): void {
     void enrich()
     return into == null ? null : `${kind === 'show' ? 's' : 'm'}-${into}`
   })
+  ipcMain.handle('meta:person', (_e, id: unknown) =>
+    hasMetadata() && typeof id === 'number' && Number.isInteger(id) && id > 0 ? personDetails(open(), tmdb, id).catch(() => null) : null
+  )
   ipcMain.handle('meta:status', () => {
     const n = (sql: string): number => Number((open().prepare(sql).get() as { n: number }).n)
     return {

@@ -10,7 +10,8 @@ const TMDB_PATHS = [
   /^\/genre\/(movie|tv)\/list$/,
   /^\/(movie|tv)\/\d+$/,
   /^\/(movie|tv)\/\d+\/(watch\/providers|images|credits|aggregate_credits|videos|external_ids|release_dates|content_ratings|similar|recommendations)$/,
-  /^\/tv\/\d+\/season\/\d+$/
+  /^\/tv\/\d+\/season\/\d+$/,
+  /^\/person\/\d+$/
 ]
 const TTL = 6 * 60 * 60
 

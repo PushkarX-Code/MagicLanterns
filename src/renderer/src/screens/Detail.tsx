@@ -53,7 +53,9 @@ function Flight({ origin, onLanded }: { origin: Origin; onLanded: () => void }) 
 }
 
 export function CastMember({ person, onFocused }: { person: MediaItem['cast'][number]; onFocused: (el: HTMLElement) => void }) {
-  const { ref, focused, pointer } = useFocus<HTMLDivElement>({ onFocus: () => ref.current && onFocused(ref.current) })
+  const push = useNav((s) => s.push)
+  const open = (): void => push({ name: 'person', person })
+  const { ref, focused, pointer } = useFocus<HTMLDivElement>({ onEnterPress: open, onFocus: () => ref.current && onFocused(ref.current) })
   const face = useRef<HTMLDivElement>(null)
   useLift(face, focused, { scale: 1.1, tilt: 0 })
   const initials = person.name
@@ -62,7 +64,7 @@ export function CastMember({ person, onFocused }: { person: MediaItem['cast'][nu
     .slice(0, 2)
     .join('')
   return (
-    <div ref={ref} className={`cast ${focused ? 'is-focused' : ''}`} {...pointer}>
+    <div ref={ref} className={`cast ${focused ? 'is-focused' : ''}`} onClick={open} role="button" aria-label={`${person.name}, ${person.character}`} {...pointer}>
       <div ref={face} className="cast-face">
         <BlurImage path={person.profile} size="w185" tiny={false} color="#1d1d21" position="center 20%" fallback={<span className="cast-initials">{initials}</span>} />
       </div>

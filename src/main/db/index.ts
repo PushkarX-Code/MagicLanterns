@@ -170,6 +170,9 @@ export const MIGRATIONS: string[] = [
   /* 3: files can be taken out of the library without touching the disk */ `
   ALTER TABLE files ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0;
   INSERT INTO collections (name, is_system, created_at) VALUES ('My List', 1, 0);
+  `,
+  /* 4: cast pages keep each person's details for a week */ `
+  CREATE TABLE person_cache (tmdb_id INTEGER PRIMARY KEY, json TEXT NOT NULL, fetched_at INTEGER NOT NULL);
   `
 ]
 
