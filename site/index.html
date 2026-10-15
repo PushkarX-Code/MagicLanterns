@@ -25,9 +25,24 @@
       </defs>
     </svg>
 
+
+    <!-- The way in. One tap starts the film with its sound (browsers only allow sound after a tap). -->
+    <div class="gate" role="dialog" aria-modal="true" aria-label="Enter Magic Lanterns">
+      <div class="gate-inner">
+        <svg class="gate-mark" viewBox="200 200 624 624" aria-hidden="true"><path d="M232 800 L232 512 A280 280 0 0 1 792 512 L792 800" fill="none" stroke="currentColor" stroke-width="56" stroke-linecap="round" /><path d="M342 800 L342 512 A170 170 0 0 1 682 512 L682 800" fill="none" stroke="currentColor" stroke-width="56" stroke-linecap="round" /><path d="M452 800 L452 520 A60 60 0 0 1 572 520 L572 800 Z" fill="currentColor" /></svg>
+        <p class="gate-title">Magic Lanterns</p>
+        <button class="pill pill-white gate-enter" type="button" autofocus>
+          <span class="eq is-live" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>Enter</span>
+        </button>
+        <p class="gate-note">Best with sound</p>
+        <button class="gate-quiet" type="button">Enter in silence</button>
+      </div>
+    </div>
+
     <header class="nav">
       <a class="nav-brand" href="#top" data-go="#top">
-        <svg viewBox="200 200 624 624" aria-hidden="true"><path d="M232 800 L232 512 A280 280 0 0 1 792 512 L792 800" fill="none" stroke="url(#r3)" stroke-width="64" stroke-linecap="round" /><path d="M342 800 L342 512 A170 170 0 0 1 682 512 L682 800" fill="none" stroke="url(#r2)" stroke-width="64" stroke-linecap="round" /><path d="M452 800 L452 520 A60 60 0 0 1 572 520 L572 800 Z" fill="url(#r1)" /></svg>
+        <svg viewBox="200 200 624 624" aria-hidden="true"><path d="M232 800 L232 512 A280 280 0 0 1 792 512 L792 800" fill="none" stroke="currentColor" stroke-width="64" stroke-linecap="round" /><path d="M342 800 L342 512 A170 170 0 0 1 682 512 L682 800" fill="none" stroke="currentColor" stroke-width="64" stroke-linecap="round" /><path d="M452 800 L452 520 A60 60 0 0 1 572 520 L572 800 Z" fill="currentColor" /></svg>
         <span>Magic Lanterns</span>
       </a>
       <nav class="nav-links" aria-label="Sections">
@@ -75,7 +90,6 @@
                 <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 4.2 8.4 3.3v6.2H2zM9.3 3.2 18 2v7.5H9.3zM2 10.4h6.4v6.3L2 15.8zM9.3 10.4H18V18l-8.7-1.2z" fill="currentColor" /></svg>
                 <span>Get it free for Windows</span>
               </a>
-              <p class="meta">v1.1 <i>·</i> Windows 10 &amp; 11<span class="opt"> <i>·</i> No account, no ads</span></p>
             </div>
             <div class="scroll-cue" aria-hidden="true"><span></span></div>
           </section>

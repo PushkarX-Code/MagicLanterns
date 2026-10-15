@@ -1,7 +1,8 @@
 /* Magic Lanterns · the site's motion and sound.
  * The page is one slow film: the Beacon draws itself, the app rises out of the dark, and every chapter is
  * pinned and scrubbed by the scroll, so the visitor sets the pace. Fast scrolling smears the pictures a little,
- * the way a camera pan does. Sound is off until asked for. */
+ * the way a camera pan does. Sound is part of the film: the visitor walks in with it on (one tap at the door,
+ * which is what browsers ask before a page may make a sound), and the score changes chord with each chapter. */
 ;(() => {
   'use strict'
 
@@ -15,15 +16,36 @@
   gsap.registerPlugin(ScrollTrigger, ScrollSmoother, DrawSVGPlugin, MorphSVGPlugin)
 
   /* ---------------- Sound ---------------- */
-  // A low, warm room tone made on the spot, and four recorded moments: the projector starting, air moving
-  // between chapters, a soft boom when the headphones land, a shimmer when the lights come up.
+  // A low, warm room tone and a slow score, both made on the spot, and four recorded moments: the projector
+  // starting, air moving between chapters, a soft boom when the headphones land, a shimmer when the lights
+  // come up.
   const sound = (() => {
     let on = false
     let ctx = null
-    let master, bed
+    let master, bed, score, pad, chordNow, chordWanted
     const buffers = {}
     const names = ['projector', 'whoosh', 'boom', 'shimmer']
     const log = (name) => window.__REC && (window.__sfxLog = window.__sfxLog || []).push({ name, t: performance.now() })
+
+    // The score: one chord per chapter, held, and dissolved into the next as the visitor scrolls.
+    const CHORDS = {
+      hero: [110, 164.81, 246.94, 277.18], // A add9: the lights going down
+      library: [92.5, 138.59, 220, 329.63], // F#m7
+      cinema: [73.42, 110, 185, 329.63], // D maj9: the big screen
+      sound: [82.41, 123.47, 207.65, 369.99], // E add9
+      ambient: [69.3, 103.83, 164.81, 246.94], // C#m7
+      day: [110, 164.81, 277.18, 493.88] // A, brighter: the lights come up
+    }
+
+    function hall(c, seconds, decay) {
+      const len = Math.floor(c.sampleRate * seconds)
+      const buf = c.createBuffer(2, len, c.sampleRate)
+      for (let ch = 0; ch < 2; ch++) {
+        const d = buf.getChannelData(ch)
+        for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay)
+      }
+      return buf
+    }
 
     function roomTone(c) {
       const out = c.createGain()
@@ -71,23 +93,68 @@
       return out
     }
 
-    async function boot() {
+    /** One held chord: a sine at the root, soft detuned saws above it, through a slowly moving filter. */
+    function voice(freqs) {
+      const g = ctx.createGain()
+      g.gain.value = 0
+      const lp = ctx.createBiquadFilter()
+      lp.type = 'lowpass'
+      lp.frequency.value = 760
+      lp.Q.value = 0.3
+      const lfo = ctx.createOscillator()
+      lfo.frequency.value = 0.045 + Math.random() * 0.03
+      const depth = ctx.createGain()
+      depth.gain.value = 260
+      lfo.connect(depth).connect(lp.frequency)
+      const oscs = [lfo]
+      freqs.forEach((f, i) =>
+        [-7, 6].forEach((detune) => {
+          const o = ctx.createOscillator()
+          o.type = i === 0 ? 'sine' : 'sawtooth'
+          o.frequency.value = f
+          o.detune.value = detune
+          const v = ctx.createGain()
+          v.gain.value = i === 0 ? 0.42 : 0.1 / (1 + i * 0.35)
+          o.connect(v).connect(lp)
+          oscs.push(o)
+        })
+      )
+      lp.connect(g).connect(score)
+      oscs.forEach((o) => o.start())
+      g.gain.setTargetAtTime(1, ctx.currentTime, 1.4)
+      return {
+        fade() {
+          g.gain.cancelScheduledValues(ctx.currentTime)
+          g.gain.setTargetAtTime(0, ctx.currentTime, 1.6)
+          setTimeout(() => oscs.forEach((o) => o.stop()), 9000)
+        }
+      }
+    }
+
+    function boot() {
       ctx = new AudioContext()
       master = ctx.createGain()
       master.gain.value = 0
       master.connect(ctx.destination)
       bed = roomTone(ctx)
       bed.connect(master)
-      await Promise.all(
-        names.map(async (n) => {
-          try {
-            const res = await fetch(`assets/sfx/${n}.mp3`)
-            buffers[n] = await ctx.decodeAudioData(await res.arrayBuffer())
-          } catch {
-            /* that one stays silent */
-          }
-        })
-      )
+      // The score sits in a generated hall, so it feels like a room rather than a speaker.
+      score = ctx.createGain()
+      score.gain.value = 0.075
+      const room = ctx.createConvolver()
+      room.buffer = hall(ctx, 4, 2.4)
+      const wet = ctx.createGain()
+      wet.gain.value = 0.55
+      score.connect(master)
+      score.connect(room).connect(wet).connect(master)
+      names.forEach(async (n) => {
+        try {
+          const res = await fetch(`assets/sfx/${n}.mp3`)
+          buffers[n] = await ctx.decodeAudioData(await res.arrayBuffer())
+        } catch {
+          /* that one stays silent */
+        }
+      })
     }
 
     function play(name, gain = 1) {
@@ -101,41 +168,91 @@
       src.start()
     }
 
-    async function toggle() {
-      on = !on
-      if (on) {
-        if (!ctx) await boot()
-        await ctx.resume()
-        const t = ctx.currentTime
-        master.gain.cancelScheduledValues(t)
-        master.gain.setTargetAtTime(0.9, t, 0.4)
-        bed.gain.setTargetAtTime(0.09, t, 1.6)
-        play('projector', 0.8)
-      } else if (ctx) {
-        const t = ctx.currentTime
-        master.gain.cancelScheduledValues(t)
-        master.gain.setTargetAtTime(0, t, 0.25)
-      }
-      return on
+    function chord(key) {
+      chordWanted = key
+      if (!ctx || !on || key === chordNow || !CHORDS[key]) return
+      chordNow = key
+      pad?.fade()
+      pad = voice(CHORDS[key])
     }
 
-    /** Lowers the room tone while the film on the page is speaking. */
+    /** Sound on: everything fades up, and the score picks up wherever the visitor is. */
+    function start() {
+      on = true
+      if (!ctx) boot()
+      ctx.resume()
+      const t = ctx.currentTime
+      master.gain.cancelScheduledValues(t)
+      master.gain.setTargetAtTime(0.9, t, 0.5)
+      bed.gain.setTargetAtTime(0.07, t, 1.6)
+      chord(chordWanted || 'hero')
+    }
+
+    function stop() {
+      on = false
+      if (!ctx) return
+      const t = ctx.currentTime
+      master.gain.cancelScheduledValues(t)
+      master.gain.setTargetAtTime(0, t, 0.3)
+    }
+
+    /** Lowers the room and the score while the film on the page is speaking. */
     function duck(down) {
       if (!ctx) return
-      bed.gain.setTargetAtTime(down ? 0.015 : 0.09, ctx.currentTime, 0.5)
+      bed.gain.setTargetAtTime(down ? 0.01 : 0.07, ctx.currentTime, 0.5)
+      score.gain.setTargetAtTime(down ? 0.015 : 0.075, ctx.currentTime, 0.5)
     }
 
-    return { play, toggle, duck, get on() {
-      return on
-    } }
+    return {
+      play,
+      chord,
+      start,
+      stop,
+      duck,
+      get on() {
+        return on
+      }
+    }
   })()
 
   const soundBtn = $('.sound-btn')
-  soundBtn.addEventListener('click', async () => {
-    const on = await sound.toggle()
-    soundBtn.setAttribute('aria-pressed', String(on))
-    soundBtn.setAttribute('aria-label', on ? 'Turn sound off' : 'Turn sound on')
+  const showSound = () => {
+    soundBtn.setAttribute('aria-pressed', String(sound.on))
+    soundBtn.setAttribute('aria-label', sound.on ? 'Turn sound off' : 'Turn sound on')
+  }
+  soundBtn.addEventListener('click', () => {
+    sound.on ? sound.stop() : sound.start()
+    showSound()
   })
+
+  /* ---------------- The entrance ---------------- */
+  // The film starts when the visitor walks in; with sound unless they choose silence.
+  let begin = () => {}
+  const gate = $('.gate')
+  const enter = (withSound) => {
+    if (withSound) {
+      sound.start()
+      sound.play('projector', 0.8)
+    }
+    showSound()
+    gsap.to(gate, { opacity: 0, duration: 0.9, ease: 'power1.inOut', onComplete: () => gate.remove() })
+    begin()
+  }
+  $('.gate-enter').addEventListener('click', () => enter(true))
+  $('.gate-quiet').addEventListener('click', () => enter(false))
+  // The score follows the chapters. Called after every pinned scene exists, so the cues land where the
+  // chapters really are.
+  const scoreCues = () =>
+    [
+      ['.hero', 'hero'],
+      ['#library', 'library'],
+      ['#cinema', 'cinema'],
+      ['#sound', 'sound'],
+      ['#ambient', 'ambient'],
+      ['#day', 'day']
+    ].forEach(([sel, key]) => ScrollTrigger.create({ trigger: sel, start: 'top 60%', end: 'bottom 40%', onToggle: (st) => st.isActive && sound.chord(key) }))
+
+  gsap.fromTo('.gate-inner > *', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1, delay: 0.2 })
 
   /* ---------------- Links ---------------- */
   $$('[data-store]').forEach((a) => {
@@ -167,6 +284,7 @@
     $$('[data-go]').forEach((a) => a.addEventListener('click', (e) => (e.preventDefault(), $(a.dataset.go)?.scrollIntoView())))
     $('.dock').classList.add('is-shown')
     $$('.speakers i').forEach((i) => i.classList.add('on'))
+    scoreCues()
     return
   }
 
@@ -213,7 +331,8 @@
   addEventListener('resize', aim)
   gsap.set(beam, { opacity: 0, '--spread': '3deg' })
 
-  const opening = gsap.timeline({ delay: 0.35, onComplete: () => smoother.paused(false) })
+  const opening = gsap.timeline({ paused: true, delay: 0.35, onComplete: () => smoother.paused(false) })
+  begin = () => opening.play()
   opening
     .fromTo('.b-arch', { drawSVG: '50% 50%' }, { drawSVG: '0% 100%', duration: 1.5, ease: 'power3.inOut', stagger: { each: 0.2, from: 'end' } })
     .to('.b-core', { scaleY: 1, duration: 0.9, ease: 'back.out(1.5)' }, 0.75)
@@ -453,5 +572,6 @@
     onToggle: (st) => dock.classList.toggle('is-shown', st.isActive)
   })
 
+  scoreCues()
   addEventListener('load', () => ScrollTrigger.refresh())
 })()

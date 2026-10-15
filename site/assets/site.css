@@ -169,8 +169,10 @@ a {
   letter-spacing: -0.015em;
 }
 .nav-brand svg {
-  width: 24px;
-  height: 24px;
+  width: 19px;
+  height: 19px;
+  overflow: visible;
+  translate: 0 -1px;
 }
 .nav-links {
   display: flex;
@@ -223,7 +225,8 @@ a {
   background: currentColor;
   transition: height 0.4s var(--ease);
 }
-[aria-pressed='true'] .eq i {
+[aria-pressed='true'] .eq i,
+.eq.is-live i {
   animation: eq 1.1s ease-in-out infinite;
 }
 [aria-pressed='true'] .eq i:nth-child(2) {
@@ -255,6 +258,65 @@ a {
   50% {
     height: 12px;
   }
+}
+
+/* ---------- The entrance ---------- */
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: var(--night);
+}
+.gate-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  text-align: center;
+}
+.gate-mark {
+  width: 34px;
+  height: 34px;
+  overflow: visible;
+  color: var(--ink);
+}
+.gate-title {
+  margin: -4px 0 18px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.gate-enter {
+  height: 58px;
+  padding: 0 34px;
+  font-size: 17px;
+}
+.gate-enter .eq {
+  color: #0a0a0a;
+}
+.gate-note {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.gate-quiet {
+  border: 0;
+  background: none;
+  padding: 6px 10px;
+  font: 500 14px/1 'Inter', sans-serif;
+  color: var(--ink-3);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgb(255 255 255 / 0.2);
+  text-underline-offset: 4px;
+  transition: color 0.3s ease;
+}
+.gate-quiet:hover {
+  color: var(--ink);
 }
 
 /* ---------- Smooth scroll stage ---------- */
@@ -483,22 +545,6 @@ h2 {
   flex-direction: column;
   align-items: center;
   gap: 18px;
-}
-.meta {
-  margin: 0;
-  line-height: 1.8;
-  font: 500 13px/1 ui-monospace, 'Cascadia Mono', Menlo, monospace;
-  color: var(--ink-3);
-  letter-spacing: 0.02em;
-}
-.meta i {
-  font-style: normal;
-  margin: 0 8px;
-}
-@media (max-width: 560px) {
-  .meta .opt {
-    display: none;
-  }
 }
 .scroll-cue {
   position: absolute;
