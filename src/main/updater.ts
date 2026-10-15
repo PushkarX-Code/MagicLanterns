@@ -38,8 +38,9 @@ export function initUpdater(skipped: () => string | undefined, skip: (version: s
   })
 
   // "Check for Updates" on the More Info page. Resolves to what the person should be told.
-  ipcMain.handle('update:check', async (): Promise<'dev' | 'latest' | 'available' | 'offline'> => {
+  ipcMain.handle('update:check', async (): Promise<'dev' | 'store' | 'latest' | 'available' | 'offline'> => {
     if (!app.isPackaged) return 'dev'
+    if (process.windowsStore) return 'store'
     try {
       manual = true
       const r = await autoUpdater.checkForUpdates()
@@ -51,7 +52,8 @@ export function initUpdater(skipped: () => string | undefined, skip: (version: s
     }
   })
 
-  if (!app.isPackaged) return // dev builds never update themselves
+  // Dev builds never update themselves; Microsoft Store copies are kept current by the Store.
+  if (!app.isPackaged || process.windowsStore) return
 
   autoUpdater.autoDownload = false
   autoUpdater.autoInstallOnAppQuit = false

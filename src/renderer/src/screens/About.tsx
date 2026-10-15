@@ -9,6 +9,7 @@ const KOFI = 'https://ko-fi.com/buymeacofi'
 
 const CHECK_TEXT: Record<string, string> = {
   dev: 'Updates are checked in installed copies of the app.',
+  store: 'The Microsoft Store keeps this copy up to date.',
   latest: "You're on the latest version.",
   available: 'A new version is ready. The update window will walk you through it.',
   offline: "Couldn't reach the update server. Check your connection and try again."

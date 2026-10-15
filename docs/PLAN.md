@@ -344,3 +344,5 @@ Reddit (r/PleX alternatives, r/Windows11, r/software, r/anime), X, YouTube trail
 - Everything else stays on free tiers: TMDB, OMDb, Cloudflare Workers, GitHub.
 
 **Done 15 Oct:** Step 16: first-run setup with a live scan wall, typo-tolerant search (shared/text.ts), automatic collections (TMDB series, directors) on Home and their own page.
+
+**Done 15 Oct:** Step 17 prep: v1.0.0, Microsoft Store package (appx target, Store tiles, Store copies don't self-update), release workflow that tests, builds both packages and can build without publishing, privacy policy published to the releases repo, listing text in docs/STORE.md.

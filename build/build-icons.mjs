@@ -31,4 +31,18 @@ for (const size of SIZES) {
 const ico = await pngToIco(ICO_SIZES.map((s) => files[s]))
 await writeFile(resolve(root, 'build/icon.ico'), ico)
 await copyFile(files[1024], resolve(root, 'build/icon.png'))
-console.log('Icons written to build/')
+
+// Microsoft Store tiles (electron-builder reads build/appx). The lantern sits centred on a clear tile,
+// at the size Windows shows each one; the wide and large tiles give it room to breathe.
+const appx = resolve(root, 'build/appx')
+await mkdir(appx, { recursive: true })
+const TILES = { StoreLogo: [50, 50, 0.9], Square44x44Logo: [44, 44, 1], SmallTile: [71, 71, 0.72], Square150x150Logo: [150, 150, 0.66], Wide310x150Logo: [310, 150, 0.66], LargeTile: [310, 310, 0.6] }
+for (const [name, [w, h, fill]] of Object.entries(TILES)) {
+  const side = Math.round(Math.min(w, h) * fill)
+  const mark = await sharp(side <= 32 ? small : full, { density: (72 * side * 2) / (side <= 32 ? 64 : 1024) }).resize(side, side).png().toBuffer()
+  await sharp({ create: { width: w, height: h, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite([{ input: mark, gravity: 'centre' }])
+    .png()
+    .toFile(resolve(appx, `${name}.png`))
+}
+console.log('Icons written to build/ and build/appx/')

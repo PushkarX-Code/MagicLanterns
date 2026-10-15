@@ -71,5 +71,5 @@ export interface LanternBridge {
   downloadUpdate(): Promise<void>
   installUpdate(): Promise<void>
   skipUpdate(version: string): Promise<void>
-  checkForUpdates(): Promise<'dev' | 'latest' | 'available' | 'offline'>
+  checkForUpdates(): Promise<'dev' | 'store' | 'latest' | 'available' | 'offline'>
 }
