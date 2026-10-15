@@ -139,7 +139,9 @@ The mouse works everywhere: hover focuses, click selects, the scrubber shows fra
 - Each file's details: length, resolution, frame rate, HDR10 / HDR10+ / HLG / Dolby Vision, and every audio and subtitle track with its language.
 - Where you stopped watching, favourites and My List, saved in `%APPDATA%\Magic Lanterns\library.db`.
 - Folders are scanned when added and each time the app opens, and they're watched while it's open, so new episodes appear within seconds.
-- Before any folder is added, Home shows a single "Add Folder" welcome.
+- First run offers the usual places films live (Videos, Downloads, Desktop) with how many videos each holds, then shows titles arriving on a wall as the first scan reads them.
+- Search forgives typos, accents and punctuation ("intersteller", "shogun", "spiderman", "dune part 2").
+- Collections build themselves: film series from TMDB, and a director's work once you own three of their films.
 
 **Every format plays.** Files your computer decodes play straight from disk. Everything else goes through the built-in engine as it plays: MKV, AVI and TS are repackaged on the fly (no quality lost, no waiting), sound the system can't decode (DTS, TrueHD, Dolby Digital) is converted keeping 5.1, and pictures it can't (10-bit anime releases, HEVC without a decoder, MPEG-2, VC-1, Dolby Vision profile 5) are converted using your graphics card when it has an encoder, with HDR tone-mapped and interlaced video cleaned up. Seeking anywhere is instant; switching to another sound track restarts at the same moment. The demo library you see in screenshots is what the app shows in a browser preview.
 
