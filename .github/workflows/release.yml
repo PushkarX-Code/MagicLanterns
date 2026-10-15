@@ -46,8 +46,8 @@ jobs:
       MAIN_VITE_OMDB_API_KEY: ${{ secrets.META_PROXY_URL == '' && secrets.OMDB_API_KEY || '' }}
       RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
@@ -75,7 +75,7 @@ jobs:
           [ -n "$STORE_PUBLISHER_NAME" ] && args+=("-c.appx.publisherDisplayName=$STORE_PUBLISHER_NAME")
           npx electron-builder --win --publish never "${args[@]}"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: magic-lanterns-${{ env.VERSION }}
           path: |
