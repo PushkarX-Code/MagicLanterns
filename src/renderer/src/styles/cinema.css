@@ -442,10 +442,10 @@
 .cinema-chip:hover {
   background: rgb(30 28 26 / 0.9);
 }
+.cinema-chip svg {
+  color: rgb(255 255 255 / 0.55);
+  transition: color 0.9s ease;
+}
 .cinema-chip.is-on svg {
   color: var(--amber);
-}
-.cinema-chip .switch {
-  margin-left: 4px;
-  transform: scale(0.8);
 }
