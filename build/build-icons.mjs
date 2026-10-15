@@ -1,4 +1,4 @@
-// Renders the lantern icon SVGs into every PNG size Windows and electron-builder need, plus the .ico.
+// Renders the Beacon icon SVGs into every PNG size Windows and electron-builder need, plus the .ico.
 // Usage: npm run icons
 import { mkdir, readFile, writeFile, copyFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
@@ -17,10 +17,10 @@ const small = await readFile(resolve(src, 'icon-small.svg'))
 await mkdir(out, { recursive: true })
 const files = {}
 for (const size of SIZES) {
-  // Below 48px the detailed glass reads as mush, so the simplified mark takes over.
+  // At 32px and below three arches blur together, so the simplified two-part mark takes over.
   const [svg, width] = size <= 32 ? [small, 64] : [full, 1024]
   const file = resolve(out, `${size}x${size}.png`)
-  // Rasterize at 2x the target, then downsample, so thin glass edges stay crisp.
+  // Rasterize at 2x the target, then downsample, so the arch edges stay crisp.
   await sharp(svg, { density: (72 * size * 2) / width })
     .resize(size, size)
     .png()
@@ -32,7 +32,7 @@ const ico = await pngToIco(ICO_SIZES.map((s) => files[s]))
 await writeFile(resolve(root, 'build/icon.ico'), ico)
 await copyFile(files[1024], resolve(root, 'build/icon.png'))
 
-// Microsoft Store tiles (electron-builder reads build/appx). The lantern sits centred on a clear tile,
+// Microsoft Store tiles (electron-builder reads build/appx). The mark sits centred on a clear tile,
 // at the size Windows shows each one; the wide and large tiles give it room to breathe.
 const appx = resolve(root, 'build/appx')
 await mkdir(appx, { recursive: true })
