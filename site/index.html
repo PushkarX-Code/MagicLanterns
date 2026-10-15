@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Magic Lanterns · Every film deserves a premiere</title>
+    <meta name="description" content="A media player for the films on your PC, with a cinema built in. Posters, surround sound and a lobby you can drive from the sofa. Free for Windows." />
+    <meta name="theme-color" content="#050505" />
+    <meta property="og:title" content="Magic Lanterns" />
+    <meta property="og:description" content="Every film deserves a premiere. A media player with a cinema built in. Free for Windows." />
+    <meta property="og:image" content="assets/img/home.webp" />
+    <link rel="icon" href="assets/img/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+    <link rel="preload" href="assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="assets/fonts/serif-italic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="assets/site.css" />
+  </head>
+  <body>
+    <!-- The Beacon's light, shared by every mark on the page. -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <linearGradient id="r1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF1D2" /><stop offset="1" stop-color="#FFB45A" /></linearGradient>
+        <linearGradient id="r2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB45A" /><stop offset="1" stop-color="#FF7A2E" /></linearGradient>
+        <linearGradient id="r3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF7A2E" /><stop offset="1" stop-color="#E0452B" /></linearGradient>
+      </defs>
+    </svg>
+
+    <header class="nav">
+      <a class="nav-brand" href="#top" data-go="#top">
+        <svg viewBox="200 200 624 624" aria-hidden="true"><path d="M232 800 L232 512 A280 280 0 0 1 792 512 L792 800" fill="none" stroke="url(#r3)" stroke-width="64" stroke-linecap="round" /><path d="M342 800 L342 512 A170 170 0 0 1 682 512 L682 800" fill="none" stroke="url(#r2)" stroke-width="64" stroke-linecap="round" /><path d="M452 800 L452 520 A60 60 0 0 1 572 520 L572 800 Z" fill="url(#r1)" /></svg>
+        <span>Magic Lanterns</span>
+      </a>
+      <nav class="nav-links" aria-label="Sections">
+        <a href="#library" data-go="#library">Library</a>
+        <a href="#cinema" data-go="#cinema">Cinema</a>
+        <a href="#sound" data-go="#sound">Sound</a>
+        <a href="#everywhere" data-go="#everywhere">Platforms</a>
+      </nav>
+      <div class="nav-end">
+        <button class="sound-btn" type="button" aria-pressed="false" aria-label="Turn sound on">
+          <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="sound-label">Sound</span>
+        </button>
+        <a class="pill pill-white pill-sm" href="#get" data-store>Get it free</a>
+      </div>
+    </header>
+
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        <main>
+          <!-- 1. Hero -->
+          <section class="hero" id="top">
+            <div class="glow" aria-hidden="true"><i class="g1"></i><i class="g2"></i><i class="g3"></i><i class="g4"></i></div>
+            <a class="news" href="#cinema" data-go="#cinema"><span class="news-tag">New</span><span>Cinema Mode is here</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
+            <div class="app-icon" aria-hidden="true">
+              <svg class="beacon" viewBox="200 200 624 624">
+                <path class="b-arch b-outer" d="M232 800 L232 512 A280 280 0 0 1 792 512 L792 800" fill="none" stroke="url(#r3)" stroke-width="56" stroke-linecap="round" />
+                <path class="b-arch b-middle" d="M342 800 L342 512 A170 170 0 0 1 682 512 L682 800" fill="none" stroke="url(#r2)" stroke-width="56" stroke-linecap="round" />
+                <path class="b-core" d="M452 800 L452 520 A60 60 0 0 1 572 520 L572 800 Z" fill="url(#r1)" />
+              </svg>
+            </div>
+            <h1 class="hero-title">
+              <span class="line">Every film deserves</span>
+              <span class="line">a <em class="serif">premiere</em>.</span>
+            </h1>
+            <p class="hero-sub">A media player for the films on your PC, with a cinema built in. Posters, surround sound and a lobby you can drive from the sofa.</p>
+            <div class="hero-cta">
+              <a class="pill pill-white" href="#get" data-store>
+                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 4.2 8.4 3.3v6.2H2zM9.3 3.2 18 2v7.5H9.3zM2 10.4h6.4v6.3L2 15.8zM9.3 10.4H18V18l-8.7-1.2z" fill="currentColor" /></svg>
+                <span>Get it free for Windows</span>
+              </a>
+              <p class="meta">v1.1 <i>·</i> Windows 10 &amp; 11<span class="opt"> <i>·</i> No account, no ads</span></p>
+            </div>
+            <div class="scroll-cue" aria-hidden="true"><span></span></div>
+          </section>
+
+          <!-- 2. The reveal: the app rises out of the dark, and its own light fills the room. -->
+          <section class="reveal" aria-label="Magic Lanterns home screen">
+            <div class="reveal-stage">
+              <div class="screen-wrap">
+                <img class="screen-light" src="assets/img/home.webp" alt="" aria-hidden="true" />
+                <figure class="screen mb">
+                  <img src="assets/img/home.webp" alt="The Magic Lanterns home screen, with Dune: Part Two on the big banner" />
+                </figure>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3. Library -->
+          <section class="chapter library" id="library">
+            <div class="chapter-head">
+              <p class="kicker">Library</p>
+              <h2 class="focus">Your films, dressed for <em class="serif">opening night</em>.</h2>
+              <p class="lede focus">Point it at a folder. Posters, cast, seasons and ratings arrive on their own, and every title gets a page worth opening.</p>
+            </div>
+            <div class="strip">
+              <div class="strip-track">
+                <figure class="frame mb"><img src="assets/img/arcane.webp" alt="A series page with its title art and episodes" loading="lazy" /><figcaption>Pages that feel like a premiere</figcaption></figure>
+                <figure class="frame mb"><img src="assets/img/bladerunner.webp" alt="A film page with ratings and runtime" loading="lazy" /><figcaption>Ratings, runtime and every track at a glance</figcaption></figure>
+                <figure class="frame mb"><img src="assets/img/seasons.webp" alt="Seasons, episodes and cast" loading="lazy" /><figcaption>Seasons and episodes, always in order</figcaption></figure>
+                <figure class="frame mb"><img src="assets/img/spyfamily.webp" alt="An anime series page" loading="lazy" /><figcaption>Films, shows and anime in one place</figcaption></figure>
+                <figure class="frame mb"><img src="assets/img/spiderverse.webp" alt="A film page with a bright poster" loading="lazy" /><figcaption>Back to exactly where you left off</figcaption></figure>
+              </div>
+            </div>
+          </section>
+
+          <!-- 4. Cinema Mode -->
+          <section class="chapter cinema" id="cinema">
+            <div class="cinema-stage">
+              <h2 class="cinema-title"><span>Dim the</span> <em class="serif">lights</em>.</h2>
+              <div class="cinema-frame mb">
+                <video class="cinema-video" src="assets/video/cinema-sound.mp4" poster="assets/video/cinema-poster.jpg" muted loop playsinline preload="none"></video>
+                <button class="hear" type="button" aria-pressed="false"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="hear-label">Hear it</span></button>
+              </div>
+              <div class="cinema-caption">
+                <p class="kicker">Cinema Mode</p>
+                <p class="lede">An opening, a lobby and a sound stage, for the nights that deserve it. Arrow keys to browse, Enter to start the show.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- 5. Sound -->
+          <section class="chapter sound" id="sound">
+            <div class="sound-stage">
+              <div class="sound-copy">
+                <p class="kicker">Sound</p>
+                <h2>Sound that <em class="serif">finds you</em>.</h2>
+                <p class="lede">Up to 7.1 lossless, sent to every speaker you actually have. On headphones, the whole room folds into a space around you.</p>
+                <ul class="sound-facts">
+                  <li><b>7.1</b><span>lossless</span></li>
+                  <li><b>8</b><span>live meters</span></li>
+                  <li><b>3</b><span>listening modes</span></li>
+                </ul>
+              </div>
+              <div class="sound-art" aria-hidden="true">
+                <div class="rings"><i></i><i></i><i></i></div>
+                <div class="speakers"><i style="--a: -30deg"></i><i style="--a: 30deg"></i><i style="--a: 0deg"></i><i style="--a: -110deg"></i><i style="--a: 110deg"></i><i style="--a: -150deg"></i><i style="--a: 150deg"></i></div>
+                <svg class="phones" viewBox="40 200 944 760">
+                  <path class="p-wave" d="" />
+                  <path class="p-wave" d="" />
+                  <path class="p-wave" d="" />
+                  <path class="p-wave" d="" />
+                  <path class="p-band" d="M232 800 L232 512 A280 280 0 0 1 792 512 L792 800" fill="none" stroke="url(#r3)" stroke-width="56" stroke-linecap="round" />
+                  <path class="p-cushion" d="M342 800 L342 512 A170 170 0 0 1 682 512 L682 800" fill="none" stroke="url(#r2)" stroke-width="56" stroke-linecap="round" />
+                  <path class="p-left" d="M452 800 L452 520 A60 60 0 0 1 572 520 L572 800 Z" fill="url(#r1)" />
+                  <path class="p-right" d="M452 800 L452 520 A60 60 0 0 1 572 520 L572 800 Z" fill="url(#r1)" />
+                </svg>
+              </div>
+            </div>
+          </section>
+
+          <!-- 6. Ambient Light -->
+          <section class="chapter ambient" id="ambient">
+            <div class="ambient-stage">
+              <div class="chapter-head">
+                <p class="kicker">Ambient Light</p>
+                <h2 class="focus">The picture spills into <em class="serif">the room</em>.</h2>
+              </div>
+              <div class="screen-wrap ambient-wrap">
+                <img class="screen-light" src="assets/img/cinema-light.webp" alt="" aria-hidden="true" loading="lazy" />
+                <figure class="screen mb"><img src="assets/img/cinema-light.webp" alt="A desert scene playing with its colours glowing past the edges of the screen" loading="lazy" /></figure>
+              </div>
+              <p class="lede ambient-lede focus">The film's own colours glow past the edges of the frame, and letterbox bars quietly disappear. One click turns it off.</p>
+            </div>
+          </section>
+
+          <!-- 7. Lights up: the page turns to day. -->
+          <section class="chapter day" id="day">
+            <div class="chapter-head">
+              <p class="kicker">Light theme</p>
+              <h2 class="focus">And when the lights <em class="serif">come up</em>.</h2>
+              <p class="lede focus">A light theme as calm as the dark one. Same posters, same motion, made for bright rooms.</p>
+            </div>
+            <figure class="day-shot mb"><img src="assets/img/light.webp" alt="Magic Lanterns in its light theme" loading="lazy" /></figure>
+          </section>
+
+          <!-- 8. Platforms -->
+          <section class="chapter everywhere" id="everywhere">
+            <div class="chapter-head">
+              <p class="kicker">Platforms</p>
+              <h2 class="focus">Windows today. <em class="serif">Everywhere</em> next.</h2>
+            </div>
+            <div class="platforms">
+              <div class="plat is-live">
+                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 4.2 8.4 3.3v6.2H2zM9.3 3.2 18 2v7.5H9.3zM2 10.4h6.4v6.3L2 15.8zM9.3 10.4H18V18l-8.7-1.2z" fill="currentColor" /></svg>
+                <b>Windows</b><span>Available now</span>
+              </div>
+              <div class="plat">
+                <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3.5" width="16" height="11" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M7 17.5h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+                <b>Mac</b><span>Coming soon</span>
+              </div>
+              <div class="plat">
+                <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3.5" y="2" width="13" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" /><circle cx="10" cy="15" r="0.9" fill="currentColor" /></svg>
+                <b>iPad</b><span>Coming soon</span>
+              </div>
+              <div class="plat">
+                <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="5.5" y="1.8" width="9" height="16.4" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M8.6 15.4h2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+                <b>Android &amp; TV</b><span>Coming soon</span>
+              </div>
+            </div>
+            <form class="notify" name="launch" method="POST" data-netlify="true" netlify-honeypot="company">
+              <input type="hidden" name="form-name" value="launch" />
+              <p class="hp"><label>Leave this empty <input name="company" tabindex="-1" autocomplete="off" /></label></p>
+              <label class="sr" for="email">Email</label>
+              <input id="email" name="email" type="email" required placeholder="Your email, for launch day" autocomplete="email" />
+              <select name="platform" aria-label="Which platform">
+                <option value="mac">Mac</option>
+                <option value="ipad">iPad</option>
+                <option value="android">Android &amp; TV</option>
+              </select>
+              <button class="pill pill-dark" type="submit">Notify me</button>
+            </form>
+            <p class="notify-note">One email when it lands. Nothing else, ever.</p>
+          </section>
+
+          <!-- 9. The last word -->
+          <section class="finale" id="get">
+            <div class="app-icon app-icon-lg" aria-hidden="true">
+              <svg viewBox="200 200 624 624"><path d="M232 800 L232 512 A280 280 0 0 1 792 512 L792 800" fill="none" stroke="url(#r3)" stroke-width="56" stroke-linecap="round" /><path d="M342 800 L342 512 A170 170 0 0 1 682 512 L682 800" fill="none" stroke="url(#r2)" stroke-width="56" stroke-linecap="round" /><path d="M452 800 L452 520 A60 60 0 0 1 572 520 L572 800 Z" fill="url(#r1)" /></svg>
+            </div>
+            <h2 class="focus">Free. <em class="serif">No account.</em> No ads.</h2>
+            <p class="lede focus">Your library stays on your computer. Always.</p>
+            <a class="pill pill-dark pill-lg" href="#get" data-store>
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 4.2 8.4 3.3v6.2H2zM9.3 3.2 18 2v7.5H9.3zM2 10.4h6.4v6.3L2 15.8zM9.3 10.4H18V18l-8.7-1.2z" fill="currentColor" /></svg>
+              <span>Get it free for Windows</span>
+            </a>
+          </section>
+
+          <footer class="foot">
+            <div class="foot-row">
+              <span class="foot-brand">Magic Lanterns</span>
+              <nav aria-label="Legal">
+                <a href="privacy.html" target="_blank" rel="noopener">Privacy</a>
+                <a href="terms.html" target="_blank" rel="noopener">Terms</a>
+                <a href="credits.html" target="_blank" rel="noopener">Credits</a>
+                <a href="https://github.com/PushkarX-Code/MagicLanterns-Releases/issues" target="_blank" rel="noopener">Support</a>
+              </nav>
+            </div>
+            <p class="foot-fine">Film information and images from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB. Artwork shown belongs to its owners.</p>
+            <p class="foot-fine">© 2026 Magic Lanterns</p>
+          </footer>
+        </main>
+      </div>
+    </div>
+
+    <!-- Follows you down the page, like the price bar under a product. -->
+    <div class="dock" aria-hidden="true">
+      <svg viewBox="200 200 624 624"><path d="M232 800 L232 512 A280 280 0 0 1 792 512 L792 800" fill="none" stroke="url(#r3)" stroke-width="64" stroke-linecap="round" /><path d="M342 800 L342 512 A170 170 0 0 1 682 512 L682 800" fill="none" stroke="url(#r2)" stroke-width="64" stroke-linecap="round" /><path d="M452 800 L452 520 A60 60 0 0 1 572 520 L572 800 Z" fill="url(#r1)" /></svg>
+      <span class="dock-text"><b>Magic Lanterns</b><span>Free for Windows 10 &amp; 11</span></span>
+      <a class="pill pill-amber pill-sm" href="#get" data-store tabindex="-1">Get it free</a>
+    </div>
+
+    <div class="day-wash" aria-hidden="true"></div>
+
+    <script src="assets/js/gsap.min.js"></script>
+    <script src="assets/js/ScrollTrigger.min.js"></script>
+    <script src="assets/js/ScrollSmoother.min.js"></script>
+    <script src="assets/js/DrawSVGPlugin.min.js"></script>
+    <script src="assets/js/MorphSVGPlugin.min.js"></script>
+    <script src="assets/site.js"></script>
+  </body>
+</html>
