@@ -388,8 +388,8 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     if (engine.current !== e) return
     e.offset = Math.min(begin, to)
     pendingSkip.current = to - e.offset > 0.25 ? to - e.offset : null
-    // A hair past the keyframe, so rounding can never send the engine back to the one before it.
-    setUrl(streamAt(e.offset + (begin < to ? 0.01 : 0)))
+    // Just past the keyframe: FFmpeg aims ~0.13 s early when copying, which would land on the keyframe before.
+    setUrl(streamAt(e.offset + (begin < to ? 0.2 : 0)))
   }
 
   /** Asks the engine how to play this file, then starts it (part-way in when resuming or switching sound). */
