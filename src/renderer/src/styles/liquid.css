@@ -1,0 +1,158 @@
+/* ---------- Liquid glass (trial on Settings) ----------
+ * Clear rather than milky: a heavy blur that lets colour through, no white wash on top. The glass is drawn by
+ * light on its edge: a rim brighter where light falls (top left, bottom right), a soft lip just inside the top,
+ * and a deep shadow under it so it floats. */
+.settings {
+  --lg-fill: linear-gradient(160deg, rgb(255 255 255 / 0.075), rgb(255 255 255 / 0.018) 42%, rgb(255 255 255 / 0.035));
+  --lg-blur: blur(44px) saturate(175%);
+  --lg-rim: linear-gradient(135deg, rgb(255 255 255 / 0.55), rgb(255 255 255 / 0.1) 24%, rgb(255 255 255 / 0.02) 52%, rgb(255 255 255 / 0.1) 78%, rgb(255 255 255 / 0.36));
+  --lg-lip: inset 0 1px 1px rgb(255 255 255 / 0.16), inset 0 22px 40px -32px rgb(255 255 255 / 0.3);
+  --lg-float: 0 34px 60px -34px rgb(0 0 0 / 0.6), 0 2px 8px rgb(0 0 0 / 0.14);
+}
+
+/* The rim: a one-pixel ring whose brightness follows the light. */
+.settings :is(.set-group.glass, .set-tab.is-selected, .set-tab.is-focused, .seg-btn.is-active)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--lg-rim);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.settings .set-group.glass {
+  position: relative;
+  border-radius: 28px;
+  background: var(--lg-fill);
+  -webkit-backdrop-filter: var(--lg-blur);
+  backdrop-filter: var(--lg-blur);
+  box-shadow: var(--lg-lip), var(--lg-float);
+}
+.settings .set-row {
+  border-radius: 22px;
+}
+.settings .set-row + .set-row {
+  box-shadow: 0 -1px 0 rgb(255 255 255 / 0.045);
+}
+/* Focus: a lighter pane of the same glass, not a grey block. */
+.settings .set-row.is-focused {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.09), rgb(255 255 255 / 0.04));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    inset 0 0 0 1px rgb(255 255 255 / 0.07);
+}
+
+/* Tabs: the chosen one is a small piece of glass; focus brightens it rather than turning it white. */
+.settings .set-tab {
+  position: relative;
+  border-radius: 20px;
+}
+.settings .set-tab.is-selected {
+  background: var(--lg-fill);
+  -webkit-backdrop-filter: var(--lg-blur);
+  backdrop-filter: var(--lg-blur);
+  box-shadow: var(--lg-lip), 0 18px 34px -22px rgb(0 0 0 / 0.6);
+}
+.settings .set-tab.is-focused {
+  color: #fff;
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.08) 50%, rgb(255 255 255 / 0.12));
+  -webkit-backdrop-filter: var(--lg-blur);
+  backdrop-filter: var(--lg-blur);
+  box-shadow: var(--lg-lip), 0 20px 40px -20px rgb(0 0 0 / 0.7);
+}
+.settings .set-tab.is-focused svg {
+  color: var(--amber);
+}
+
+/* Segmented control: a channel pressed into the glass, with a glass bead for the choice. */
+.settings .seg {
+  background: rgb(0 0 0 / 0.22);
+  box-shadow:
+    inset 0 1px 3px rgb(0 0 0 / 0.35),
+    inset 0 -1px 0 rgb(255 255 255 / 0.06);
+}
+.settings .seg-btn {
+  position: relative;
+}
+.settings .seg-btn.is-active {
+  color: #fff;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.24), rgb(255 255 255 / 0.1));
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 0.3),
+    0 6px 14px -6px rgb(0 0 0 / 0.6);
+}
+
+/* Switch: the same channel; the knob is a bead of glass, and "on" glows from inside. */
+.settings .switch {
+  background: rgb(0 0 0 / 0.26);
+  box-shadow:
+    inset 0 1px 3px rgb(0 0 0 / 0.4),
+    inset 0 -1px 0 rgb(255 255 255 / 0.07);
+}
+.settings .switch.is-on {
+  background: linear-gradient(180deg, #ffc47a, #ff9a3c);
+  box-shadow:
+    inset 0 1px 2px rgb(255 255 255 / 0.45),
+    inset 0 -2px 6px rgb(160 70 0 / 0.35),
+    0 0 18px -4px rgb(255 160 70 / 0.55);
+}
+.settings .switch span {
+  background: radial-gradient(120% 120% at 30% 25%, #fff 0%, #f1f1f3 55%, #d9d9de 100%);
+  box-shadow:
+    inset 0 -1px 2px rgb(0 0 0 / 0.12),
+    inset 0 1px 1px rgb(255 255 255 / 0.9),
+    0 3px 8px rgb(0 0 0 / 0.35);
+}
+
+/* Light behind the glass: two soft shapes drifting slowly, so the panels have something to bend and carry. */
+.settings::before,
+.settings::after {
+  content: '';
+  position: fixed;
+  z-index: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(30px);
+}
+.settings::before {
+  top: 6%;
+  left: 48%;
+  width: 640px;
+  height: 640px;
+  background: radial-gradient(circle at 40% 38%, rgb(255 170 80 / 0.6), rgb(255 110 40 / 0.32) 42%, transparent 70%);
+  animation: lg-drift-a 34s ease-in-out infinite alternate;
+}
+.settings::after {
+  top: 46%;
+  left: 30%;
+  width: 760px;
+  height: 520px;
+  background: radial-gradient(ellipse at 50% 50%, rgb(120 90 220 / 0.42), rgb(70 60 160 / 0.2) 45%, transparent 72%);
+  animation: lg-drift-b 41s ease-in-out infinite alternate;
+}
+.settings > * {
+  position: relative;
+  z-index: 1;
+}
+@keyframes lg-drift-a {
+  to {
+    transform: translate(-120px, 90px) scale(1.12);
+  }
+}
+@keyframes lg-drift-b {
+  to {
+    transform: translate(160px, -70px) scale(0.92);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings::before,
+  .settings::after {
+    animation: none;
+  }
+}
