@@ -4,8 +4,10 @@ import { createServer, type Server } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { extname } from 'node:path'
 import { ipcMain } from 'electron'
-import type { PlaybackPlan, PlayerCaps } from '../../shared/types.ts'
+import type { PlaybackPlan, PlayerCaps, SubtitleTrack } from '../../shared/types.ts'
+import type { Cue } from '../../shared/subs.ts'
 import { plan, type Choice, type Facts, type Machine } from './planner.ts'
+import { findSidecars, readEmbedded, readSidecar } from './subtitles.ts'
 
 // The playback engine. Files the system can decode play straight from disk; everything else is repackaged
 // or converted by FFmpeg as it plays and served to the player from a private address on this computer.
@@ -20,6 +22,18 @@ interface Session {
 }
 
 const sessions = new Map<string, Session>()
+const SIDECAR_BASE = 10_000
+const LANGS = new Intl.DisplayNames(['en'], { type: 'language' })
+const languageName = (code: string): string => {
+  if (code === 'und') return ''
+  try {
+    return LANGS.of(code) ?? code
+  } catch {
+    return code
+  }
+}
+const frames = new Map<string, string>()
+const factsCache = new Map<string, Promise<Facts | null>>()
 let server: Server | null = null
 let port = 0
 let machine: Promise<Machine> | null = null
@@ -164,6 +178,61 @@ export function initPlayer(deps: PlayerDeps): void {
       return { mode: p.mode, url: `http://127.0.0.1:${port}/s/${id}`, session: id, encoder: p.mode === 'transcode' ? m.encoder : null, duration: facts.duration ?? 0 }
     }
   )
+  // Subtitle files beside the film. Their index numbers start at 10000 so they never collide with the file's own tracks.
+  ipcMain.handle('player:subtitles', (_e, target: { fileId?: string; path?: string }): SubtitleTrack[] => {
+    const path = deps.resolve(target ?? {})
+    if (!path) return []
+    return findSidecars(path).map((s, i) => ({
+      index: SIDECAR_BASE + i,
+      codec: s.path.split('.').pop()!.toLowerCase(),
+      language: s.language,
+      title: [languageName(s.language) || 'Subtitles', s.label, s.forced ? 'Forced' : '', 'File'].filter(Boolean).join(' · '),
+      forced: s.forced,
+      external: true
+    }))
+  })
+  ipcMain.handle(
+    'player:subtitle',
+    async (_e, target: { fileId?: string; path?: string }, track: { index: number; codec: string }, encoding: unknown): Promise<Cue[] | null> => {
+      const path = deps.resolve(target ?? {})
+      if (!path || typeof track?.index !== 'number') return null
+      try {
+        if (track.index >= SIDECAR_BASE) {
+          const file = findSidecars(path)[track.index - SIDECAR_BASE]
+          return file ? readSidecar(file.path, typeof encoding === 'string' ? encoding : 'auto') : null
+        }
+        return await readEmbedded(deps.ffmpeg, path, track.index, String(track.codec ?? ''))
+      } catch (e) {
+        console.error('Subtitle read failed', e)
+        return null
+      }
+    }
+  )
+  // A small still for the scrub bar while streaming (the player can't seek a second copy of a live conversion).
+  ipcMain.handle('player:frame', async (_e, target: { fileId?: string; path?: string }, at: unknown): Promise<string | null> => {
+    const path = deps.resolve(target ?? {})
+    const t = Number(at)
+    if (!path || !Number.isFinite(t) || t < 0) return null
+    const key = `${path}|${Math.round(t / 2)}`
+    if (frames.has(key)) return frames.get(key)!
+    const facts = await (factsCache.get(path) ?? factsCache.set(path, readFacts(deps.ffprobe, path).catch(() => null)).get(path)!)
+    const m = await detectMachine(deps.ffmpeg)
+    const tone = facts?.video?.hdr && m.canToneMap ? ',zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p' : ''
+    const jpg = await new Promise<Buffer | null>((resolve) =>
+      execFile(
+        deps.ffmpeg,
+        ['-hide_banner', '-loglevel', 'error', '-nostdin', '-ss', t.toFixed(2), '-i', path, '-frames:v', '1', '-vf', `scale=320:-2${tone}`, '-f', 'image2', '-c:v', 'mjpeg', '-q:v', '6', '-'],
+        { timeout: 8000, encoding: 'buffer', maxBuffer: 4 * 1024 * 1024, windowsHide: true },
+        (err, out) => resolve(err || !out.length ? null : out)
+      )
+    )
+    const url = jpg ? `data:image/jpeg;base64,${jpg.toString('base64')}` : null
+    if (url) {
+      frames.set(key, url)
+      if (frames.size > 400) frames.delete(frames.keys().next().value!)
+    }
+    return url
+  })
   ipcMain.handle('player:close', (_e, id: unknown) => {
     const s = typeof id === 'string' ? sessions.get(id) : undefined
     if (s) {

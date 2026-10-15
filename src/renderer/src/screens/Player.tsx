@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 import {
   AudioLines,
   Share,
@@ -18,7 +18,9 @@ import {
   X
 } from 'lucide-react'
 import { playerCaps } from '../player/caps'
-import type { PlaybackPlan, PlaybackSource, Settings } from '@shared/types'
+import type { PlaybackPlan, PlaybackSource, Settings, SubtitleTrack } from '@shared/types'
+import { cuesAt, type Cue } from '@shared/subs'
+import { sameLanguage } from '@shared/lang'
 import { DEFAULT_SETTINGS, EQ_PRESETS } from '@shared/settings'
 import { AudioChain, isLocalSource, needsChain } from '../player/audioChain'
 import { PipIcon } from '../components/Icons'
@@ -172,6 +174,32 @@ interface PlayerProps {
   fresh?: boolean
 }
 
+/** One subtitle cue: its lines, with the italics and bold the file asked for. */
+function CueText({ text }: { text: string }) {
+  let i = false
+  let b = false
+  return (
+    <div>
+      <span>
+        {text.split('\n').map((line, n) => (
+          <Fragment key={n}>
+            {n > 0 && <br />}
+            {line.split(/(<\/?[ib]>)/).map((part, k) => {
+              if (/^<\/?i>$/.test(part)) i = part === '<i>'
+              else if (/^<\/?b>$/.test(part)) b = part === '<b>'
+              else if (part) {
+                const words = i ? <i>{part}</i> : part
+                return <Fragment key={k}>{b ? <b>{words}</b> : words}</Fragment>
+              }
+              return null
+            })}
+          </Fragment>
+        ))}
+      </span>
+    </div>
+  )
+}
+
 export function Player({ itemId, episodeId, fileId, url: streamUrl, title: streamTitle, fresh }: PlayerProps) {
   const back = useNav((s) => s.back)
   const replace = useNav((s) => s.replace)
@@ -194,6 +222,11 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const [showRemaining, setShowRemaining] = useState(() => useSettings.getState().settings?.showRemaining ?? true)
   const [audio, setAudio] = useState(0)
   const [subtitle, setSubtitle] = useState<number | null>(null)
+  // Every subtitle track on offer (the file's own, then files beside it) and the lines of the chosen one.
+  const [tracks, setTracks] = useState<SubtitleTrack[]>([])
+  const [cues, setCues] = useState<Cue[] | null>(null)
+  const [subClock, setSubClock] = useState(0)
+  const [thumb, setThumb] = useState<{ t: number; src: string } | null>(null)
   const [visible, setVisible] = useState(true)
   const [menu, setMenu] = useState<Menu>(null)
   const [scrub, setScrub] = useState<{ x: number; t: number; dragging: boolean } | null>(null)
@@ -446,6 +479,76 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     hudTimer.current = window.setTimeout(() => setHud(null), 1100)
   }
 
+  // ---------- Subtitles ----------
+  // The film's own tracks, plus matching files beside it; then the default the viewer asked for in Settings.
+  useEffect(() => {
+    if (!src) return
+    let alive = true
+    const own = src.file?.subtitles ?? []
+    const target = targetOf(src)
+    const extra = target && cfg.autoLoadSubs && window.lantern?.listSubtitleFiles ? window.lantern.listSubtitleFiles(target).catch(() => []) : Promise.resolve([])
+    void extra.then((files) => {
+      if (!alive) return
+      const all = [...own, ...files]
+      setTracks(all)
+      const usable = all.filter((t) => !t.picture)
+      const pref = cfg.subtitleLanguage
+      const spoken = src.file?.audio[audio]?.language
+      const pick =
+        pref === 'off'
+          ? undefined
+          : pref === 'forced'
+            ? usable.find((t) => t.forced && (sameLanguage(t.language, spoken) || t.language === 'und'))
+            : (usable.find((t) => sameLanguage(t.language, pref) && !t.forced) ?? usable.find((t) => sameLanguage(t.language, pref)))
+      setSubtitle(pick ? pick.index : null)
+    })
+    return () => {
+      alive = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [src])
+
+  // Read the chosen track's lines (the film's own tracks take a moment: the file is read once, then kept).
+  useEffect(() => {
+    setCues(null)
+    const track = tracks.find((t) => t.index === subtitle)
+    const target = src && targetOf(src)
+    if (!track || !target || !window.lantern?.loadSubtitles) return
+    let alive = true
+    const slow = window.setTimeout(() => alive && flash('Loading subtitles…'), 400)
+    window.lantern
+      .loadSubtitles(target, { index: track.index, codec: track.codec }, cfg.subtitleEncoding)
+      .then((c) => {
+        if (!alive) return
+        if (c && c.length) setCues(c)
+        else flash("These subtitles couldn't be read")
+      })
+      .catch(() => alive && flash("These subtitles couldn't be read"))
+      .finally(() => window.clearTimeout(slow))
+    return () => {
+      alive = false
+      window.clearTimeout(slow)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subtitle, tracks, cfg.subtitleEncoding])
+
+  // Lines change more often than the progress bar updates; follow the picture ten times a second.
+  useEffect(() => {
+    if (!cues) return
+    const id = window.setInterval(() => setSubClock(position()), 100)
+    return () => window.clearInterval(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cues])
+
+  const chooseSubtitle = (t: SubtitleTrack | null): boolean => {
+    if (t?.picture) {
+      flash('Picture subtitles (Blu-ray and DVD) can’t be shown yet')
+      return false
+    }
+    setSubtitle(t ? t.index : null)
+    return true
+  }
+
   const changeVolume = (direction: 1 | -1): void => {
     const v = video.current
     if (!v) return
@@ -592,7 +695,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   }
 
   const cycleSubs = (): void => {
-    const list = src?.file?.subtitles ?? []
+    const list = tracks.filter((t) => !t.picture)
     if (!list.length) {
       flash('No Subtitles')
       return
@@ -776,6 +879,22 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     }, 60)
   }, [scrub])
 
+  // While streaming there's no second copy of the film to seek, so the engine sends small stills instead.
+  const thumbAsk = useRef(0)
+  useEffect(() => {
+    if (!scrub || !streaming || !src || !window.lantern?.scrubFrame) return
+    const target = targetOf(src)
+    if (!target) return
+    const ask = ++thumbAsk.current
+    const id = window.setTimeout(() => {
+      window.lantern!.scrubFrame(target, scrub.t)
+        .then((s) => ask === thumbAsk.current && s && setThumb({ t: scrub.t, src: s }))
+        .catch(() => undefined)
+    }, 120)
+    return () => window.clearTimeout(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scrub?.t, streaming])
+
   const onBarDown = (e: React.PointerEvent): void => {
     if (!Number.isFinite(duration) || !duration) return // live streams can't be scrubbed
     ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
@@ -826,13 +945,13 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
         ...(nav.share ? [{ label: 'Share…', divider: true, onSelect: () => nav.share!({ title: src.title, text: shareText() }).catch(() => undefined) }] : [])
       ]
     }
-    const tracks = src.file?.audio ?? []
+    const sounds = src.file?.audio ?? []
     if (menu === 'audio') {
       const effects = local ? undefined : 'Local files'
       const preset = cfg.eqEnabled ? cfg.eqPreset : 'Off'
       return [
-        ...(tracks.length
-          ? tracks.map((a, i) => ({ label: a.title, checked: i === audio, onSelect: () => chooseAudio(i) }))
+        ...(sounds.length
+          ? sounds.map((a, i) => ({ label: a.title, checked: i === audio, onSelect: () => chooseAudio(i) }))
           : [{ label: 'Default Track', checked: true, onSelect: () => undefined }]),
         {
           label: 'Equalizer',
@@ -867,13 +986,12 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     }
     return [
       { label: 'Off', checked: subtitle === null, onSelect: () => setSubtitle(null) },
-      ...(src.file?.subtitles ?? []).map((s) => ({
+      ...tracks.map((s) => ({
         label: s.title,
-        hint: s.external ? 'SRT' : undefined,
+        hint: s.picture ? 'Picture' : undefined,
         checked: subtitle === s.index,
         onSelect: () => {
-          setSubtitle(s.index)
-          preview()
+          if (chooseSubtitle(s) && !window.lantern?.loadSubtitles) preview()
         }
       })),
       {
@@ -902,7 +1020,9 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const pct = finite ? (time / duration) * 100 : 0
   const bufPct = finite ? (buffered / duration) * 100 : 0
   const VolumeIcon = muted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2
-  const subTrack = src?.file?.subtitles.find((s) => s.index === subtitle)
+  const subTrack = tracks.find((s) => s.index === subtitle)
+  // Positive delay shows lines later; the setting is in milliseconds.
+  const showing = cues ? cuesAt(cues, subClock - cfg.subtitleDelay / 1000) : []
   const live = !Number.isFinite(duration) // live HLS streams report an infinite duration
 
   return (
@@ -993,13 +1113,17 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
 
           <div className="pl-dim" style={{ opacity: ready && !playing ? 1 : 0 }} />
 
-          {/* Subtitles (real cues arrive with the FFmpeg pipeline; style preview works now). */}
-          {subTrack && cuePreview && (
+          {/* Subtitles: the chosen track's lines, drawn in the viewer's style. The demo shows a sample line instead. */}
+          {(showing.length > 0 || (subTrack && cuePreview && !cues)) && (
             <div
               className={`pl-cue size-${subSize} style-${subStyle} color-${cfg.subtitleColor}`}
               style={{ bottom: (visible ? 190 : 72) + (cfg.subtitlePosition === 'raised' ? 70 : 0) }}
             >
-              <span>{subTrack.title} subtitles will look like this.</span>
+              {showing.length > 0 ? (
+                showing.map((c, i) => <CueText key={`${c.start}-${i}`} text={c.text} />)
+              ) : (
+                <span>{subTrack!.title} subtitles will look like this.</span>
+              )}
             </div>
           )}
 
@@ -1107,7 +1231,10 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
                   </div>
                   <div className="pl-knob" style={{ left: `${scrub?.dragging ? (scrub.t / (duration || 1)) * 100 : pct}%` }} />
                   <div className="pl-thumb" style={{ left: scrub?.x ?? 0, opacity: scrub ? 1 : 0 }}>
-                    <div className="pl-thumb-frame">{url && !streaming && <video ref={preview} src={url} muted preload="metadata" />}</div>
+                    <div className="pl-thumb-frame">
+                      {url && !streaming && <video ref={preview} src={url} muted preload="metadata" />}
+                      {streaming && thumb && <img src={thumb.src} alt="" />}
+                    </div>
                     <div className="pl-thumb-time">{timecode(scrub?.t ?? 0)}</div>
                   </div>
                 </div>

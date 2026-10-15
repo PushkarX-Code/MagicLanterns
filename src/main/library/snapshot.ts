@@ -1,4 +1,5 @@
 import type { AudioTrack, Episode, FileInfo, HdrFormat, MediaItem, Progress, Season, SubtitleTrack } from '../../shared/types.ts'
+import { PICTURE_SUBS } from '../player/subtitles.ts'
 import type { Db } from '../db/index.ts'
 
 // The library as the screens see it, built from the database. Films and shows found on disk, with every
@@ -45,11 +46,21 @@ interface FileRow {
   added_at: number
   item_id: number | null
   frame: string | null
+  intro: string | null
   position: number | null
   pduration: number | null
   watched: number | null
   play_count: number | null
   last_played_at: number | null
+}
+
+function introOf(f: FileRow): Pick<FileInfo, 'intro'> {
+  try {
+    const m = f.intro ? (JSON.parse(f.intro) as { start: number; end: number } | null) : null
+    return m ? { intro: { start: m.start, end: m.end } } : {}
+  } catch {
+    return {}
+  }
 }
 
 function fileInfo(f: FileRow, streams: Map<number, Record<string, unknown>[]>): FileInfo {
@@ -79,7 +90,8 @@ function fileInfo(f: FileRow, streams: Map<number, Record<string, unknown>[]>): 
       language: String(s.language ?? 'und'),
       title: [languageName(s.language as string | null) || `Track ${Number(s.idx)}`, s.title ? String(s.title) : '', s.is_forced ? 'Forced' : ''].filter(Boolean).join(' · '),
       forced: !!s.is_forced,
-      external: false
+      external: false,
+      ...(PICTURE_SUBS.has(String(s.codec)) && { picture: true })
     }))
   return {
     id: String(f.id),
@@ -93,7 +105,8 @@ function fileInfo(f: FileRow, streams: Map<number, Record<string, unknown>[]>): 
     hdr: (f.hdr ?? 'SDR') as HdrFormat,
     bitrate: Number(f.bitrate ?? 0),
     audio,
-    subtitles
+    subtitles,
+    ...introOf(f)
   }
 }
 
@@ -117,9 +130,10 @@ export function buildSnapshot(db: Db): MediaItem[] {
   const files = db
     .prepare(
       `SELECT f.id, f.path, f.size, f.duration, f.container, f.video_codec, f.width, f.height, f.hdr, f.bitrate, f.added_at, f.item_id,
-              g.local_path AS frame, p.position, p.duration AS pduration, p.watched, p.play_count, p.last_played_at
+              g.local_path AS frame, gi.meta_json AS intro, p.position, p.duration AS pduration, p.watched, p.play_count, p.last_played_at
        FROM files f
        LEFT JOIN generated g ON g.file_id = f.id AND g.type = 'frame'
+       LEFT JOIN generated gi ON gi.file_id = f.id AND gi.type = 'intro'
        LEFT JOIN playback p ON p.file_id = f.id
        WHERE f.missing = 0 AND f.hidden = 0 AND f.video_codec IS NOT NULL AND f.item_id IS NOT NULL`
     )
