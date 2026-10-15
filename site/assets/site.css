@@ -841,6 +841,7 @@ body,
 }
 .day-shot img {
   width: 100%;
+  aspect-ratio: 1440 / 864;
   border-radius: var(--r-frame);
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.06);
   outline: 1px solid rgb(0 0 0 / 0.06);

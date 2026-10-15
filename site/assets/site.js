@@ -560,5 +560,13 @@
   })
 
   scoreCues()
+  // Pictures that arrive late must not leave the page shorter than its content: re-measure as they land.
+  let remeasure
+  $$('img[loading="lazy"]').forEach((im) =>
+    im.addEventListener('load', () => {
+      clearTimeout(remeasure)
+      remeasure = setTimeout(() => ScrollTrigger.refresh(), 200)
+    })
+  )
   addEventListener('load', () => ScrollTrigger.refresh())
 })()
