@@ -29,5 +29,8 @@
     "renderer/src/**/*.json",
     "shared/**/*",
     "preload/bridge.d.ts"
+  ],
+  "exclude": [
+    "**/*.test.ts"
   ]
 }

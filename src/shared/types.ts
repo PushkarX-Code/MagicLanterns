@@ -108,6 +108,8 @@ export interface MediaItem {
   trailerKey: string | null
   cast: CastMember[]
   credit: { role: 'Director' | 'Creator'; name: string } | null
+  /** The film series it belongs to (from TMDB), e.g. "Dune Collection". */
+  collection?: { id: string; name: string } | null
   /** Short muted preview clip for the hero (Phase 4 generates these from the file). */
   preview: { url: string; start: number } | null
   addedAt: number
@@ -136,6 +138,8 @@ export interface CardModel {
 
 export interface GenreTile {
   name: string
+  /** Set when the tile is a collection rather than a genre; opens that collection. */
+  collectionId?: string
   count: number
   images: string[] // up to three backdrops, fanned like glass slides
   color: string

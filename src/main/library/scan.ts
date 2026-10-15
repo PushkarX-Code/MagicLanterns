@@ -131,3 +131,26 @@ export async function scanFolder(
   onProgress({ folder: folder.path, phase: 'done', found: result.found, toRead: toRead.length, read: result.read, current: null })
   return result
 }
+
+/** Counts video files under a folder, giving up quietly on very large trees (it's only a hint for first run). */
+export async function countVideos(root: string, limit = 4000): Promise<number> {
+  let seen = 0
+  let videos = 0
+  const walk = async (dir: string, depth: number): Promise<void> => {
+    if (depth > 4 || seen > limit) return
+    let entries
+    try {
+      entries = await readdir(dir, { withFileTypes: true })
+    } catch {
+      return
+    }
+    for (const e of entries) {
+      if (++seen > limit) return
+      if (e.isDirectory()) {
+        if (!SKIP_DIRS.test(e.name) && !e.name.startsWith('.')) await walk(join(dir, e.name), depth + 1)
+      } else if (VIDEO_EXTENSIONS.has(extname(e.name).toLowerCase())) videos++
+    }
+  }
+  await walk(root, 0)
+  return videos
+}

@@ -8,7 +8,7 @@ import { addFolder, folderRows, listFolders, openDb, removeFolder, type Db } fro
 import { frameFor } from './frames.ts'
 import { pruneOrphans } from './identify.ts'
 import { probeFile } from './probe.ts'
-import { scanFolder } from './scan.ts'
+import { countVideos, scanFolder } from './scan.ts'
 import { buildSnapshot, hideFiles, itemIdOf, saveProgress, setFavorite, setInList, setWatched } from './snapshot.ts'
 import { createWatcher } from './watch.ts'
 import { hasMetadata, omdb, tmdb } from '../keys'
@@ -167,6 +167,16 @@ const strings = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is
 export function initLibrary(): void {
   open()
   ipcMain.handle('library:folders', (): LibraryFolder[] => listFolders(open()))
+  // First run: the usual places films live on this computer, with how many videos each holds.
+  ipcMain.handle('library:suggest-folders', async (): Promise<{ path: string; label: string; videos: number }[]> => {
+    const home = app.getPath('home')
+    const places = (['videos', 'downloads', 'desktop'] as const)
+      .map((key) => ({ path: app.getPath(key), label: key[0].toUpperCase() + key.slice(1) }))
+      // Where a special folder isn't set up it falls back to the home folder; offer each place once, never home itself.
+      .filter((p, i, all) => p.path !== home && all.findIndex((q) => q.path === p.path) === i)
+    const found = await Promise.all(places.map(async (p) => ({ ...p, videos: await countVideos(p.path).catch(() => 0) })))
+    return found.filter((f) => f.videos > 0)
+  })
   ipcMain.handle('library:add-folder', (_e, path: unknown): LibraryFolder[] => {
     const clean = checkedFolder(path)
     addFolder(open(), clean)

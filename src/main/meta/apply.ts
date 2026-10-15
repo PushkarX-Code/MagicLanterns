@@ -46,6 +46,7 @@ interface Details {
   backdrop_path?: string | null
   imdb_id?: string
   genres?: { id: number; name: string }[]
+  belongs_to_collection?: { id: number; name: string } | null
   images?: Images
   videos?: { results: { key: string; site: string; type: string; official?: boolean }[] }
   credits?: { cast: Person[]; crew: Person[] }
@@ -214,6 +215,15 @@ export async function applyMatch(db: Db, tmdb: Tmdb, itemId: number, kind: 'movi
     cast.forEach((p, ord) =>
       db.prepare("INSERT INTO credits (item_id, person_id, kind, character, ord) VALUES (?, ?, 'cast', ?, ?)").run(id, personId(db, p), p.character ?? p.roles?.[0]?.character ?? '', ord)
     )
+    // The film series it belongs to; the collection is kept even before a second film arrives.
+    db.prepare('DELETE FROM collection_items WHERE item_id = ? AND collection_id IN (SELECT id FROM collections WHERE tmdb_id IS NOT NULL)').run(id)
+    const series = d.belongs_to_collection
+    if (series?.id && series.name) {
+      db.prepare('INSERT INTO collections (name, is_system, created_at, tmdb_id) VALUES (?, 0, ?, ?) ON CONFLICT(tmdb_id) DO UPDATE SET name = excluded.name').run(series.name, now, series.id)
+      const cid = Number((db.prepare('SELECT id FROM collections WHERE tmdb_id = ?').get(series.id) as { id: number }).id)
+      db.prepare('INSERT OR IGNORE INTO collection_items (collection_id, item_id) VALUES (?, ?)').run(cid, id)
+    }
+
     const director = d.credits?.crew.find((c) => c.job === 'Director')
     if (director) db.prepare("INSERT INTO credits (item_id, person_id, kind, job, ord) VALUES (?, ?, 'crew', 'Director', 0)").run(id, personId(db, director))
     const creator = d.created_by?.[0]

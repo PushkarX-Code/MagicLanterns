@@ -342,3 +342,5 @@ Reddit (r/PleX alternatives, r/Windows11, r/software, r/anime), X, YouTube trail
 - Microsoft Store account: free for individuals (verify at sign-up).
 - Store commission: 15% of Pro revenue (or payment-provider fees if using your own payments).
 - Everything else stays on free tiers: TMDB, OMDb, Cloudflare Workers, GitHub.
+
+**Done 15 Oct:** Step 16: first-run setup with a live scan wall, typo-tolerant search (shared/text.ts), automatic collections (TMDB series, directors) on Home and their own page.

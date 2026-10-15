@@ -20,7 +20,7 @@ import {
 import { playerCaps } from '../player/caps'
 import type { PlaybackPlan, PlaybackSource, Settings, SubtitleTrack } from '@shared/types'
 import { cuesAt, type Cue } from '@shared/subs'
-import { sameLanguage } from '@shared/lang'
+import { sameLanguage } from '@shared/text'
 import { DEFAULT_SETTINGS, EQ_PRESETS } from '@shared/settings'
 import { AudioChain, isLocalSource, needsChain } from '../player/audioChain'
 import { PipIcon } from '../components/Icons'

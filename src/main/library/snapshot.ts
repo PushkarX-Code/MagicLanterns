@@ -174,6 +174,10 @@ export function buildSnapshot(db: Db): MediaItem[] {
     else if (!credit.has(id) && (c.job === 'Director' || c.job === 'Creator')) credit.set(id, { role: c.job, name: String(c.name) })
   }
 
+  const series = new Map<number, MediaItem['collection']>()
+  for (const c of db.prepare('SELECT ci.item_id, c.id, c.name FROM collection_items ci JOIN collections c ON c.id = ci.collection_id WHERE c.tmdb_id IS NOT NULL').all())
+    series.set(Number(c.item_id), { id: `c-${c.id}`, name: String(c.name) })
+
   const items: MediaItem[] = []
   const base = (r: Record<string, unknown>, kind: 'movie' | 'show'): MediaItem => ({
     id: `${kind === 'movie' ? 'm' : 's'}-${r.id}`,
@@ -200,6 +204,7 @@ export function buildSnapshot(db: Db): MediaItem[] {
     trailerKey: r.trailer_key ? String(r.trailer_key) : null,
     cast: cast.get(Number(r.id)) ?? [],
     credit: credit.get(Number(r.id)) ?? null,
+    collection: series.get(Number(r.id)) ?? null,
     preview: null,
     addedAt: Number(r.added_at),
     favorite: !!r.favorite,

@@ -173,6 +173,10 @@ export const MIGRATIONS: string[] = [
   `,
   /* 4: cast pages keep each person's details for a week */ `
   CREATE TABLE person_cache (tmdb_id INTEGER PRIMARY KEY, json TEXT NOT NULL, fetched_at INTEGER NOT NULL);
+  `,
+  /* 5: films that belong to a series ("Dune Collection") are grouped by TMDB's collection id */ `
+  ALTER TABLE collections ADD COLUMN tmdb_id INTEGER;
+  CREATE UNIQUE INDEX collections_tmdb ON collections(tmdb_id);
   `
 ]
 

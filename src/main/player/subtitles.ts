@@ -1,7 +1,7 @@
 import { execFile } from 'node:child_process'
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { basename, dirname, extname, join } from 'node:path'
-import { langKey } from '../../shared/lang.ts'
+import { langKey } from '../../shared/text.ts'
 import { parseSubtitles, type Cue } from '../../shared/subs.ts'
 
 // Subtitles for the player: tracks inside the file are read out with FFmpeg, and subtitle files sitting

@@ -75,6 +75,8 @@ export interface Settings {
   theme: 'default' | 'dark' | 'light'
   reduceMotion: boolean
   heroPreviews: boolean
+  /** First-run setup finished (or skipped because a library already existed). */
+  onboarded: boolean
   showClock: boolean
 }
 
@@ -123,5 +125,6 @@ export const DEFAULT_SETTINGS: Settings = {
   theme: 'default',
   reduceMotion: false,
   heroPreviews: true,
+  onboarded: false,
   showClock: true
 }
