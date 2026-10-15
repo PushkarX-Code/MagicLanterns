@@ -31,6 +31,4 @@ for (const size of SIZES) {
 const ico = await pngToIco(ICO_SIZES.map((s) => files[s]))
 await writeFile(resolve(root, 'build/icon.ico'), ico)
 await copyFile(files[1024], resolve(root, 'build/icon.png'))
-await mkdir(resolve(root, 'resources'), { recursive: true })
-await copyFile(files[512], resolve(root, 'resources/icon.png'))
-console.log('Icons written to build/ and resources/')
+console.log('Icons written to build/')

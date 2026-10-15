@@ -9,8 +9,8 @@ Premium local media player for Windows. Electron + React 18 + Vite (electron-vit
 ```
 MagicLanterns/
 ├─ electron.vite.config.ts
-├─ electron-builder.yml          NSIS installer, asarUnpack for ffmpeg/ffprobe/sqlite
-├─ package.json / tsconfig.*.json
+├─ package.json                  scripts, dependencies, and the installer settings ("build")
+├─ tsconfig.json                 points at src/tsconfig.node.json and src/tsconfig.web.json
 ├─ build/                        icon.ico, icon.png (1024), build-icons.mjs (SVG → PNG → .ico)
 ├─ docs/                         PLAN.md, LOGO_PROMPT.md, README images
 └─ src/

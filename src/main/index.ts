@@ -7,6 +7,7 @@ import { initUpdater } from './updater'
 import { initDiscover } from './discover'
 import { binaries, initLibrary, isLibraryPath, libraryFilePath } from './library'
 import { closePlayer, initPlayer } from './player'
+import windowIcon from '../../build/icons/512x512.png?asset'
 
 const isDev = !app.isPackaged && !!process.env['ELECTRON_RENDERER_URL']
 
@@ -87,7 +88,7 @@ function createWindow(): void {
     show: false,
     backgroundColor: '#0A0A0B',
     title: 'Magic Lanterns',
-    icon: join(__dirname, '../../resources/icon.png'),
+    icon: windowIcon,
     titleBarStyle: 'hidden',
     titleBarOverlay: { color: '#00000000', symbolColor: '#E8E8EA', height: 36 },
     webPreferences: {
