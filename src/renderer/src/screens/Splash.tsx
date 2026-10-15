@@ -25,14 +25,12 @@ export function Splash({ onDone }: { onDone: () => void }) {
 
     gsap.set(q('.lm-core'), { opacity: 0.18 })
     gsap.set(q('.lm-play'), { opacity: 0.05 })
-    gsap.set(q('.lm-halo, .lm-pool'), { opacity: 0 })
     gsap.set(q('.splash-spill'), { scale: 0.15, opacity: 0 })
 
     const tl = gsap.timeline({ onComplete: finish })
     tl.fromTo(q('.splash-mark'), { opacity: 0, scale: 0.94, y: 8 }, { opacity: 1, scale: 1, y: 0, duration: 1.0, ease: 'power2.out' })
       .to(q('.lm-core'), { opacity: 1, duration: 1.3, ease: 'sine.inOut' }, '-=0.3')
       .to(q('.lm-play'), { opacity: 1, duration: 0.9, ease: 'sine.inOut', stagger: { each: 0.3, from: 'end' } }, '<0.35')
-      .to(q('.lm-halo, .lm-pool'), { opacity: 1, duration: 1.2, ease: 'sine.inOut' }, '<')
       .fromTo(q('.wordmark'), { opacity: 0, y: 10, letterSpacing: '0.12em' }, { opacity: 1, y: 0, letterSpacing: '0.035em', duration: 1.1, ease: 'expo.out' }, '<0.3')
       .to(q('.splash-spill'), { opacity: 1, scale: 1.1, duration: 0.9, ease: 'power2.in' }, '+=0.15')
       .to(q('.splash-spill'), { scale: 5.5, opacity: 0, duration: 1.3, ease: 'power2.out' })
