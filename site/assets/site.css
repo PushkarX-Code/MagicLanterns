@@ -310,44 +310,104 @@ h2 {
   padding: 120px 24px 80px;
   overflow: hidden;
 }
-.glow {
+/* The beam. Its origin (--ox, --oy) is set from the Beacon's position, so the light always leaves the icon. */
+@property --sweep {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.beam {
+  --ox: 50%;
+  --oy: 30%;
+  --spread: 34deg;
   position: absolute;
-  inset: -20%;
+  inset: 0;
   pointer-events: none;
 }
-.glow i {
+.beam-cone,
+.beam-rays {
   position: absolute;
-  border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0;
+  inset: 0;
+  -webkit-mask-image: radial-gradient(circle at var(--ox) var(--oy), #000 0, #000 22%, rgb(0 0 0 / 0.7) 52%, transparent 94%);
+  mask-image: radial-gradient(circle at var(--ox) var(--oy), #000 0, #000 22%, rgb(0 0 0 / 0.7) 52%, transparent 94%);
 }
-.glow .g1 {
-  width: 44vw;
-  height: 54vw;
-  left: 34%;
-  top: 6%;
-  background: radial-gradient(closest-side, rgb(255 166 64 / 0.62), rgb(224 92 30 / 0.18) 60%, transparent);
+/* Warm white at the centre of the throw, amber at its edges. */
+.beam-cone {
+  background:
+    conic-gradient(
+      from calc(180deg - var(--spread)) at var(--ox) var(--oy),
+      transparent 0deg,
+      rgb(255 140 60 / 0.16) calc(var(--spread) * 0.3),
+      rgb(255 196 128 / 0.3) calc(var(--spread) * 0.72),
+      rgb(255 228 190 / 0.4) var(--spread),
+      rgb(255 196 128 / 0.3) calc(var(--spread) * 1.28),
+      rgb(255 140 60 / 0.16) calc(var(--spread) * 1.7),
+      transparent calc(var(--spread) * 2),
+      transparent 360deg
+    );
+  filter: blur(18px);
 }
-.glow .g2 {
-  width: 40vw;
-  height: 40vw;
-  left: 2%;
-  top: 22%;
-  background: radial-gradient(closest-side, rgb(120 42 110 / 0.55), transparent);
+/* Shafts inside the beam, turning very slowly, like light through a lens. */
+.beam-rays {
+  background: repeating-conic-gradient(
+    from calc(180deg - var(--spread) + var(--sweep)) at var(--ox) var(--oy),
+    rgb(255 226 180 / 0) 0deg,
+    rgb(255 226 180 / 0.14) 1.1deg,
+    rgb(255 226 180 / 0) 2.3deg,
+    rgb(255 226 180 / 0) 3.9deg,
+    rgb(255 226 180 / 0.1) 4.6deg,
+    rgb(255 226 180 / 0) 6.1deg
+  );
+  -webkit-mask-image:
+    radial-gradient(circle at var(--ox) var(--oy), #000 0, rgb(0 0 0 / 0.6) 40%, transparent 78%),
+    conic-gradient(from calc(180deg - var(--spread)) at var(--ox) var(--oy), transparent 0deg, #000 calc(var(--spread) * 0.5), #000 calc(var(--spread) * 1.5), transparent calc(var(--spread) * 2));
+  mask-image:
+    radial-gradient(circle at var(--ox) var(--oy), #000 0, rgb(0 0 0 / 0.6) 40%, transparent 78%),
+    conic-gradient(from calc(180deg - var(--spread)) at var(--ox) var(--oy), transparent 0deg, #000 calc(var(--spread) * 0.5), #000 calc(var(--spread) * 1.5), transparent calc(var(--spread) * 2));
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  filter: blur(1.5px);
+  animation: sweep 26s ease-in-out infinite alternate;
 }
-.glow .g3 {
-  width: 38vw;
-  height: 38vw;
-  right: 2%;
-  top: 26%;
-  background: radial-gradient(closest-side, rgb(196 82 46 / 0.5), transparent);
+@keyframes sweep {
+  to {
+    --sweep: 7deg;
+  }
 }
-.glow .g4 {
-  width: 70vw;
-  height: 30vw;
-  left: 15%;
-  bottom: 4%;
-  background: radial-gradient(closest-side, rgb(255 140 60 / 0.16), transparent);
+.motes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+/* Film grain over the dark, barely there. */
+.grain {
+  position: absolute;
+  inset: -50%;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.9s steps(6) infinite;
+}
+@keyframes grain {
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-3%, 2%);
+  }
+  40% {
+    transform: translate(2%, -4%);
+  }
+  60% {
+    transform: translate(-4%, -1%);
+  }
+  80% {
+    transform: translate(3%, 3%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
 }
 .news {
   position: relative;
@@ -585,7 +645,7 @@ h2 {
 .cinema-frame {
   position: relative;
   width: min(1240px, 88vw);
-  aspect-ratio: 1280 / 768;
+  aspect-ratio: 1920 / 1152;
   border-radius: var(--r-frame);
   overflow: hidden;
   background: #000;
@@ -1035,7 +1095,9 @@ html.is-day .dock-text span {
     scale: none;
   }
   .scroll-cue span,
-  [aria-pressed='true'] .eq i {
+  [aria-pressed='true'] .eq i,
+  .beam-rays,
+  .grain {
     animation: none;
   }
 }

@@ -202,6 +202,17 @@
   gsap.set(icon, { ...toCentre, scale: 2 })
   gsap.set('.b-core', { scaleY: 0, transformOrigin: '50% 100%' })
 
+  // The beam leaves from beneath the Beacon, wherever the icon sits.
+  const hero = $('.hero')
+  const beam = $('.beam')
+  const aim = () => {
+    beam.style.setProperty('--ox', icon.offsetLeft + icon.offsetWidth / 2 + 'px')
+    beam.style.setProperty('--oy', icon.offsetTop + icon.offsetHeight * 0.86 + 'px')
+  }
+  aim()
+  addEventListener('resize', aim)
+  gsap.set(beam, { opacity: 0, '--spread': '3deg' })
+
   const opening = gsap.timeline({ delay: 0.35, onComplete: () => smoother.paused(false) })
   opening
     .fromTo('.b-arch', { drawSVG: '50% 50%' }, { drawSVG: '0% 100%', duration: 1.5, ease: 'power3.inOut', stagger: { each: 0.2, from: 'end' } })
@@ -209,21 +220,68 @@
     .call(() => sound.play('boom', 0.7), null, 1.3)
     .to(icon, { backgroundColor: 'rgba(13,13,15,1)', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.08)', duration: 1.2, ease: 'power1.inOut' }, 1.5)
     .to(icon, { x: 0, y: 0, scale: 1, duration: 1.6, ease: 'expo.inOut' }, 1.8)
-    .fromTo('.glow i', { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 3.2, ease: 'power2.out', stagger: 0.25 }, 2.2)
+    // The lantern throws its light: a thin shaft that opens into a beam.
+    .to(beam, { opacity: 1, duration: 1.2, ease: 'power1.out' }, 2.4)
+    .to(beam, { '--spread': '34deg', duration: 3, ease: 'expo.out' }, 2.4)
     .fromTo(heroBits, { opacity: 0, y: 40, filter: 'blur(16px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.6, ease: 'expo.out', stagger: 0.12 }, 2.75)
     .fromTo('.nav', { opacity: 0, y: -18 }, { opacity: 1, y: 0, duration: 1.4, ease: 'expo.out' }, 3.1)
     .to('.scroll-cue', { opacity: 1, duration: 1 }, 3.6)
 
-  // The light behind the hero drifts, as if from a projector.
-  $$('.glow i').forEach((g, i) =>
-    gsap.to(g, { xPercent: gsap.utils.random(-14, 14), yPercent: gsap.utils.random(-10, 10), duration: 9 + i * 2.5, ease: 'sine.inOut', yoyo: true, repeat: -1 })
-  )
+  // Dust turning in the beam: brighter inside the light, nearly gone outside it.
+  const motes = $('.motes')
+  const mctx = motes.getContext('2d')
+  let dust = []
+  const sizeMotes = () => {
+    const dpr = Math.min(devicePixelRatio || 1, 2)
+    motes.width = hero.offsetWidth * dpr
+    motes.height = hero.offsetHeight * dpr
+    mctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    dust = Array.from({ length: Math.round(hero.offsetWidth / 14) }, () => ({
+      x: Math.random() * hero.offsetWidth,
+      y: Math.random() * hero.offsetHeight,
+      r: 0.5 + Math.random() * 1.4,
+      vx: (Math.random() - 0.5) * 0.12,
+      vy: -0.04 - Math.random() * 0.1,
+      tw: Math.random() * Math.PI * 2
+    }))
+  }
+  sizeMotes()
+  addEventListener('resize', sizeMotes)
+  const drawMotes = () => {
+    const w = hero.offsetWidth
+    const h = hero.offsetHeight
+    const ox = parseFloat(beam.style.getPropertyValue('--ox')) || w / 2
+    const oy = parseFloat(beam.style.getPropertyValue('--oy')) || h * 0.3
+    const spread = (parseFloat(gsap.getProperty(beam, '--spread')) || 34) * (Math.PI / 180)
+    const lit = Number(gsap.getProperty(beam, 'opacity'))
+    mctx.clearRect(0, 0, w, h)
+    for (const d of dust) {
+      d.x += d.vx
+      d.y += d.vy
+      d.tw += 0.02
+      if (d.y < -4) (d.y = h + 4), (d.x = Math.random() * w)
+      if (d.x < -4) d.x = w + 4
+      if (d.x > w + 4) d.x = -4
+      const dx = d.x - ox
+      const dy = d.y - oy
+      const off = Math.abs(Math.atan2(dx, dy)) // 0 = straight down the beam
+      const inBeam = dy > 0 ? Math.max(0, 1 - off / spread) : 0
+      const fall = Math.max(0, 1 - Math.hypot(dx, dy) / (h * 0.85))
+      const a = lit * (0.04 + 0.75 * inBeam * fall) * (0.6 + 0.4 * Math.sin(d.tw))
+      if (a < 0.01) continue
+      mctx.fillStyle = `rgba(255,226,186,${a.toFixed(3)})`
+      mctx.beginPath()
+      mctx.arc(d.x, d.y, d.r, 0, Math.PI * 2)
+      mctx.fill()
+    }
+  }
+  ScrollTrigger.create({ trigger: hero, start: 'top bottom', end: 'bottom top', onToggle: (st) => (st.isActive ? gsap.ticker.add(drawMotes) : gsap.ticker.remove(drawMotes)) })
 
   // Scrolling away, the hero loses focus and the light dims.
   gsap
     .timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1.4 } })
     .to(['.news', '.app-icon', '.hero-title', '.hero-sub', '.hero-cta'], { y: -90, opacity: 0, filter: 'blur(14px)', stagger: 0.04, ease: 'none' }, 0)
-    .to('.glow', { scale: 1.25, opacity: 0.25, ease: 'none' }, 0)
+    .to(beam, { opacity: 0.15, '--spread': '48deg', ease: 'none' }, 0)
     .to('.scroll-cue', { opacity: 0, duration: 0.2 }, 0)
 
   /* ---------------- 2. The reveal ---------------- */

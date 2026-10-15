@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#050505" />
     <meta property="og:title" content="Magic Lanterns" />
     <meta property="og:description" content="Every film deserves a premiere. A media player with a cinema built in. Free for Windows." />
-    <meta property="og:image" content="assets/img/home.webp" />
+    <meta property="og:image" content="assets/img/home-1x.webp" />
     <link rel="icon" href="assets/img/favicon.png" />
     <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
     <link rel="preload" href="assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
@@ -50,7 +50,13 @@
         <main>
           <!-- 1. Hero -->
           <section class="hero" id="top">
-            <div class="glow" aria-hidden="true"><i class="g1"></i><i class="g2"></i><i class="g3"></i><i class="g4"></i></div>
+            <!-- The lantern's own light: a beam falls from the Beacon over the title, dust turning in it. -->
+            <div class="beam" aria-hidden="true">
+              <div class="beam-cone"></div>
+              <div class="beam-rays"></div>
+              <canvas class="motes"></canvas>
+            </div>
+            <div class="grain" aria-hidden="true"></div>
             <a class="news" href="#cinema" data-go="#cinema"><span class="news-tag">New</span><span>Cinema Mode is here</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
             <div class="app-icon" aria-hidden="true">
               <svg class="beacon" viewBox="200 200 624 624">
@@ -78,9 +84,9 @@
           <section class="reveal" aria-label="Magic Lanterns home screen">
             <div class="reveal-stage">
               <div class="screen-wrap">
-                <img class="screen-light" src="assets/img/home.webp" alt="" aria-hidden="true" />
+                <img class="screen-light" src="assets/img/home-1x.webp" alt="" aria-hidden="true" />
                 <figure class="screen mb">
-                  <img src="assets/img/home.webp" alt="The Magic Lanterns home screen, with Dune: Part Two on the big banner" />
+                  <img src="assets/img/home-1x.webp" srcset="assets/img/home-1x.webp 1440w, assets/img/home.webp 2880w" sizes="(max-width: 900px) 92vw, 1240px" alt="The Magic Lanterns home screen, with Dune: Part Two on the big banner" />
                 </figure>
               </div>
             </div>
@@ -95,11 +101,11 @@
             </div>
             <div class="strip">
               <div class="strip-track">
-                <figure class="frame mb"><img src="assets/img/arcane.webp" alt="A series page with its title art and episodes" loading="lazy" /><figcaption>Pages that feel like a premiere</figcaption></figure>
-                <figure class="frame mb"><img src="assets/img/bladerunner.webp" alt="A film page with ratings and runtime" loading="lazy" /><figcaption>Ratings, runtime and every track at a glance</figcaption></figure>
-                <figure class="frame mb"><img src="assets/img/seasons.webp" alt="Seasons, episodes and cast" loading="lazy" /><figcaption>Seasons and episodes, always in order</figcaption></figure>
-                <figure class="frame mb"><img src="assets/img/spyfamily.webp" alt="An anime series page" loading="lazy" /><figcaption>Films, shows and anime in one place</figcaption></figure>
-                <figure class="frame mb"><img src="assets/img/spiderverse.webp" alt="A film page with a bright poster" loading="lazy" /><figcaption>Back to exactly where you left off</figcaption></figure>
+                <figure class="frame mb"><img src="assets/img/arcane-1x.webp" srcset="assets/img/arcane-1x.webp 1440w, assets/img/arcane.webp 2880w" sizes="(max-width: 900px) 92vw, 1240px" alt="A series page with its title art and episodes" loading="lazy" /><figcaption>Pages that feel like a premiere</figcaption></figure>
+                <figure class="frame mb"><img src="assets/img/bladerunner-1x.webp" srcset="assets/img/bladerunner-1x.webp 1440w, assets/img/bladerunner.webp 2880w" sizes="(max-width: 900px) 92vw, 1240px" alt="A film page with ratings and runtime" loading="lazy" /><figcaption>Ratings, runtime and every track at a glance</figcaption></figure>
+                <figure class="frame mb"><img src="assets/img/seasons-1x.webp" srcset="assets/img/seasons-1x.webp 1440w, assets/img/seasons.webp 2880w" sizes="(max-width: 900px) 92vw, 1240px" alt="Seasons, episodes and cast" loading="lazy" /><figcaption>Seasons and episodes, always in order</figcaption></figure>
+                <figure class="frame mb"><img src="assets/img/spyfamily-1x.webp" srcset="assets/img/spyfamily-1x.webp 1440w, assets/img/spyfamily.webp 2880w" sizes="(max-width: 900px) 92vw, 1240px" alt="An anime series page" loading="lazy" /><figcaption>Films, shows and anime in one place</figcaption></figure>
+                <figure class="frame mb"><img src="assets/img/spiderverse-1x.webp" srcset="assets/img/spiderverse-1x.webp 1440w, assets/img/spiderverse.webp 2880w" sizes="(max-width: 900px) 92vw, 1240px" alt="A film page with a bright poster" loading="lazy" /><figcaption>Back to exactly where you left off</figcaption></figure>
               </div>
             </div>
           </section>
@@ -157,8 +163,8 @@
                 <h2 class="focus">The picture spills into <em class="serif">the room</em>.</h2>
               </div>
               <div class="screen-wrap ambient-wrap">
-                <img class="screen-light" src="assets/img/cinema-light.webp" alt="" aria-hidden="true" loading="lazy" />
-                <figure class="screen mb"><img src="assets/img/cinema-light.webp" alt="A desert scene playing with its colours glowing past the edges of the screen" loading="lazy" /></figure>
+                <img class="screen-light" src="assets/img/cinema-light-1x.webp" alt="" aria-hidden="true" loading="lazy" />
+                <figure class="screen mb"><img src="assets/img/cinema-light-1x.webp" srcset="assets/img/cinema-light-1x.webp 1440w, assets/img/cinema-light.webp 2880w" sizes="(max-width: 900px) 92vw, 1240px" alt="A desert scene playing with its colours glowing past the edges of the screen" loading="lazy" /></figure>
               </div>
               <p class="lede ambient-lede focus">The film's own colours glow past the edges of the frame, and letterbox bars quietly disappear. One click turns it off.</p>
             </div>
@@ -171,7 +177,7 @@
               <h2 class="focus">And when the lights <em class="serif">come up</em>.</h2>
               <p class="lede focus">A light theme as calm as the dark one. Same posters, same motion, made for bright rooms.</p>
             </div>
-            <figure class="day-shot mb"><img src="assets/img/light.webp" alt="Magic Lanterns in its light theme" loading="lazy" /></figure>
+            <figure class="day-shot mb"><img src="assets/img/light-1x.webp" srcset="assets/img/light-1x.webp 1440w, assets/img/light.webp 2880w" sizes="(max-width: 900px) 92vw, 1240px" alt="Magic Lanterns in its light theme" loading="lazy" /></figure>
           </section>
 
           <!-- 8. Platforms -->
