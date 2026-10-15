@@ -21,6 +21,8 @@ export interface LanternBridge {
   pickFiles(): Promise<PickedFile[]>
   /** Library folders saved in the library database. Add rejects a path that isn't an existing folder. */
   getFolders(): Promise<LibraryFolder[]>
+  /** First run: common folders on this computer that hold videos. */
+  suggestFolders(): Promise<{ path: string; label: string; videos: number }[]>
   addFolder(path: string): Promise<LibraryFolder[]>
   removeFolder(path: string): Promise<LibraryFolder[]>
   /** Look through every folder again for new, changed or removed files. */

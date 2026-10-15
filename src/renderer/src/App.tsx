@@ -10,7 +10,7 @@ import { Detail } from './screens/Detail'
 import { Player } from './screens/Player'
 import { FavoritesScreen } from './screens/Favorites'
 import { FilesScreen } from './screens/Files'
-import { GenreScreen } from './screens/Genre'
+import { CollectionScreen, GenreScreen } from './screens/Genre'
 import { DiscoverScreen } from './screens/Discover'
 import { PersonScreen } from './screens/Person'
 import { AboutScreen } from './screens/About'
@@ -30,6 +30,8 @@ function render(entry: Entry) {
       return <FilesScreen />
     case 'genre':
       return <GenreScreen genre={r.genre} entryKey={entry.key} />
+    case 'collection':
+      return <CollectionScreen id={r.id} entryKey={entry.key} />
     case 'search':
       return <SearchScreen />
     case 'about':

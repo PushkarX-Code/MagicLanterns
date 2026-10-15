@@ -6,13 +6,13 @@ import { useLift } from '../focus/useLift'
 import { useAmbient } from '../state/ambient'
 import { useNav } from '../state/nav'
 
-/** A genre as a small stack of lit glass slides: three backdrops fanned behind the name. */
+/** A genre or collection as a small stack of lit glass slides: three backdrops fanned behind the name. */
 export function GenreTile({ genre, onFocused }: { genre: Genre; onFocused?: (el: HTMLElement) => void }) {
   const push = useNav((s) => s.push)
   const setAmbient = useAmbient((s) => s.set)
   const frame = useRef<HTMLDivElement>(null)
   const sheen = useRef<HTMLDivElement>(null)
-  const open = (): void => push({ name: 'genre', genre: genre.name })
+  const open = (): void => push(genre.collectionId ? { name: 'collection', id: genre.collectionId } : { name: 'genre', genre: genre.name })
   const { ref, focused, pointer } = useFocus<HTMLDivElement>({
     onEnterPress: open,
     onFocus: () => {

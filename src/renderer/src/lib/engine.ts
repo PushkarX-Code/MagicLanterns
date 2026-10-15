@@ -1,4 +1,5 @@
 import type { LanternApi } from '@shared/api'
+import { matchScore } from '@shared/text'
 import type { CardModel, Collection, Episode, FileEntry, FileInfo, GenreTile, HomeRow, LibraryFolder, MediaItem, PlaybackSource } from '@shared/types'
 import { DEFAULT_SETTINGS, type Settings } from '@shared/settings'
 
@@ -180,24 +181,47 @@ export function createLibraryApi(src: LibrarySource): LanternApi {
       }))
   }
 
-  /** Lightweight typo-tolerant scorer. Phase 5 replaces it with fuse.js over the SQLite index. */
-  function score(item: MediaItem, q: string): number {
-    const hay = [item.title, String(item.year), ...item.genres, ...item.cast.map((c) => c.name), item.credit?.name ?? '']
-    let best = 0
-    for (const field of hay) {
-      const f = field.toLowerCase()
-      if (f === q) best = Math.max(best, 100)
-      else if (f.startsWith(q)) best = Math.max(best, 80)
-      else if (f.split(/\s+/).some((w) => w.startsWith(q))) best = Math.max(best, 65)
-      else if (f.includes(q)) best = Math.max(best, 50)
-      else {
-        // Subsequence match lets "intrstlr" find "Interstellar".
-        let k = 0
-        for (const ch of f) if (ch === q[k]) k++
-        if (k === q.length && q.length >= 3) best = Math.max(best, 30 - (f.length - q.length) / 10)
-      }
+  /**
+   * Collections, made without anyone curating: film series from TMDB (two or more owned), a director's work
+   * (three or more), and any hand-made ones the source provides. Each appears once.
+   */
+  function autoCollections(): Collection[] {
+    const byYear = (ids: MediaItem[]): string[] => [...ids].sort((a, b) => a.year - b.year).map((i) => i.id)
+    const series = new Map<string, { name: string; items: MediaItem[] }>()
+    const directors = new Map<string, MediaItem[]>()
+    for (const i of items()) {
+      if (i.collection) series.set(i.collection.id, { name: i.collection.name, items: [...(series.get(i.collection.id)?.items ?? []), i] })
+      if (i.credit?.role === 'Director') directors.set(i.credit.name, [...(directors.get(i.credit.name) ?? []), i])
     }
-    return item.title.toLowerCase().includes(q) ? best + 10 : best
+    const out: Collection[] = [
+      ...[...series.entries()]
+        .filter(([, s]) => s.items.length >= 2)
+        .map(([id, s]) => ({ id, name: s.name, description: `${s.items.length} films, in order`, itemIds: byYear(s.items) })),
+      ...[...directors.entries()]
+        .filter(([, list]) => list.length >= 3)
+        .map(([name, list]) => ({ id: `dir-${name.toLowerCase().replace(/\W+/g, '-')}`, name, description: `Directed by ${name}`, itemIds: byYear(list) })),
+      ...src.collections()
+    ]
+    const seen = new Set<string>()
+    return out.filter((c) => {
+      const key = c.name.toLowerCase()
+      if (seen.has(key) || c.itemIds.length < 2) return false
+      seen.add(key)
+      return true
+    })
+  }
+
+  function collectionTiles(): GenreTile[] {
+    return autoCollections().map((c) => {
+      const list = c.itemIds.map((id) => byId().get(id)).filter((i): i is MediaItem => !!i)
+      return { name: c.name, collectionId: c.id, count: list.length, images: list.slice(0, 3).map((i) => i.backdrop).filter(Boolean) as string[], color: list[0]?.color ?? '#222' }
+    })
+  }
+
+  /** Search: titles first, then series, people and genres; typos, accents and punctuation forgiven. */
+  function score(item: MediaItem, q: string): number {
+    if (/^\d{4}$/.test(q.trim())) return item.year === Number(q) ? 100 : 0
+    return matchScore(q, [item.title, item.collection?.name ?? '', [...item.cast.map((c) => c.name), item.credit?.name ?? ''].join(' '), item.genres.join(' ')])
   }
 
   // ---------- Files ----------
@@ -328,6 +352,7 @@ export function createLibraryApi(src: LibrarySource): LanternApi {
         },
         { id: 'picks', title: 'Picks of the Day', kind: 'cards', cards: picksOfTheDay().map((i) => card(i)) },
         { id: 'genres', title: 'Film Genres', kind: 'genres', cards: [], genres: genreTiles() },
+        { id: 'collections', title: 'Collections', kind: 'genres', cards: [], genres: collectionTiles() },
         { id: 'unwatched', title: 'Unwatched', kind: 'cards', cards: items().filter(isUnwatched).map((i) => card(i)) },
         {
           id: 'most',
@@ -373,7 +398,13 @@ export function createLibraryApi(src: LibrarySource): LanternApi {
     async getCollections() {
       await latency('collections', 300)
       const list = { id: 'my-list', name: 'My List', description: 'Saved for later.', itemIds: items().filter((i) => i.inList).map((i) => i.id) }
-      return [list, ...src.collections()]
+      return [list, ...autoCollections()]
+    },
+    async getCollection(id) {
+      await latency(`collection-${id}`, 300)
+      const c = (await this.getCollections()).find((x) => x.id === id)
+      if (!c) return null
+      return { collection: c, items: c.itemIds.map((i) => byId().get(i)).filter((i): i is MediaItem => !!i) }
     },
     async search(query) {
       const q = query.trim().toLowerCase()

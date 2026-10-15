@@ -12,7 +12,7 @@
     "build": "electron-vite build",
     "preview": "electron-vite preview",
     "typecheck": "tsc --noEmit -p src/tsconfig.node.json && tsc --noEmit -p src/tsconfig.web.json",
-    "test": "node --test \"src/main/**/*.test.ts\"",
+    "test": "node --test \"src/**/*.test.ts\"",
     "icons": "node build/build-icons.mjs",
     "dist": "electron-vite build && electron-builder --win"
   },

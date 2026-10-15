@@ -22,6 +22,7 @@ export interface LanternApi {
   /** Library titles a cast member appears in, newest first. */
   getPersonItems(person: { id?: number; name: string }): Promise<MediaItem[]>
   getCollections(): Promise<Collection[]>
+  getCollection(id: string): Promise<{ collection: Collection; items: MediaItem[] } | null>
   search(query: string): Promise<MediaItem[]>
 
   // Files

@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react'
-import { api } from '../lib/api'
+import { api, isRealLibrary } from '../lib/api'
 import { useAsync } from '../lib/useAsync'
 import { Hero, HeroSkeleton } from '../components/Hero'
-import { EmptyLibrary } from '../components/EmptyLibrary'
+import { Welcome } from '../components/Welcome'
+import { useSettings } from '../state/settings'
 import { Card, CardSkeleton } from '../components/Card'
 import { GenreTile } from '../components/GenreTile'
 import { TopTen } from '../components/TopTen'
@@ -14,6 +15,22 @@ import { gsap, d, EASE } from '../design/motion'
 export function Home() {
   const stackDepth = useNav((s) => s.stack.length)
   const { data, reload } = useAsync(() => api.getHome(), [])
+  const onboarded = useSettings((s) => s.settings?.onboarded ?? true)
+  const finishOnboarding = useSettings((s) => s.update)
+  // A library that existed before first-run setup did skips it (checked once, on the first load, so a
+  // first scan finishing later never yanks someone off the welcome wall).
+  const checkedSetup = useRef(false)
+  const settingsReady = useSettings((s) => !!s.settings)
+  useEffect(() => {
+    if (!data || !settingsReady || checkedSetup.current) return
+    checkedSetup.current = true
+    if (!isRealLibrary || onboarded || !data.hero.length) return
+    window.lantern?.scanStatus().then((s) => {
+      if (!s.scanning) void finishOnboarding({ onboarded: true })
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, settingsReady])
+  const welcome = isRealLibrary && !!data && (!onboarded || !data.hero.length)
   const page = useRef<HTMLDivElement | null>(null)
   const rows = useRef<HTMLDivElement>(null)
 
@@ -39,8 +56,8 @@ export function Home() {
 
   return (
     <Screen id="home" ref={page} className="home" initialFocus="HERO-PLAY">
-      {!data ? <HeroSkeleton /> : data.hero.length ? <Hero items={data.hero} onFocusHero={toTop} /> : <EmptyLibrary />}
-      <div ref={rows} className="home-rows">
+      {!data ? <HeroSkeleton /> : welcome ? <Welcome /> : <Hero items={data.hero} onFocusHero={toTop} />}
+      <div ref={rows} className="home-rows" hidden={welcome}>
         {data
           ? data.rows.map((row) => (
               <Row

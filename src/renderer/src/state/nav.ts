@@ -13,6 +13,7 @@ export interface Origin {
 export type Route =
   | { name: Section }
   | { name: 'genre'; genre: string }
+  | { name: 'collection'; id: string }
   | { name: 'search' }
   | { name: 'detail'; id: string; origin?: Origin }
   | { name: 'discover'; title: TrendingTitle; list?: DiscoverList }

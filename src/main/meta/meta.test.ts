@@ -83,6 +83,7 @@ const RESPONSES: Record<string, unknown> = {
     id: 693134, title: 'Dune: Part Two', original_title: 'Dune: Part Two', release_date: '2024-02-27', tagline: 'Long live the fighters.',
     overview: 'Paul Atreides unites with Chani and the Fremen.', runtime: 167, vote_average: 8.15, imdb_id: 'tt15239678', original_language: 'en',
     genres: [{ id: 878, name: 'Science Fiction' }, { id: 12, name: 'Adventure' }],
+    belongs_to_collection: { id: 726871, name: 'Dune Collection' },
     images: { posters: [{ file_path: '/poster.jpg', iso_639_1: 'en' }], backdrops: [{ file_path: '/banner.jpg', iso_639_1: null }, { file_path: '/thumb.jpg', iso_639_1: 'en' }], logos: [{ file_path: '/logo.png', iso_639_1: 'en' }] },
     credits: { cast: [{ id: 1190668, name: 'Timothée Chalamet', character: 'Paul Atreides', profile_path: '/tc.jpg' }, { id: 505710, name: 'Zendaya', character: 'Chani', profile_path: '/z.jpg' }], crew: [{ id: 137427, name: 'Denis Villeneuve', job: 'Director', profile_path: null }] },
     release_dates: { results: [{ iso_3166_1: 'US', release_dates: [{ certification: 'PG-13', type: 3 }] }] },
@@ -149,6 +150,8 @@ test('pending titles are matched, enriched, merged when they are the same film, 
   assert.deepEqual(d.genres, ['Adventure', 'Science Fiction'])
   assert.deepEqual(d.cast.map((c) => `${c.name} as ${c.character}`), ['Timothée Chalamet as Paul Atreides', 'Zendaya as Chani'])
   assert.deepEqual(d.credit, { role: 'Director', name: 'Denis Villeneuve' })
+  assert.equal(d.collection?.name, 'Dune Collection', 'the film keeps its series')
+  assert.equal(items.find((i) => i.kind === 'show')!.collection, null)
   assert.equal(d.favorite, true, "the merged copy's favourite survives")
   assert.equal(d.file!.path, '/lib/Dune.Part.Two.2024.2160p.mkv')
 

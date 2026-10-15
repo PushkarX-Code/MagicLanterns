@@ -24,6 +24,7 @@ const bridge: LanternBridge = {
   pickFolder: () => ipcRenderer.invoke('dialog:open-folder'),
   pickFiles: () => ipcRenderer.invoke('dialog:open-files'),
   getFolders: () => ipcRenderer.invoke('library:folders'),
+  suggestFolders: () => ipcRenderer.invoke('library:suggest-folders'),
   addFolder: (path) => ipcRenderer.invoke('library:add-folder', path),
   removeFolder: (path) => ipcRenderer.invoke('library:remove-folder', path),
   rescan: () => ipcRenderer.invoke('library:rescan'),
