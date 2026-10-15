@@ -345,7 +345,11 @@
 .pl-skip {
   position: absolute;
   z-index: 6;
-  right: var(--gutter);
+  /* Centred over the picture, at the height of the Up Next card (margin auto keeps transform free for the hover lift). */
+  left: 0;
+  right: 0;
+  width: fit-content;
+  margin: 0 auto;
   bottom: 190px;
   display: inline-flex;
   align-items: center;
@@ -375,7 +379,7 @@
 .pl-next {
   position: absolute;
   z-index: 6;
-  right: var(--gutter);
+  right: 32px; /* lines up with the right edge of the controls (the camera button) */
   bottom: 190px;
   width: 460px;
   display: flex;
