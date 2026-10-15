@@ -55,6 +55,11 @@ export interface Settings {
   eqPreset: string
   eqBands: number[]
   passthrough: boolean
+  // Cinema Mode
+  ambientLight: boolean // the film's own light fills the letterbox bars
+  spatialHeadphones: boolean // a virtual 7.1 room around the head
+  dialogueLift: boolean
+  nightListening: boolean
   // Subtitles
   subtitleLanguage: string
   autoLoadSubs: boolean
@@ -109,6 +114,10 @@ export const DEFAULT_SETTINGS: Settings = {
   eqPreset: 'Flat',
   eqBands: [...EQ_PRESETS.Flat],
   passthrough: false,
+  ambientLight: true,
+  spatialHeadphones: false,
+  dialogueLift: false,
+  nightListening: false,
   subtitleLanguage: 'eng',
   autoLoadSubs: true,
   subtitleSize: 'medium',

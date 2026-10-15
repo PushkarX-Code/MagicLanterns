@@ -19,7 +19,7 @@ export type Route =
   | { name: 'detail'; id: string; origin?: Origin }
   | { name: 'discover'; title: TrendingTitle; list?: DiscoverList }
   | { name: 'person'; person: CastMember }
-  | { name: 'player'; itemId?: string; episodeId?: string; fileId?: string; url?: string; title?: string; fresh?: boolean }
+  | { name: 'player'; itemId?: string; episodeId?: string; fileId?: string; url?: string; title?: string; fresh?: boolean; cinema?: boolean }
 
 export interface Entry {
   key: number

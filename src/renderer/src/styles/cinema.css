@@ -1,4 +1,5 @@
-/* ---------- Cinema Mode: the big-screen lobby, Sound Stage and Ambient Light ---------- */
+/* ---------- Cinema Mode: the lobby, Sound Stage, Ambient Light ---------- */
+/* Everything here moves slowly: a cinema's lights never snap. */
 .cinema {
   position: fixed;
   inset: 0;
@@ -19,6 +20,8 @@
   overflow: hidden;
 }
 .cine-backdrop img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -29,21 +32,22 @@
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.55) 34%, rgba(0, 0, 0, 0) 64%),
     linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 30%, rgba(0, 0, 0, 0) 56%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 18%);
+    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 22%);
 }
 .cine-top {
   position: absolute;
-  top: 34px;
+  top: 36px;
   left: 96px;
   right: 72px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
 }
 .cine-brand {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-top: 10px;
   font-size: 13px;
   font-weight: 650;
   letter-spacing: 0.42em;
@@ -51,10 +55,32 @@
   color: rgb(255 255 255 / 0.86);
 }
 .cine-clock {
-  font-size: 22px;
-  font-weight: 500;
+  text-align: right;
+}
+.cine-time {
+  font-size: 46px;
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
-  color: rgb(255 255 255 / 0.86);
+  font-feature-settings: 'tnum', 'ss01', 'cv11';
+  color: #fff;
+}
+.cine-period {
+  margin-left: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  vertical-align: 0.95em;
+  color: rgb(255 255 255 / 0.62);
+}
+.cine-date {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.5);
 }
 .cine-feature {
   position: absolute;
@@ -62,23 +88,11 @@
   bottom: 392px;
   width: min(640px, 46vw);
 }
-.cine-now {
-  display: inline-block;
-  margin-bottom: 18px;
-  padding: 6px 12px;
-  border: 1px solid rgb(255 180 90 / 0.5);
-  border-radius: 999px;
-  font-size: 11.5px;
-  font-weight: 650;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--amber);
-}
 .cine-logo {
   display: block;
   max-width: 100%;
   max-height: 170px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   object-fit: contain;
   object-position: left bottom;
 }
@@ -103,11 +117,24 @@
   gap: 14px;
   margin-top: 28px;
 }
+/* The quiet button: a fine outline on dark, no frost. */
+.pill.cine-quiet {
+  background: rgb(0 0 0 / 0.35);
+  border: 1px solid rgb(255 255 255 / 0.22);
+  color: #fff;
+  transition:
+    background 0.6s ease,
+    border-color 0.6s ease;
+}
+.pill.cine-quiet:hover {
+  background: rgb(255 255 255 / 0.1);
+  border-color: rgb(255 255 255 / 0.4);
+}
 .cine-strip {
   position: absolute;
   left: 96px;
   right: 0;
-  bottom: 88px;
+  bottom: 96px;
   display: flex;
   align-items: flex-end;
   gap: 22px;
@@ -124,9 +151,9 @@
   opacity: 0.5;
   cursor: pointer;
   transition:
-    width 0.45s var(--ease-out, ease),
-    opacity 0.45s ease,
-    box-shadow 0.45s ease;
+    width 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.9s ease,
+    box-shadow 0.9s ease;
 }
 .cine-poster img {
   width: 100%;
@@ -143,156 +170,187 @@
 .cine-poster:hover {
   opacity: 0.85;
 }
-.cine-hints {
+
+/* Key hints: one centred line, keys drawn as small keycaps. */
+.cine-keys {
   position: absolute;
-  left: 96px;
-  bottom: 34px;
+  left: 0;
+  right: 0;
+  bottom: 30px;
   display: flex;
-  gap: 28px;
-  font-size: 13px;
-  color: rgb(255 255 255 / 0.5);
+  justify-content: center;
+  gap: 34px;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgb(255 255 255 / 0.46);
 }
-.cine-hints kbd {
-  display: inline-block;
-  min-width: 22px;
-  margin-right: 4px;
-  padding: 2px 7px;
-  border: 1px solid rgb(255 255 255 / 0.2);
-  border-radius: 6px;
+.cine-key-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cine-keys kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  margin-right: 2px;
+  padding: 0 6px;
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.12), rgb(255 255 255 / 0.05));
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.12),
+    inset 0 -2px 0 rgb(0 0 0 / 0.35);
   font: inherit;
-  font-size: 12px;
-  text-align: center;
-  color: rgb(255 255 255 / 0.8);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgb(255 255 255 / 0.85);
+}
+.cine-keys kbd.wide {
+  min-width: 34px;
 }
 
-/* Sound Stage */
-.cine-sound {
+/* Sound Stage: a dark, solid panel. */
+.ss {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 20;
   display: grid;
   place-items: center;
-  background: rgb(0 0 0 / 0.55);
-  backdrop-filter: blur(24px) saturate(1.2);
+  background: rgb(0 0 0 / 0.72);
+  backdrop-filter: blur(6px);
 }
-.cine-sound-panel {
+.ss-panel {
   display: grid;
   grid-template-columns: 540px 400px;
   gap: 44px;
   align-items: center;
   padding: 40px 44px;
-  border-radius: var(--r-panel);
+  border-radius: 28px;
+  background: #121110;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.07),
+    0 40px 90px rgb(0 0 0 / 0.6);
 }
-.cine-room {
+.ss-room {
   width: 540px;
   height: 440px;
   overflow: visible;
 }
-.cine-room-wall {
-  fill: rgb(255 255 255 / 0.025);
-  stroke: rgb(255 255 255 / 0.1);
+.ss-wall {
+  fill: rgb(255 255 255 / 0.02);
+  stroke: rgb(255 255 255 / 0.08);
   stroke-width: 1.5;
 }
-.cine-room-label {
+.ss-label {
   font-size: 11px;
   font-weight: 650;
   letter-spacing: 0.32em;
-  fill: rgb(255 255 255 / 0.45);
+  fill: rgb(255 255 255 / 0.4);
 }
-.cine-sphere {
+.ss-sphere {
   fill: none;
-  stroke: rgb(255 180 90 / 0.35);
+  stroke: rgb(255 180 90 / 0.3);
   stroke-width: 1.5;
   stroke-dasharray: 4 8;
 }
-.cine-level {
-  fill: rgb(255 140 50 / 0.22);
+.ss-level {
+  fill: rgb(255 140 50 / 0.2);
   stroke: #ffb45a;
   stroke-width: 1.5;
 }
-.cine-cone {
-  fill: #1b1918;
-  stroke: rgb(255 255 255 / 0.28);
+.ss-cone {
+  fill: #1c1a19;
+  stroke: rgb(255 255 255 / 0.26);
   stroke-width: 1.5;
+  transition: stroke 0.8s ease;
 }
-.cine-ch {
+.ss-ch {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
   fill: rgb(255 255 255 / 0.9);
+  transition: fill 0.8s ease;
 }
-.cine-speaker.is-off .cine-cone {
-  stroke: rgb(255 255 255 / 0.1);
+.ss-speaker.is-off .ss-cone {
+  stroke: rgb(255 255 255 / 0.08);
 }
-.cine-speaker.is-off .cine-ch {
-  fill: rgb(255 255 255 / 0.25);
+.ss-speaker.is-off .ss-ch {
+  fill: rgb(255 255 255 / 0.22);
 }
-.cine-room.is-spatial .cine-cone {
+.ss-room.is-spatial .ss-cone {
   stroke-dasharray: 3 4;
 }
-.cine-seat circle {
-  fill: rgb(255 180 90 / 0.14);
-  stroke: rgb(255 180 90 / 0.6);
+.ss-seat circle {
+  fill: rgb(255 180 90 / 0.12);
+  stroke: rgb(255 180 90 / 0.55);
   stroke-width: 1.5;
 }
-.cine-seat svg {
+.ss-seat svg {
   color: #ffd9a3;
 }
-.cine-sound-title {
+.ss-title {
   margin: 8px 0 20px;
   font-size: 30px;
   font-weight: 650;
   letter-spacing: -0.015em;
 }
-.cine-modes {
+.ss-modes {
   display: grid;
   gap: 10px;
 }
-.cine-mode {
+.ss-mode {
   display: flex;
   align-items: flex-start;
   gap: 14px;
   padding: 14px 16px;
-  border: 1px solid rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(255 255 255 / 0.08);
   border-radius: 16px;
-  background: rgb(255 255 255 / 0.03);
+  background: #181716;
   color: var(--text-2);
   text-align: left;
   cursor: pointer;
   transition:
-    border-color 0.3s ease,
-    background 0.3s ease;
+    border-color 0.7s ease,
+    background 0.7s ease,
+    color 0.7s ease;
 }
-.cine-mode svg {
+.ss-mode svg {
   flex: 0 0 auto;
   margin-top: 2px;
 }
-.cine-mode b {
+.ss-mode b {
   display: block;
   font-size: 15px;
   font-weight: 600;
   color: var(--text);
 }
-.cine-mode small {
+.ss-mode small {
   display: block;
   margin-top: 3px;
   font-size: 13px;
   line-height: 1.45;
   color: var(--text-3);
 }
-.cine-mode.is-on {
-  border-color: rgb(255 180 90 / 0.7);
-  background: rgb(255 180 90 / 0.08);
+.ss-mode:hover {
+  border-color: rgb(255 255 255 / 0.18);
+}
+.ss-mode.is-on {
+  border-color: rgb(255 180 90 / 0.6);
+  background: #1f1a15;
   color: var(--amber);
 }
-.cine-toggles {
+.ss-toggles {
   margin-top: 16px;
 }
-.cine-toggles .set-row {
+.ss-toggles .set-row {
   padding-left: 0;
   padding-right: 0;
 }
-.cine-signal {
+.ss-signal {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -300,49 +358,94 @@
   font-size: 13px;
   color: var(--text-3);
 }
-
-/* Ambient Light: the letterbox bars carry a blurred, living copy of the picture. */
-.cine-screen {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  background: #000;
+.ss-note {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-4);
 }
-.cine-ambient {
+
+/* Ambient Light: the film's own light, blurred behind the picture. It fades in and out slowly. */
+.ambient-light {
   position: absolute;
   inset: -12%;
   width: 124%;
   height: 124%;
   filter: blur(64px) saturate(1.5) brightness(0.85);
+  opacity: 0;
+  transition: opacity 2.4s ease;
+  pointer-events: none;
 }
-.cine-picture {
-  position: absolute;
-  top: 50%;
+.ambient-light.is-on {
+  opacity: 1;
+}
+.player.is-cinema .pl-video {
+  inset: auto;
+  top: 0;
   left: 50%;
-  width: min(100vw, calc(100vh * 4));
-  max-height: 100vh;
-  overflow: hidden;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 80px 10px rgb(0 0 0 / 0.35);
-}
-.cine-video {
-  position: absolute;
-  left: 0;
+  translate: -50% 0;
   width: 100%;
-  object-fit: fill;
+  height: 100%;
+  background: transparent;
+  transition:
+    width 1.6s ease,
+    height 1.6s ease,
+    top 1.6s ease,
+    clip-path 1.6s ease,
+    filter 0.3s ease;
 }
-.cine-badge {
+
+/* Cinema Mode's own controls, waiting at the top of the picture. */
+.cinema-bar {
   position: absolute;
-  top: 30px;
-  right: 34px;
+  top: 0;
+  left: 50%;
+  z-index: 6;
+  width: 560px;
+  height: 120px;
+  translate: -50% 0;
+  display: flex;
+  justify-content: center;
+  padding-top: 30px;
+}
+.cinema-bar-row {
+  display: flex;
+  gap: 10px;
+  height: 42px;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s ease;
+}
+.cinema-bar.is-shown .cinema-bar-row {
+  opacity: 1;
+  transform: none;
+}
+.cinema-chip {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
+  gap: 9px;
+  padding: 0 16px;
+  border: 0;
   border-radius: 999px;
-  background: rgb(0 0 0 / 0.4);
-  backdrop-filter: blur(14px);
-  font-size: 13px;
+  background: rgb(14 13 12 / 0.78);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1);
+  font: inherit;
+  font-size: 13.5px;
   font-weight: 600;
   color: rgb(255 255 255 / 0.9);
+  cursor: pointer;
+  transition:
+    background 0.6s ease,
+    color 0.6s ease;
+}
+.cinema-chip:hover {
+  background: rgb(30 28 26 / 0.9);
+}
+.cinema-chip.is-on svg {
+  color: var(--amber);
+}
+.cinema-chip .switch {
+  margin-left: 4px;
+  transform: scale(0.8);
 }
