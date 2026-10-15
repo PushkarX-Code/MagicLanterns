@@ -9,8 +9,9 @@ gsap.registerPlugin(DrawSVGPlugin, MorphSVGPlugin)
 // The way into Cinema Mode, about four seconds; any key hurries it.
 // The Beacon draws itself in light and its core rises. Then every part plays its own role in becoming a pair
 // of headphones: the mark gathers itself (a small dip), the core swells into a drop and splits in two, the
-// halves fly apart squashing as they go and land as ear cups with a bounce, the outer arch thickens into the
-// band and the middle arch follows into the cushion; both give a little at the cups' impact and settle. Sound
+// halves fly apart squashing as they go and land as ear cups with a bounce, the outer arch becomes the band
+// and the middle arch follows into its cushion; both give a little at the cups' impact and settle, and the
+// ear cushions slide out from inside each cup to sit against the ear. Sound
 // ripples out from each side and the name arrives, then the light goes down into the lobby.
 
 const BEACON = {
@@ -19,16 +20,18 @@ const BEACON = {
   core: 'M452 800 L452 520 A60 60 0 0 1 572 520 L572 800 Z'
 }
 
-/** A rounded ear cup, centred on x. */
-const cup = (cx: number, top = 575, w = 206, h = 320): string => {
+/** A rounded ear cup (or ear cushion), centred on x. */
+const cup = (cx: number, top = 580, w = 190, h = 300): string => {
   const r = w / 2
   return `M${cx - r} ${top + r} A${r} ${r} 0 0 1 ${cx + r} ${top + r} L${cx + r} ${top + h - r} A${r} ${r} 0 0 1 ${cx - r} ${top + h - r} Z`
 }
 const PHONES = {
-  band: 'M232 650 L232 512 A280 280 0 0 1 792 512 L792 650',
+  band: 'M232 690 L232 512 A280 280 0 0 1 792 512 L792 690',
   cushion: 'M290 600 L290 512 A222 222 0 0 1 734 512 L734 600',
   drop: cup(512), // the swollen core, before it splits
-  travel: 280 // each cup's distance from the centre
+  travel: 280, // each cup's distance from the centre
+  padLeft: cup(290, 620, 70, 220), // the cushions, on the inner side of each cup
+  padRight: cup(734, 620, 70, 220)
 }
 
 /** Sound leaving one ear cup: a short arc facing outward. */
@@ -70,7 +73,7 @@ export function CinemaIntro({ onDone }: { onDone: () => void }) {
       .set(right, { opacity: 1 }, 'm+=0.05')
       .to([left, right], { morphSVG: { shape: PHONES.drop, type: 'rotational' }, duration: 0.45, ease: 'power3.inOut' }, 'm+=0.05')
       // ...while the arches start becoming band and cushion, the cushion a beat behind.
-      .to(q('.ci-outer'), { morphSVG: PHONES.band, attr: { 'stroke-width': 64 }, duration: 0.8, ease: 'expo.inOut' }, 'm+=0.1')
+      .to(q('.ci-outer'), { morphSVG: PHONES.band, duration: 0.8, ease: 'expo.inOut' }, 'm+=0.1')
       .to(q('.ci-middle'), { morphSVG: PHONES.cushion, attr: { 'stroke-width': 30 }, duration: 0.9, ease: 'expo.inOut' }, 'm+=0.2')
 
       // 4. The drop splits: two halves fly apart, stretched by the speed, overshoot and come back.
@@ -90,6 +93,14 @@ export function CinemaIntro({ onDone }: { onDone: () => void }) {
       .to(q('.ci-outer'), { y: 0, duration: 0.8, ease: 'elastic.out(1, 0.4)' }, 'land+=0.14')
       .to(q('.ci-middle'), { y: 6, duration: 0.12, ease: 'power2.out' }, 'land+=0.08')
       .to(q('.ci-middle'), { y: 0, duration: 0.85, ease: 'elastic.out(1, 0.35)' }, 'land+=0.2')
+
+      // ...then the ear cushions slide out from inside each cup and settle against it.
+      .fromTo(
+        q('.ci-pad'),
+        { opacity: 0, x: (i: number) => (i ? 58 : -58), scaleY: 0.7, transformOrigin: '50% 50%' },
+        { opacity: 0.92, x: 0, scaleY: 1, duration: 0.75, ease: 'elastic.out(1, 0.55)', stagger: 0.06 },
+        'land+=0.22'
+      )
 
       // 6. Sound ripples out from both cups, and the name arrives.
       .to(q('.ci-wave'), { opacity: 1, scale: 1, duration: 0.45, ease: 'power2.out', stagger: 0.1 }, 'land+=0.1')
@@ -143,6 +154,8 @@ export function CinemaIntro({ onDone }: { onDone: () => void }) {
           <path className="ci-middle" d={BEACON.middle} fill="none" stroke="url(#ci-r2)" strokeWidth="56" strokeLinecap="round" />
           <path className="ci-core" d={BEACON.core} fill="url(#ci-r1)" />
           <path className="ci-right" d={BEACON.core} fill="url(#ci-r1)" />
+          <path className="ci-pad" d={PHONES.padLeft} fill="url(#ci-r2)" opacity="0" />
+          <path className="ci-pad" d={PHONES.padRight} fill="url(#ci-r2)" opacity="0" />
         </g>
       </svg>
       <div className="ci-name">Cinema</div>

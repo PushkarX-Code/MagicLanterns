@@ -150,6 +150,9 @@ export const cinemaSound = {
     // Each cup lands where you'd hear it: a soft thump on the left, then the right.
     tone(c, 74, 2.35, 0.02, { gain: 0.24, attack: 0.006, release: 0.45, glideTo: 48, space: 0.1, pan: -0.7 })
     tone(c, 74, 2.4, 0.02, { gain: 0.24, attack: 0.006, release: 0.45, glideTo: 48, space: 0.1, pan: 0.7 })
+    // The cushions settling in: two soft, felted taps.
+    tone(c, 210, 2.6, 0.01, { gain: 0.05, attack: 0.004, release: 0.12, glideTo: 150, lowpass: 900, space: 0.2, pan: -0.5 })
+    tone(c, 210, 2.66, 0.01, { gain: 0.05, attack: 0.004, release: 0.12, glideTo: 150, lowpass: 900, space: 0.2, pan: 0.5 })
     // Headphones on: the chord opens, and a ripple rings out of each side with the waves.
     const chord = [A.A3, A.E4, A.A4, A.B4, A.Cs5]
     chord.forEach((f, i) => {
