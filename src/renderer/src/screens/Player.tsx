@@ -377,7 +377,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     const d = video.current?.duration ?? 0
     return Number.isFinite(d) ? d : 0
   }
-  const streamAt = (t: number): string => `${engine.current!.plan.url}?t=${Math.max(0, t).toFixed(2)}`
+  const streamAt = (t: number): string => `${engine.current!.plan.url}?t=${Math.max(0, t).toFixed(3)}`
   /** Seconds to skip once a repackaged stream (which starts on a keyframe) has buffered past them. */
   const pendingSkip = useRef<number | null>(null)
   /** Starts the stream as close to `to` as it can begin, then lets the player cover the gap. */
@@ -389,7 +389,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     e.offset = Math.min(begin, to)
     pendingSkip.current = to - e.offset > 0.25 ? to - e.offset : null
     // A hair past the keyframe, so rounding can never send the engine back to the one before it.
-    setUrl(`${e.plan.url}?t=${(e.offset + (begin < to ? 0.01 : 0)).toFixed(3)}`)
+    setUrl(streamAt(e.offset + (begin < to ? 0.01 : 0)))
   }
 
   /** Asks the engine how to play this file, then starts it (part-way in when resuming or switching sound). */
