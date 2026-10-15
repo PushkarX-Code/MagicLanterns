@@ -28,10 +28,12 @@ test('MKV with playable picture and sound is only repackaged', () => {
   assert.equal(p.args.at(-1), 'pipe:1')
 })
 
-test('sound the system can not decode is converted, keeping 5.1', () => {
+test('sound the system can not decode is converted, keeping every channel', () => {
   const p = plan(film({ container: 'mkv', audio: [{ codec: 'truehd', channels: 8 }] }, { codec: 'hevc' }), caps, choice, gpu)
   assert.equal(p.mode, 'audio')
-  assert.deepEqual([arg(p.args, '-c:v'), arg(p.args, '-c:a'), arg(p.args, '-ac')], ['copy', 'aac', '6'])
+  assert.deepEqual([arg(p.args, '-c:v'), arg(p.args, '-c:a'), arg(p.args, '-ac')], ['copy', 'flac', '8'])
+  const ac3 = plan(film({ audio: [{ codec: 'ac3', channels: 6 }] }), { ...caps, audio: ['aac'] }, choice, gpu)
+  assert.deepEqual([arg(ac3.args, '-c:a'), arg(ac3.args, '-ac')], ['aac', '6'])
   const dts = plan(film({ audio: [{ codec: 'dts', channels: 6 }] }), caps, { ...choice, downmix: true }, gpu)
   assert.deepEqual([dts.mode, arg(dts.args, '-ac')], ['audio', '2'])
 })

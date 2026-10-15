@@ -24,6 +24,9 @@ import { sameLanguage } from '@shared/text'
 import { DEFAULT_SETTINGS, EQ_PRESETS } from '@shared/settings'
 import { AudioChain, isLocalSource, needsChain } from '../player/audioChain'
 import { PipIcon } from '../components/Icons'
+import { AmbientLight, type PictureShape } from '../components/AmbientLight'
+import { CinemaBar } from '../components/CinemaBar'
+import { SoundStage } from '../components/SoundStage'
 import { api } from '../lib/api'
 import { timecode } from '../lib/format'
 import { BlurImage } from '../components/BlurImage'
@@ -69,6 +72,28 @@ function videoStyle(s: Settings): React.CSSProperties {
   ].filter(Boolean)
   if (f.length) style.filter = f.join(' ')
   return style
+}
+
+/**
+ * Cinema Mode crops black bars baked into the file, so Ambient Light fills them instead. The frame grows so
+ * the picture keeps its size and place, and the bars are clipped away. Any fit or shape the viewer chose wins.
+ */
+function cinemaFrame(s: Settings, shape: PictureShape | null): React.CSSProperties | null {
+  if (s.videoFit !== 'fit' || s.aspect !== 'auto') return null
+  const { top = 0, bottom = 0, aspect = 16 / 9 } = shape ?? {}
+  const kept = 1 - top - bottom
+  const width = `min(100cqw, ${(aspect / kept) * 100}cqh)`
+  const height = `calc(${width} / ${aspect})`
+  return {
+    inset: 'auto',
+    left: '50%',
+    translate: '-50% 0',
+    width,
+    height,
+    top: `calc(50cqh - ${height} * ${top + kept / 2})`,
+    objectFit: 'fill',
+    clipPath: `inset(${top * 100}% 0 ${bottom * 100}% 0)`
+  }
 }
 
 const BOOSTS = [100, 125, 150, 200]
@@ -172,6 +197,8 @@ interface PlayerProps {
   url?: string
   title?: string
   fresh?: boolean
+  /** Opened from Cinema Mode: Ambient Light, Sound Stage, and slower, softer transitions. */
+  cinema?: boolean
 }
 
 /** One subtitle cue: its lines, with the italics and bold the file asked for. */
@@ -200,7 +227,7 @@ function CueText({ text }: { text: string }) {
   )
 }
 
-export function Player({ itemId, episodeId, fileId, url: streamUrl, title: streamTitle, fresh }: PlayerProps) {
+export function Player({ itemId, episodeId, fileId, url: streamUrl, title: streamTitle, fresh, cinema = false }: PlayerProps) {
   const back = useNav((s) => s.back)
   const replace = useNav((s) => s.replace)
   const settings = useSettings((s) => s.settings)
@@ -254,6 +281,11 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const wheel = useRef(0)
   const chain = useRef<AudioChain | null>(null)
   const [processed, setProcessed] = useState(false)
+  const [sound, setSound] = useState(false)
+  const [shape, setShape] = useState<PictureShape | null>(null)
+  const playingRef = useRef(false)
+  playingRef.current = playing
+  const levels = useCallback(() => (chain.current && playingRef.current ? chain.current.levels() : null), [])
 
   const { ref: root, focusKey } = useFocus<HTMLDivElement>({ focusKey: 'PLAYER', trackChildren: true, isFocusBoundary: true })
 
@@ -340,7 +372,8 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   useEffect(() => {
     const v = video.current
     if (!v || !local) return
-    if (!chain.current && needsChain(cfg)) {
+    // Cinema Mode keeps the engine running so Sound Stage can switch and meter without a pause.
+    if (!chain.current && (needsChain(cfg) || cinema)) {
       try {
         chain.current = new AudioChain(v)
         setProcessed(true)
@@ -348,8 +381,8 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
         return // already wired, or WebAudio unavailable: keep plain playback
       }
     }
-    chain.current?.apply(cfg)
-  }, [cfg, local, url, ready])
+    chain.current?.apply(cfg, src?.file?.audio[audio]?.channels ?? 2)
+  }, [cfg, local, url, ready, src, audio])
   useEffect(
     () => () => {
       chain.current?.close()
@@ -589,10 +622,25 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     return () => document.removeEventListener('fullscreenchange', on)
   }, [])
 
+  const exiting = useRef(false)
   const exit = (): void => {
     save()
     if (fullscreen) toggleFullscreen()
-    back()
+    if (!cinema) return back()
+    // Cinema Mode never cuts: the picture and sound fade out together, then the lobby comes back.
+    if (exiting.current) return
+    exiting.current = true
+    const v = video.current
+    const from = v?.volume ?? 1
+    gsap.to(root.current, {
+      opacity: 0,
+      duration: d(1.1),
+      ease: 'power1.inOut',
+      onUpdate() {
+        if (v) v.volume = from * (1 - this.progress())
+      },
+      onComplete: back
+    })
   }
 
   const playNext = (): void => {
@@ -746,7 +794,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   // Keyboard map.
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
-      if (menu) return // the open popover handles keys
+      if (menu || sound) return // the open popover or Sound Stage handles keys
       const v = video.current
       let handled = true
       switch (e.key) {
@@ -1054,7 +1102,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
       <FocusContext.Provider value={focusKey}>
         <div
           ref={root}
-          className={`player ${playing ? 'is-playing' : 'is-paused'}`}
+          className={`player ${playing ? 'is-playing' : 'is-paused'} ${cinema ? 'is-cinema' : ''}`}
           data-audio={processed ? 'processed' : 'direct'}
           onPointerMove={(e) => {
             // Browsers fire synthetic moves when the chrome fades under a resting cursor; only real travel wakes it.
@@ -1100,11 +1148,12 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
             </div>
           )}
 
+          {cinema && <AmbientLight video={video} on={cfg.ambientLight} onShape={setShape} />}
           {url && (
             <video
               ref={video}
               className="pl-video"
-              style={{ ...videoStyle(cfg), opacity: catchingUp ? 0 : undefined }}
+              style={{ ...videoStyle(cfg), ...(cinema ? cinemaFrame(cfg, shape) : null), opacity: catchingUp ? 0 : undefined }}
               crossOrigin={/^ml-file:|^http:\/\/127\.0\.0\.1:/.test(url) ? 'anonymous' : undefined}
               src={url}
               preload="auto"
@@ -1158,6 +1207,11 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
               )}
             </div>
           )}
+
+          {cinema && ready && (
+            <CinemaBar ambient={cfg.ambientLight} onAmbient={() => void updateSettings({ ambientLight: !cfg.ambientLight })} onSound={() => setSound(true)} />
+          )}
+          {sound && <SoundStage track={src?.file?.audio[audio]} levels={levels} outputs={chain.current?.outputs} onClose={() => setSound(false)} />}
 
           <div ref={chrome} className="pl-chrome">
             <div className="pl-top">

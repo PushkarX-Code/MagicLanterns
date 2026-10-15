@@ -1016,11 +1016,17 @@ kbd {
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
   gap: 22px;
   padding: 0 var(--gutter) 0 var(--content-left);
-  max-width: calc(1240px + var(--content-left));
 }
+/* About me and the app side by side at one height, updates as a full-width strip below. Footers sit on the bottom edge. */
 .info-card {
+  display: flex;
+  flex-direction: column;
   padding: 30px 32px;
   border-radius: var(--r-panel);
+}
+.info-card > .info-foot,
+.info-card > .info-credits {
+  margin-top: auto;
 }
 .info-card p {
   margin: 12px 0 0;
@@ -1045,7 +1051,6 @@ kbd {
   letter-spacing: -0.015em;
 }
 .info-me {
-  grid-row: span 2;
   background-image: radial-gradient(120% 90% at 0% 0%, rgba(255, 181, 71, 0.16), transparent 60%), var(--glass-gloss);
 }
 .info-me .info-title {
@@ -1101,6 +1106,30 @@ kbd {
   font-size: 12.5px;
   line-height: 1.6;
   color: var(--text-4);
+}
+.info-credits {
+  padding-top: 22px;
+}
+.info-credits p:first-child {
+  margin-top: 0;
+  padding-top: 18px;
+  border-top: 1px solid rgb(var(--ink) / 0.08);
+}
+.info-credits p + p {
+  margin-top: 6px;
+}
+.info-updates {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+.info-updates-text p {
+  max-width: 760px;
+}
+.info-updates .pill {
+  flex-shrink: 0;
 }
 
 /* ---------- First run: choose folders, then watch the library arrive ---------- */

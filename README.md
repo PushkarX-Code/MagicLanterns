@@ -43,13 +43,21 @@ Every image is the running app, with real film data and artwork.
 
 ![Player](docs/showcase/player.webp)
 
+**Cinema Mode**
+
+![Cinema Mode](docs/showcase/cinema.webp)
+
+![Cinema Mode, playing](docs/showcase/cinema-light.webp)
+
+Some things are better seen than described. Find it in the sidebar, and dim the lights.
+
 **Light theme**
 
 ![Light theme](docs/showcase/light.webp)
 
 ## What's in it
 
-**Sections:** Home, Favorites, Files and Settings, with **More Info** at the foot of the sidebar: what the app is, a Check for Updates button, and a note from me.
+**Sections:** Home, Favorites, Files, **Cinema Mode** and Settings, with **More Info** at the foot of the sidebar: what the app is, a Check for Updates button, and a note from me.
 
 **Home** opens on a hero carousel, then: your recents (no heading, just the films), Recently Added, Picks of the Day (a fresh shuffle every day), Film Genres, Unwatched, Most Watched, and five rows about the wider world: **Top 10 This Week**, **Top 10 This Month**, **Greatest of All Time**, **Must-Watch Series** and **Must-Watch Anime**. They refresh automatically. Each title opens a full-screen page like your own films, with **Where to Watch** in place of Play: it shows the services carrying it in your country and links straight to them.
 

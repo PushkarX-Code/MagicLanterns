@@ -17,6 +17,7 @@ import { AboutScreen } from './screens/About'
 import { SearchScreen } from './screens/Search'
 import { SettingsScreen } from './screens/Settings'
 import { Splash } from './screens/Splash'
+import { CinemaScreen } from './screens/Cinema'
 import { UpdatePrompt } from './components/UpdatePrompt'
 
 function render(entry: Entry) {
@@ -44,8 +45,10 @@ function render(entry: Entry) {
       return <PersonScreen person={r.person} entryKey={entry.key} />
     case 'detail':
       return <Detail id={r.id} origin={r.origin} entryKey={entry.key} />
+    case 'cinema':
+      return <CinemaScreen />
     case 'player':
-      return <Player key={entry.key} itemId={r.itemId} episodeId={r.episodeId} fileId={r.fileId} url={r.url} title={r.title} fresh={r.fresh} />
+      return <Player key={entry.key} itemId={r.itemId} episodeId={r.episodeId} fileId={r.fileId} url={r.url} title={r.title} fresh={r.fresh} cinema={r.cinema} />
   }
 }
 
@@ -59,17 +62,22 @@ function ScreenHost({ entry, top, first, live }: { entry: Entry; top: boolean; f
     if (!node || first) return
     const r = entry.route
     if (r.name === 'detail' && r.origin) return // the shared-element flight handles the entrance
-    if (r.name === 'player') gsap.fromTo(node, { opacity: 0 }, { opacity: 1, duration: d(0.5), ease: 'power1.out' })
+    if (r.name === 'player') gsap.fromTo(node, { opacity: 0 }, { opacity: 1, duration: d(r.cinema ? 1.6 : 0.5), ease: 'power1.out' })
+    else if (r.name === 'cinema') return // Cinema Mode raises its own lights
     else gsap.fromTo(node, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: d(0.6), ease: EASE.settle })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    if (top && !wasTop.current && el.current) gsap.fromTo(el.current, { opacity: 0.35 }, { opacity: 1, duration: d(0.5), ease: 'power1.out' })
+    if (top && !wasTop.current && el.current) {
+      // Back in the Cinema lobby: the lights come up slowly.
+      const slow = entry.route.name === 'cinema'
+      gsap.fromTo(el.current, { opacity: slow ? 0 : 0.35 }, { opacity: 1, duration: d(slow ? 1.4 : 0.5), ease: 'power1.out' })
+    }
     wasTop.current = top
   }, [top])
 
-  const kind = entry.route.name === 'player' ? 'is-player' : entry.route.name === 'detail' || entry.route.name === 'discover' || entry.route.name === 'person' ? 'is-full' : 'is-section'
+  const kind = entry.route.name === 'player' || entry.route.name === 'cinema' ? 'is-player' : entry.route.name === 'detail' || entry.route.name === 'discover' || entry.route.name === 'person' ? 'is-full' : 'is-section'
   return (
     <div ref={el} className={`screen-host ${kind} ${top ? 'is-top' : 'is-under'}`} aria-hidden={!top}>
       <ScreenActive.Provider value={top && live}>{render(entry)}</ScreenActive.Provider>
@@ -83,7 +91,7 @@ export function App() {
   const load = useSettings((s) => s.load)
   const [splash, setSplash] = useState(true)
   const top = stack[stack.length - 1]
-  const immersive = top.route.name === 'detail' || top.route.name === 'discover' || top.route.name === 'person' || top.route.name === 'player'
+  const immersive = top.route.name === 'detail' || top.route.name === 'discover' || top.route.name === 'person' || top.route.name === 'player' || top.route.name === 'cinema'
 
   useEffect(() => {
     load()

@@ -92,8 +92,14 @@ export function plan(f: Facts, caps: Caps, c: Choice, m: Machine): Plan {
 
   if (track) {
     if (convertSound) {
-      const ch = c.downmix ? 2 : Math.min(track.channels || 2, 6)
-      args.push('-c:a', 'aac', '-ac', String(ch), '-b:a', ch > 2 ? '448k' : '192k')
+      // Lossless soundtracks and anything past 5.1 become FLAC (lossless, up to 7.1); the rest becomes AAC.
+      const lossless = /^(truehd|mlp|pcm_)/.test(track.codec) || (track.channels || 2) > 6
+      if (!c.downmix && lossless && caps.audio.includes('flac'))
+        args.push('-c:a', 'flac', '-ac', String(Math.min(track.channels || 2, 8)), '-strict', '-2')
+      else {
+        const ch = c.downmix ? 2 : Math.min(track.channels || 2, 6)
+        args.push('-c:a', 'aac', '-ac', String(ch), '-b:a', ch > 2 ? '448k' : '192k')
+      }
     } else args.push('-c:a', 'copy')
   }
 
