@@ -3,8 +3,8 @@ import { Lantern, Wordmark } from '../components/Lantern'
 import { gsap, reduceMotion } from '../design/motion'
 
 /**
- * The lantern fades in, its amber core slowly brightens, the light spills outward into the dark
- * and dissolves into Home.
+ * The Beacon fades in, its core lights first and each arch catches the glow on the way out,
+ * then the light spills into the dark and dissolves into Home.
  */
 export function Splash({ onDone }: { onDone: () => void }) {
   const root = useRef<HTMLDivElement>(null)
@@ -31,7 +31,7 @@ export function Splash({ onDone }: { onDone: () => void }) {
     const tl = gsap.timeline({ onComplete: finish })
     tl.fromTo(q('.splash-mark'), { opacity: 0, scale: 0.94, y: 8 }, { opacity: 1, scale: 1, y: 0, duration: 1.0, ease: 'power2.out' })
       .to(q('.lm-core'), { opacity: 1, duration: 1.3, ease: 'sine.inOut' }, '-=0.3')
-      .to(q('.lm-play'), { opacity: 0.85, duration: 1.1, ease: 'sine.inOut' }, '<0.25')
+      .to(q('.lm-play'), { opacity: 1, duration: 0.9, ease: 'sine.inOut', stagger: { each: 0.3, from: 'end' } }, '<0.35')
       .to(q('.lm-halo, .lm-pool'), { opacity: 1, duration: 1.2, ease: 'sine.inOut' }, '<')
       .fromTo(q('.wordmark'), { opacity: 0, y: 10, letterSpacing: '0.12em' }, { opacity: 1, y: 0, letterSpacing: '0.035em', duration: 1.1, ease: 'expo.out' }, '<0.3')
       .to(q('.splash-spill'), { opacity: 1, scale: 1.1, duration: 0.9, ease: 'power2.in' }, '+=0.15')

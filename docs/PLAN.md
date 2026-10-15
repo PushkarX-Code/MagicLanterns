@@ -12,7 +12,7 @@ MagicLanterns/
 ├─ package.json                  scripts, dependencies, and the installer settings ("build")
 ├─ tsconfig.json                 points at src/tsconfig.node.json and src/tsconfig.web.json
 ├─ build/                        icon.ico, icon.png (1024), build-icons.mjs (SVG → PNG → .ico)
-├─ docs/                         PLAN.md, LOGO_PROMPT.md, README images
+├─ docs/                         PLAN.md, store and privacy docs, README images
 └─ src/
    ├─ shared/                    imported by main, engine, preload, renderer
    │  ├─ types.ts                Item, Show, Season, Episode, FileInfo, Track, Progress…
@@ -194,7 +194,7 @@ Derived, not stored: Continue Watching, Next Episode per show, Unwatched, genre 
 ## 5. Phases
 
 **Phase 1 — Shell (visually complete, mock data)**
-App icon (SVG + .ico/PNGs), LOGO_PROMPT.md, splash animation, design tokens, glass system, ambient color layer, sidebar (expand/collapse rail, live clock), Home (hero carousel + Ken Burns + idle video loop, all rows), Detail page (full cinematic layout, below-the-fold cast/seasons/file info/more like this), Player screen (full ten-foot controls UI against a real sample video), focus engine + tilt + Flip shared-element transition, skeletons + blur-up everywhere, Reduce Motion.
+App icon (SVG + .ico/PNGs), splash animation, design tokens, glass system, ambient color layer, sidebar (expand/collapse rail, live clock), Home (hero carousel + Ken Burns + idle video loop, all rows), Detail page (full cinematic layout, below-the-fold cast/seasons/file info/more like this), Player screen (full ten-foot controls UI against a real sample video), focus engine + tilt + Flip shared-element transition, skeletons + blur-up everywhere, Reduce Motion.
 
 **Phase 2 — Library engine**
 Folder add/remove, recursive scan, chokidar watcher, ffprobe normalization, filename + folder parsing, series grouping, SQLite + migrations, unmatched generated cards (frame grab at 30% + cleaned name), scan progress events.
