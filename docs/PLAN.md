@@ -255,3 +255,5 @@ Goal: click any cast member and see who they are and everything they're in.
 5. **Tests:** credit mapping, library matching, cache expiry.
 
 Order: A first (unblocks downloads and updates), then B.
+
+**Done 15 Oct:** A (remote updates) and B (cast pages), then Step 15: subtitles (embedded + sidecar, encoding, delay), scrub stills while streaming, Skip Intro by audio fingerprints (chapters win), Up Next with real episode order, and copied streams that start on a keyframe so the clock and subtitles match the picture. Picture-based subtitles (Blu-ray/DVD) are listed but not drawn yet.
