@@ -257,3 +257,88 @@ Goal: click any cast member and see who they are and everything they're in.
 Order: A first (unblocks downloads and updates), then B.
 
 **Done 15 Oct:** A (remote updates) and B (cast pages), then Step 15: subtitles (embedded + sidecar, encoding, delay), scrub stills while streaming, Skip Intro by audio fingerprints (chapters win), Up Next with real episode order, and copied streams that start on a keyframe so the clock and subtitles match the picture. Picture-based subtitles (Blu-ray/DVD) are listed but not drawn yet.
+
+---
+
+# Business plan (v2, 15 Oct)
+
+Magic Lanterns ships on the **Microsoft Store** as **free to download, with Pro as an upgrade**. Everything a player must do stays free. Pro adds experiences no other Windows player has. Order of work: **finish v1 → Store launch → Pro infrastructure → Pro features**.
+
+## Positioning
+"Your films, presented like a cinema." Other players are built around *playing a file*; Magic Lanterns is built around *the evening*: the room dims, the library feels like a streaming service you own, and the app knows your films well enough to search what's said in them.
+
+## Free vs Pro
+
+**Free, forever** (the promise stays true; nothing that's free today moves to Pro):
+- Library, artwork and details, every format, subtitles, Skip Intro, Up Next, cast pages, themes, discover rows, equaliser and every setting that exists today.
+
+**Pro** ($5 a month, $24 a year shown as "$2/month", or $50 lifetime; 14-day free trial, no card needed to start):
+
+| Feature | What it is | Why nobody else has it |
+|---|---|---|
+| **Cinema Mode** | A second, 10-foot interface (like a console's big-screen mode): the window becomes a theatre, the house lights dim, the selected film's poster is lit by a projector beam, full Xbox/PlayStation controller support, ambient score, a curtain-open animation into playback. An idle poster wall plays when nothing is selected. | Desktop players only shrink or enlarge the same interface. None turn the PC into a living-room theatre. |
+| **Scene Search** | Type a line ("I'll be back"), see every scene across the whole library where it's said, with a still and a timestamp; Enter plays from that moment. Built from the subtitles we already read. | No consumer player searches *inside* films. |
+| **Skip Recap and Credits** | Extends the Skip Intro listener: "Previously on…" is found by matching the last episode's audio; end credits by the shared closing theme, so Up Next appears exactly when credits start. | Others need hand-marked databases or only do intros. |
+| **Clip & Share** | Mark in/out while watching, export a clip, GIF or still in one click, with subtitles burned in if wanted. | Players screenshot; none make shareable clips. |
+| **Phone Remote** | Scan a QR code and the phone becomes a remote with artwork, scrubbing and track pickers. Works on your Wi-Fi only, no account, nothing leaves the house. | Others need an account and a cloud service. |
+| **Ambient Light** | The picture's edge colours glow softly around the video in windowed mode (like bias lighting behind a TV). | Rare on desktop; never this subtle. |
+| **Your Year in Film** | A Wrapped-style story: hours watched, favourite genres, most-watched actor, longest binge, shareable cards. Computed on the PC. | Streaming services do this; no local player does. Free marketing every December. |
+| **Smart Organise** | Rename and file messy downloads into clean "Title (Year)" and "Show/Season 01" folders, with a preview and undo. | Usually a separate paid tool. |
+| **Dialogue Boost & Night Mode** | Lifts voices and evens out loud explosions for late-night watching. | Built in, one key. |
+
+Pro features are added one per release after launch, so every update gives a reason to upgrade and to talk about it.
+
+## Pricing, honestly
+- **$5/month vs $24/year:** the yearly plan is 60% cheaper, so almost everyone will choose yearly. That's healthy (less churn, money up front). Monthly mainly makes yearly look good.
+- **$50 lifetime** is about two years of yearly. Good for launch hype; consider raising it to $59–69 after the first few months.
+- **Store cut:** Microsoft takes **15%** of in-app purchases and subscriptions for apps (12% for games). Microsoft also allows non-game apps to use their own payments and pay **0%** to the Store. Either way, payment providers take their own share.
+- **Launch offer:** lifetime at $39 for the first two weeks. That gives people a reason to act now, and makes a good post.
+
+## Microsoft Store, what changes
+- **Package:** MSIX via electron-builder `appx` target. Microsoft signs Store packages, so **the "Windows protected your PC" warning disappears** for Store installs (no paid certificate needed).
+- **Updates:** the Store updates Store installs; the in-app updater stays only for the direct-download build.
+- **Account:** Partner Center developer account (free for individuals at the time of writing; confirm at sign-up). Needs identity verification.
+- **Listing needs:** privacy policy URL (a page on the releases repo, free), age rating questionnaire, 4–10 screenshots (we have them), a short trailer (your specialty), description, search keywords.
+- **Trials and subscriptions:** Store add-ons support free trials and subscriptions natively; the app checks entitlement through the Windows Store API (a small native helper, since Electron can't call it directly). **Main technical risk; prototype it first.**
+
+## Licensing design (works offline, fair, not paranoid)
+- One `entitlement` module: `free | trial(daysLeft) | pro(plan, renews)`. Every Pro feature asks it; nothing else knows about money.
+- Trial starts on first launch of a Pro feature (not install), 14 days, stored by the Store.
+- Offline: a verified entitlement is trusted for 30 days, so flights and cabins still work.
+- When a trial ends: Pro features show a beautiful preview with an "Unlock" card, never nag screens, never popups over a film.
+
+## More Info page, enhanced
+1. **Your plan:** Free / Trial (days left, progress ring) / Pro (plan, renewal date, Manage).
+2. **What's new:** the latest release notes, beautifully set, with a "See all" history.
+3. **Your library at a glance:** films, shows, hours watched, storage used.
+4. **Pro showcase:** each Pro feature as a short looping preview card.
+5. **Privacy promise:** "Your library never leaves your PC." The one-line truth that sells.
+6. **Help & feedback:** keyboard shortcuts, send feedback, report a problem (opens email with logs attached on request).
+7. **Credits & about me** (kept). The Ko-fi tip jar is replaced by Pro (one way to support, clearer for the Store).
+
+## Roadmap
+
+**Phase A: finish v1 (Free)**
+1. Step 16: first-run setup with a live first scan, typo-tolerant search, collections.
+2. Full-app QA pass with your library; fix everything you find (your testing round).
+3. Store build: MSIX packaging, Store-only switches (no self-updater), privacy page, listing text.
+
+**Phase B: Store launch (Free)**
+4. Partner Center submission, certification, launch. Ratings and reviews start counting from day one.
+
+**Phase C: Pro infrastructure**
+5. Entitlement module, Store add-ons (monthly, yearly, lifetime) with 14-day trial, Unlock cards, the enhanced More Info page.
+
+**Phase D: Pro features, one per release**
+6. Cinema Mode (the flagship and the trailer).
+7. Scene Search. 8. Skip Recap & Credits. 9. Phone Remote. 10. Clip & Share. 11. Ambient Light. 12. Year in Film (ship in December). 13. Smart Organise. 14. Dialogue Boost & Night Mode.
+
+**Phase E: Growth (only after your approval of every post)**
+Reddit (r/PleX alternatives, r/Windows11, r/software, r/anime), X, YouTube trailer, Product Hunt launch for Cinema Mode.
+
+**Later:** Mac version (after everything above), Blu-ray picture subtitles.
+
+## Costs (all flagged)
+- Microsoft Store account: free for individuals (verify at sign-up).
+- Store commission: 15% of Pro revenue (or payment-provider fees if using your own payments).
+- Everything else stays on free tiers: TMDB, OMDb, Cloudflare Workers, GitHub.
