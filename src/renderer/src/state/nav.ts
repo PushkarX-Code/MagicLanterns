@@ -15,6 +15,7 @@ export type Route =
   | { name: 'genre'; genre: string }
   | { name: 'collection'; id: string }
   | { name: 'search' }
+  | { name: 'cinema' }
   | { name: 'detail'; id: string; origin?: Origin }
   | { name: 'discover'; title: TrendingTitle; list?: DiscoverList }
   | { name: 'person'; person: CastMember }

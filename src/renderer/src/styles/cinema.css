@@ -1,0 +1,348 @@
+/* ---------- Cinema Mode: the big-screen lobby, Sound Stage and Ambient Light ---------- */
+.cinema {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  background: #000;
+  color: var(--text);
+}
+
+/* Lobby */
+.cine-lobby {
+  position: absolute;
+  inset: 0;
+}
+.cine-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.cine-backdrop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cine-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.55) 34%, rgba(0, 0, 0, 0) 64%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 30%, rgba(0, 0, 0, 0) 56%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 18%);
+}
+.cine-top {
+  position: absolute;
+  top: 34px;
+  left: 96px;
+  right: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cine-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.86);
+}
+.cine-clock {
+  font-size: 22px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: rgb(255 255 255 / 0.86);
+}
+.cine-feature {
+  position: absolute;
+  left: 96px;
+  bottom: 392px;
+  width: min(640px, 46vw);
+}
+.cine-now {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 6px 12px;
+  border: 1px solid rgb(255 180 90 / 0.5);
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+.cine-logo {
+  display: block;
+  max-width: 100%;
+  max-height: 170px;
+  margin-bottom: 20px;
+  object-fit: contain;
+  object-position: left bottom;
+}
+.cine-title {
+  margin: 0 0 18px;
+  font-size: 64px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.cine-overview {
+  display: -webkit-box;
+  margin: 16px 0 0;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: 17px;
+  line-height: 1.6;
+  color: rgb(255 255 255 / 0.78);
+}
+.cine-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 28px;
+}
+.cine-strip {
+  position: absolute;
+  left: 96px;
+  right: 0;
+  bottom: 88px;
+  display: flex;
+  align-items: flex-end;
+  gap: 22px;
+}
+.cine-poster {
+  flex: 0 0 auto;
+  width: 148px;
+  aspect-ratio: 2 / 3;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 14px;
+  background: #111;
+  opacity: 0.5;
+  cursor: pointer;
+  transition:
+    width 0.45s var(--ease-out, ease),
+    opacity 0.45s ease,
+    box-shadow 0.45s ease;
+}
+.cine-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cine-poster.is-current {
+  width: 176px;
+  opacity: 1;
+  box-shadow:
+    0 0 0 2px rgb(255 255 255 / 0.92),
+    0 24px 50px rgb(0 0 0 / 0.6);
+}
+.cine-poster:hover {
+  opacity: 0.85;
+}
+.cine-hints {
+  position: absolute;
+  left: 96px;
+  bottom: 34px;
+  display: flex;
+  gap: 28px;
+  font-size: 13px;
+  color: rgb(255 255 255 / 0.5);
+}
+.cine-hints kbd {
+  display: inline-block;
+  min-width: 22px;
+  margin-right: 4px;
+  padding: 2px 7px;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 12px;
+  text-align: center;
+  color: rgb(255 255 255 / 0.8);
+}
+
+/* Sound Stage */
+.cine-sound {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  background: rgb(0 0 0 / 0.55);
+  backdrop-filter: blur(24px) saturate(1.2);
+}
+.cine-sound-panel {
+  display: grid;
+  grid-template-columns: 540px 400px;
+  gap: 44px;
+  align-items: center;
+  padding: 40px 44px;
+  border-radius: var(--r-panel);
+}
+.cine-room {
+  width: 540px;
+  height: 440px;
+  overflow: visible;
+}
+.cine-room-wall {
+  fill: rgb(255 255 255 / 0.025);
+  stroke: rgb(255 255 255 / 0.1);
+  stroke-width: 1.5;
+}
+.cine-room-label {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.32em;
+  fill: rgb(255 255 255 / 0.45);
+}
+.cine-sphere {
+  fill: none;
+  stroke: rgb(255 180 90 / 0.35);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 8;
+}
+.cine-level {
+  fill: rgb(255 140 50 / 0.22);
+  stroke: #ffb45a;
+  stroke-width: 1.5;
+}
+.cine-cone {
+  fill: #1b1918;
+  stroke: rgb(255 255 255 / 0.28);
+  stroke-width: 1.5;
+}
+.cine-ch {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  fill: rgb(255 255 255 / 0.9);
+}
+.cine-speaker.is-off .cine-cone {
+  stroke: rgb(255 255 255 / 0.1);
+}
+.cine-speaker.is-off .cine-ch {
+  fill: rgb(255 255 255 / 0.25);
+}
+.cine-room.is-spatial .cine-cone {
+  stroke-dasharray: 3 4;
+}
+.cine-seat circle {
+  fill: rgb(255 180 90 / 0.14);
+  stroke: rgb(255 180 90 / 0.6);
+  stroke-width: 1.5;
+}
+.cine-seat svg {
+  color: #ffd9a3;
+}
+.cine-sound-title {
+  margin: 8px 0 20px;
+  font-size: 30px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+.cine-modes {
+  display: grid;
+  gap: 10px;
+}
+.cine-mode {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.03);
+  color: var(--text-2);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.3s ease,
+    background 0.3s ease;
+}
+.cine-mode svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+.cine-mode b {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+.cine-mode small {
+  display: block;
+  margin-top: 3px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-3);
+}
+.cine-mode.is-on {
+  border-color: rgb(255 180 90 / 0.7);
+  background: rgb(255 180 90 / 0.08);
+  color: var(--amber);
+}
+.cine-toggles {
+  margin-top: 16px;
+}
+.cine-toggles .set-row {
+  padding-left: 0;
+  padding-right: 0;
+}
+.cine-signal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+/* Ambient Light: the letterbox bars carry a blurred, living copy of the picture. */
+.cine-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: #000;
+}
+.cine-ambient {
+  position: absolute;
+  inset: -12%;
+  width: 124%;
+  height: 124%;
+  filter: blur(64px) saturate(1.5) brightness(0.85);
+}
+.cine-picture {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(100vw, calc(100vh * 4));
+  max-height: 100vh;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 80px 10px rgb(0 0 0 / 0.35);
+}
+.cine-video {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  object-fit: fill;
+}
+.cine-badge {
+  position: absolute;
+  top: 30px;
+  right: 34px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.4);
+  backdrop-filter: blur(14px);
+  font-size: 13px;
+  font-weight: 600;
+  color: rgb(255 255 255 / 0.9);
+}

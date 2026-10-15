@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { FolderOpen, House, Info, Settings, Star, type LucideIcon } from 'lucide-react'
+import { FolderOpen, House, Info, Projector, Settings, Star, type LucideIcon } from 'lucide-react'
 import { Lantern } from './Lantern'
 import { FocusContext, setFocus, useFocus } from '../focus/focus'
 import { useNav, type Section } from '../state/nav'
@@ -14,7 +14,7 @@ const ITEMS: { id: Section; label: string; icon: LucideIcon }[] = [
 
 export const SIDEBAR_KEY = 'SIDEBAR'
 
-function Item({ id, label, icon: Icon, selected, disabled, onSelect }: { id: Section; label: string; icon: LucideIcon; selected: boolean; disabled: boolean; onSelect: (s: Section) => void }) {
+function Item({ id, label, icon: Icon, selected, disabled, onSelect }: { id: Section | 'cinema'; label: string; icon: LucideIcon; selected: boolean; disabled: boolean; onSelect: (s: Section | 'cinema') => void }) {
   const { ref, focused, pointer } = useFocus<HTMLButtonElement>({ focusKey: `SIDEBAR-${id}`, disabled, onEnterPress: () => onSelect(id) })
   return (
     <button
@@ -66,7 +66,8 @@ export function Sidebar({ hidden }: { hidden: boolean }) {
     if (panel.current) gsap.to(panel.current, { autoAlpha: hidden ? 0 : 1, x: hidden ? -24 : 0, duration: d(0.45) })
   }, [hidden])
 
-  const select = (s: Section): void => {
+  const select = (s: Section | 'cinema'): void => {
+    if (s === 'cinema') return useNav.getState().push({ name: 'cinema' })
     // Selecting the section you're already on just hands focus back to its content.
     if (s === section && useNav.getState().stack.length === 1) setFocus(`SCREEN-${s}`)
     else go(s) // the new screen takes focus itself once its content has loaded
@@ -92,6 +93,8 @@ export function Sidebar({ hidden }: { hidden: boolean }) {
             {ITEMS.filter((it) => it.id !== 'settings').map((it) => (
               <Item key={it.id} {...it} selected={section === it.id} disabled={hidden} onSelect={select} />
             ))}
+            <div className="sb-section">Experience</div>
+            <Item id="cinema" label="Cinema Mode" icon={Projector} selected={false} disabled={hidden} onSelect={select} />
           </div>
           <div className="sb-items sb-bottom">
             {ITEMS.filter((it) => it.id === 'settings').map((it) => (

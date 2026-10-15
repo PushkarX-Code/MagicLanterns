@@ -17,6 +17,7 @@ import { AboutScreen } from './screens/About'
 import { SearchScreen } from './screens/Search'
 import { SettingsScreen } from './screens/Settings'
 import { Splash } from './screens/Splash'
+import { CinemaScreen } from './screens/Cinema'
 import { UpdatePrompt } from './components/UpdatePrompt'
 
 function render(entry: Entry) {
@@ -44,6 +45,8 @@ function render(entry: Entry) {
       return <PersonScreen person={r.person} entryKey={entry.key} />
     case 'detail':
       return <Detail id={r.id} origin={r.origin} entryKey={entry.key} />
+    case 'cinema':
+      return <CinemaScreen />
     case 'player':
       return <Player key={entry.key} itemId={r.itemId} episodeId={r.episodeId} fileId={r.fileId} url={r.url} title={r.title} fresh={r.fresh} />
   }
@@ -69,7 +72,7 @@ function ScreenHost({ entry, top, first, live }: { entry: Entry; top: boolean; f
     wasTop.current = top
   }, [top])
 
-  const kind = entry.route.name === 'player' ? 'is-player' : entry.route.name === 'detail' || entry.route.name === 'discover' || entry.route.name === 'person' ? 'is-full' : 'is-section'
+  const kind = entry.route.name === 'player' || entry.route.name === 'cinema' ? 'is-player' : entry.route.name === 'detail' || entry.route.name === 'discover' || entry.route.name === 'person' ? 'is-full' : 'is-section'
   return (
     <div ref={el} className={`screen-host ${kind} ${top ? 'is-top' : 'is-under'}`} aria-hidden={!top}>
       <ScreenActive.Provider value={top && live}>{render(entry)}</ScreenActive.Provider>
@@ -83,7 +86,7 @@ export function App() {
   const load = useSettings((s) => s.load)
   const [splash, setSplash] = useState(true)
   const top = stack[stack.length - 1]
-  const immersive = top.route.name === 'detail' || top.route.name === 'discover' || top.route.name === 'person' || top.route.name === 'player'
+  const immersive = top.route.name === 'detail' || top.route.name === 'discover' || top.route.name === 'person' || top.route.name === 'player' || top.route.name === 'cinema'
 
   useEffect(() => {
     load()
