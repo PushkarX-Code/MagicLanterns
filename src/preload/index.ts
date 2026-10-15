@@ -45,6 +45,7 @@ const bridge: LanternBridge = {
   setLaunchPrefs: (prefs) => ipcRenderer.invoke('prefs:set', prefs),
   getDiscover: (list) => ipcRenderer.invoke('discover:list', list),
   getDiscoverDetails: (kind, id) => ipcRenderer.invoke('discover:details', kind, id),
+  getPerson: (id) => ipcRenderer.invoke('meta:person', id),
   updateState: () => ipcRenderer.invoke('update:state'),
   onUpdate: (cb) => {
     const listener = (_e: unknown, state: Parameters<typeof cb>[0]): void => cb(state)

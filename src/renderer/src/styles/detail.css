@@ -425,3 +425,58 @@
   font-size: 12px;
   color: var(--text-4);
 }
+
+/* ---------- Cast pages ---------- */
+.cast {
+  cursor: pointer;
+}
+.person-backdrop .bimg {
+  filter: blur(28px) saturate(1.1);
+  transform: scale(1.08);
+}
+.person-fold {
+  align-items: flex-end;
+  /* Shorter than a title page so the rows below peek up. */
+  height: 78vh;
+  min-height: 560px;
+}
+.person-head {
+  display: flex;
+  align-items: flex-end;
+  gap: 40px;
+  min-width: 0;
+}
+.person-portrait {
+  position: relative;
+  flex: none;
+  width: 236px;
+  height: 236px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgb(var(--ink) / 0.1);
+}
+.person-portrait .cast-initials {
+  font-size: 64px;
+}
+.person-id {
+  min-width: 0;
+  padding-bottom: 10px;
+}
+.person-name {
+  margin: 0 0 16px;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.45);
+}
+.person-role {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text-3);
+}
+.credit {
+  flex: none;
+  width: 172px;
+}
+.person-offline {
+  padding: 34px var(--content-left) 0;
+  font-size: 14px;
+  color: var(--text-3);
+}

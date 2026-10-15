@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { DiscoverList, TrendingTitle } from '@shared/types'
+import type { CastMember, DiscoverList, TrendingTitle } from '@shared/types'
 
 export type Section = 'home' | 'favorites' | 'files' | 'settings' | 'about'
 
@@ -15,7 +15,8 @@ export type Route =
   | { name: 'genre'; genre: string }
   | { name: 'search' }
   | { name: 'detail'; id: string; origin?: Origin }
-  | { name: 'discover'; title: TrendingTitle; list: DiscoverList }
+  | { name: 'discover'; title: TrendingTitle; list?: DiscoverList }
+  | { name: 'person'; person: CastMember }
   | { name: 'player'; itemId?: string; episodeId?: string; fileId?: string; url?: string; title?: string; fresh?: boolean }
 
 export interface Entry {

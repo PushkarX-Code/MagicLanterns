@@ -13,6 +13,8 @@ export interface Ratings {
 }
 
 export interface CastMember {
+  /** TMDB person id; opens their page. Missing for people from titles matched before ids were kept. */
+  id?: number
   name: string
   character: string
   profile: string | null
@@ -278,8 +280,36 @@ export interface DiscoverDetails {
   runtime: number | null // minutes (per episode for series)
   genres: string[]
   credit: { role: string; name: string } | null
-  cast: { name: string; character: string; profile: string | null }[]
+  cast: CastMember[]
   trailerKey: string | null
+  /** Where it streams in the viewer's country; filled when the title wasn't opened from a discover row. */
+  providers: TrendingTitle['providers']
+  watchLink: string | null
+}
+
+/** One title in a person's filmography. */
+export interface PersonCredit {
+  id: number
+  kind: 'movie' | 'tv'
+  title: string
+  year: number | null
+  character: string
+  overview: string
+  poster: string | null
+  backdrop: string | null
+  rating: number | null
+}
+
+/** A cast member's page: who they are and everything they're in. */
+export interface PersonDetails {
+  id: number
+  name: string
+  profile: string | null
+  knownFor: string
+  biography: string
+  born: string | null // "12 Dec 1995, New York City, USA"
+  died: string | null
+  credits: PersonCredit[]
 }
 
 /** App update lifecycle, as the renderer sees it. */

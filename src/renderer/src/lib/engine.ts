@@ -353,6 +353,12 @@ export function createLibraryApi(src: LibrarySource): LanternApi {
       await latency('favorites', 400)
       return items().filter((i) => i.favorite).sort((a, b) => a.title.localeCompare(b.title))
     },
+    async getPersonItems(person) {
+      await latency(`person-${person.name}`, 300)
+      return items()
+        .filter((i) => i.cast.some((c) => (person.id != null && c.id === person.id) || c.name === person.name))
+        .sort((a, b) => b.year - a.year)
+    },
     async getMoreLikeThis(id) {
       await latency(`more-${id}`, 700)
       const item = byId().get(id)

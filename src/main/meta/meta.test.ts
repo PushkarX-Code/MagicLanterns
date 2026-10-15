@@ -267,3 +267,53 @@ test('Fix Match: search shows choices; picking one wins and is never redone auto
   assert.equal((db.prepare('SELECT match_state FROM items WHERE id = ?').get(dune) as { match_state: string }).match_state, 'manual')
   done()
 })
+
+// ---------- Cast pages ----------
+
+test('a filmography keeps real roles, once each, newest first', async () => {
+  const { mapPerson } = await import('./person.ts')
+  const p = mapPerson({
+    id: 1190668,
+    name: 'Timothée Chalamet',
+    profile_path: '/p.jpg',
+    known_for_department: 'Acting',
+    biography: ' An actor. ',
+    birthday: '1995-12-27',
+    place_of_birth: 'New York City, New York, USA',
+    combined_credits: {
+      cast: [
+        { id: 438631, media_type: 'movie', title: 'Dune', release_date: '2021-09-15', character: 'Paul Atreides', poster_path: '/d.jpg', vote_count: 12000 },
+        { id: 693134, media_type: 'movie', title: 'Dune: Part Two', release_date: '2024-02-27', character: 'Paul Atreides', poster_path: '/d2.jpg', vote_count: 6000 },
+        { id: 693134, media_type: 'movie', title: 'Dune: Part Two', release_date: '2024-02-27', character: 'Paul', poster_path: '/d2.jpg', vote_count: 6000 },
+        { id: 1, media_type: 'tv', name: 'A Talk Show', first_air_date: '2020-01-01', character: 'Himself', poster_path: '/t.jpg', vote_count: 900 },
+        { id: 2, media_type: 'tv', name: 'Late Night', first_air_date: '2022-01-01', character: 'Guest', poster_path: '/l.jpg', vote_count: 900, genre_ids: [10767] },
+        { id: 3, media_type: 'movie', title: 'Unseen Short', release_date: '2012-01-01', character: 'Boy', poster_path: null, vote_count: 2 }
+      ]
+    }
+  })
+  assert.deepEqual(p.credits.map((c) => c.title), ['Dune: Part Two', 'Dune'])
+  assert.equal(p.knownFor, 'Actor')
+  assert.equal(p.biography, 'An actor.')
+  assert.equal(p.born, '27 Dec 1995, New York City, New York, USA')
+})
+
+test('person pages are cached for a week and survive going offline', async () => {
+  const { personDetails, PERSON_TTL } = await import('./person.ts')
+  const dir = mkdtempSync(join(tmpdir(), 'ml-person-'))
+  const db = openDb(join(dir, 'library.db'))
+  let calls = 0
+  let online = true
+  const tmdb = (async () => {
+    calls++
+    if (!online) throw new Error('offline')
+    return { id: 7, name: 'Zendaya', profile_path: null, combined_credits: { cast: [] } }
+  }) as Tmdb
+  await personDetails(db, tmdb, 7, 0)
+  await personDetails(db, tmdb, 7, PERSON_TTL - 1)
+  assert.equal(calls, 1)
+  online = false
+  assert.equal((await personDetails(db, tmdb, 7, PERSON_TTL + 1)).name, 'Zendaya')
+  assert.equal(calls, 2)
+  db.close()
+  rmSync(dir, { recursive: true })
+})

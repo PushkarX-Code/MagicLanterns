@@ -19,6 +19,8 @@ export interface LanternApi {
   getGenre(name: string): Promise<MediaItem[]>
   getFavorites(): Promise<MediaItem[]>
   getMoreLikeThis(id: string): Promise<MediaItem[]>
+  /** Library titles a cast member appears in, newest first. */
+  getPersonItems(person: { id?: number; name: string }): Promise<MediaItem[]>
   getCollections(): Promise<Collection[]>
   search(query: string): Promise<MediaItem[]>
 
