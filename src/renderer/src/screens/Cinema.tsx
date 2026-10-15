@@ -4,6 +4,8 @@ import type { MediaItem } from '@shared/types'
 import { Lantern } from '../components/Lantern'
 import { MetaLine, primaryFile } from '../components/Meta'
 import { SoundStage } from '../components/SoundStage'
+import { CinemaIntro } from '../components/CinemaIntro'
+import { useSettings } from '../state/settings'
 import { ScreenActive } from '../focus/focus'
 import { api } from '../lib/api'
 import { useAsync } from '../lib/useAsync'
@@ -17,7 +19,14 @@ import { gsap, d } from '../design/motion'
 export function CinemaScreen() {
   const { data } = useAsync(() => api.getHome(), [])
   const items = data?.hero ?? []
-  return <div className="cinema">{items.length > 0 && <Lobby items={items} />}</div>
+  // The opening plays once per visit, while the lobby's films load behind it.
+  const [intro, setIntro] = useState(() => useSettings.getState().settings?.cinemaIntro ?? true)
+  return (
+    <div className="cinema">
+      {!intro && items.length > 0 && <Lobby items={items} />}
+      {intro && <CinemaIntro onDone={() => setIntro(false)} />}
+    </div>
+  )
 }
 
 function Clock() {
@@ -78,8 +87,18 @@ function Lobby({ items }: { items: MediaItem[] }) {
     if (Number(gsap.getProperty(root.current, 'opacity')) < 1) gsap.to(root.current, { opacity: 1, duration: d(1.4), ease: 'power1.out' })
   }, [active])
 
-  const pick = (i: number): void => {
+  /** Choosing a film: the poster gives under the press, springs up into place and catches a sweep of light. */
+  const pick = (i: number, pressed = false): void => {
     if (i === index) return
+    const q = gsap.utils.selector(root)
+    const poster = q('.cine-poster')[i]
+    if (poster) {
+      gsap
+        .timeline()
+        .to(poster, { scale: pressed ? 0.92 : 1.03, duration: pressed ? 0.12 : 0.18, ease: 'power2.out' })
+        .to(poster, { scale: 1, duration: 0.9, ease: 'elastic.out(1, 0.5)' })
+      gsap.fromTo(poster.querySelector('.cine-sheen'), { xPercent: -140, opacity: 0.7 }, { xPercent: 140, opacity: 0, duration: 0.9, ease: 'power2.out', delay: pressed ? 0.1 : 0 })
+    }
     setIndex(i)
     setLayers((l) => [...l.slice(-1), { key: (l.at(-1)?.key ?? 0) + 1, item: items[i] }])
   }
@@ -151,8 +170,9 @@ function Lobby({ items }: { items: MediaItem[] }) {
       </section>
       <div className="cine-strip">
         {items.map((it, i) => (
-          <button key={it.id} className={`cine-poster ${i === index ? 'is-current' : ''}`} onClick={() => pick(i)}>
+          <button key={it.id} className={`cine-poster ${i === index ? 'is-current' : ''}`} onClick={() => pick(i, true)}>
             <img src={img(it.poster, 'w342') ?? undefined} alt={it.title} />
+            <span className="cine-sheen" />
           </button>
         ))}
       </div>
