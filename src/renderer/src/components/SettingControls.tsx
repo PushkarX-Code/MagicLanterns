@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { ChevronRight, ChevronsUpDown } from 'lucide-react'
 import type { UseFocusableConfig } from '@noriginmedia/norigin-spatial-navigation'
 import { FocusContext, useFocus } from '../focus/focus'
@@ -51,28 +51,60 @@ export function Section({ title, children, footer }: { title?: string; children:
   )
 }
 
+/** While a switch or selector travels, its knob turns to clear glass for a moment, then settles. */
+function useTravel(ms = 560): [boolean, () => void] {
+  const [moving, setMoving] = useState(false)
+  const timer = useRef(0)
+  return [
+    moving,
+    () => {
+      window.clearTimeout(timer.current)
+      setMoving(true)
+      timer.current = window.setTimeout(() => setMoving(false), ms)
+    }
+  ]
+}
+
 export function Toggle({ value, onChange, ...text }: RowText & { value: boolean; onChange: (v: boolean) => void }) {
-  const { ref, focused, pointer } = useRow({ onEnterPress: () => onChange(!value) })
+  const [moving, travel] = useTravel()
+  const flip = (): void => {
+    travel()
+    onChange(!value)
+  }
+  const { ref, focused, pointer } = useRow({ onEnterPress: flip })
   return (
-    <div ref={ref} className={`set-row ${focused ? 'is-focused' : ''}`} onClick={() => onChange(!value)} {...pointer}>
+    <div ref={ref} className={`set-row ${focused ? 'is-focused' : ''}`} onClick={flip} {...pointer}>
       <Text {...text} />
-      <span className={`switch ${value ? 'is-on' : ''}`}>
+      <span className={`switch ${value ? 'is-on' : ''} ${moving ? 'is-moving' : ''}`}>
         <span />
       </span>
     </div>
   )
 }
 
-/** Segmented control for 2–4 short options. Enter cycles; left/right stay free for navigation. */
+/** Segmented control for 2–4 short options. Enter cycles; left/right stay free for navigation. A glass bead slides to the choice. */
 export function Choice<T extends string>({ value, options, onChange, ...text }: RowText & { value: T; options: { id: T; label: string }[]; onChange: (v: T) => void }) {
-  const next = (): void => onChange(options[(options.findIndex((o) => o.id === value) + 1) % options.length].id)
+  const [moving, travel] = useTravel()
+  const pick = (id: T): void => {
+    if (id === value) return
+    travel()
+    onChange(id)
+  }
+  const next = (): void => pick(options[(options.findIndex((o) => o.id === value) + 1) % options.length].id)
   const { ref, focused, pointer } = useRow({ onEnterPress: next })
+  const seg = useRef<HTMLDivElement>(null)
+  const [bead, setBead] = useState<{ left: number; width: number } | null>(null)
+  useLayoutEffect(() => {
+    const el = seg.current?.querySelector<HTMLElement>('.seg-btn.is-active')
+    if (el) setBead({ left: el.offsetLeft, width: el.offsetWidth })
+  }, [value])
   return (
     <div ref={ref} className={`set-row ${focused ? 'is-focused' : ''}`} {...pointer}>
       <Text {...text} />
-      <div className="seg">
+      <div ref={seg} className={`seg ${moving ? 'is-moving' : ''}`}>
+        {bead && <span className="seg-bead" style={{ left: bead.left, width: bead.width }} />}
         {options.map((o) => (
-          <button key={o.id} className={`seg-btn ${o.id === value ? 'is-active' : ''}`} onClick={() => onChange(o.id)}>
+          <button key={o.id} className={`seg-btn ${o.id === value ? 'is-active' : ''}`} onClick={() => pick(o.id)}>
             {o.label}
           </button>
         ))}
