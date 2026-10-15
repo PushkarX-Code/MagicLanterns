@@ -45,11 +45,13 @@ Every image is the running app, with real film data and artwork.
 
 **Cinema Mode**
 
+![Cinema Mode, the way in](docs/showcase/cinema-opening.webp)
+
 ![Cinema Mode](docs/showcase/cinema.webp)
 
 ![Cinema Mode, playing](docs/showcase/cinema-light.webp)
 
-Some things are better seen than described. Find it in the sidebar, and dim the lights.
+Some things are better seen than described, and heard: ▶ [watch it with sound](docs/showcase/cinema-mode.mp4). Then find it in the sidebar, and dim the lights.
 
 **Light theme**
 

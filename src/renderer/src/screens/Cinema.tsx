@@ -1,9 +1,12 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, AudioLines, CornerDownLeft, Play } from 'lucide-react'
 import type { MediaItem } from '@shared/types'
 import { Lantern } from '../components/Lantern'
 import { MetaLine, primaryFile } from '../components/Meta'
 import { SoundStage } from '../components/SoundStage'
+import { CinemaIntro } from '../components/CinemaIntro'
+import { useSettings } from '../state/settings'
+import { cinemaSound } from '../lib/cinemaSound'
 import { ScreenActive } from '../focus/focus'
 import { api } from '../lib/api'
 import { useAsync } from '../lib/useAsync'
@@ -17,7 +20,14 @@ import { gsap, d } from '../design/motion'
 export function CinemaScreen() {
   const { data } = useAsync(() => api.getHome(), [])
   const items = data?.hero ?? []
-  return <div className="cinema">{items.length > 0 && <Lobby items={items} />}</div>
+  // The opening plays once per visit, while the lobby's films load behind it.
+  const [intro, setIntro] = useState(() => useSettings.getState().settings?.cinemaIntro ?? true)
+  return (
+    <div className="cinema">
+      {!intro && items.length > 0 && <Lobby items={items} />}
+      {intro && <CinemaIntro onDone={() => setIntro(false)} />}
+    </div>
+  )
 }
 
 function Clock() {
@@ -56,30 +66,47 @@ function Lobby({ items }: { items: MediaItem[] }) {
   const back = useNav((s) => s.back)
   const item = items[index]
 
-  // Lights down: the screen opens from a thin line of light, then the lobby rises into place.
-  useEffect(() => {
+  // The lights come up: the picture develops out of black, then the lobby settles in around it.
+  // Set before the first paint (layout effect, and hidden in CSS), so nothing shows before its fade.
+  // (Posters fade through their artwork, not their own opacity, which the strip animates on its own.)
+  useLayoutEffect(() => {
     const q = gsap.utils.selector(root)
     const tl = gsap.timeline()
-    tl.fromTo(root.current, { opacity: 0 }, { opacity: 1, duration: d(0.6), ease: 'power1.out' })
-      .fromTo(q('.cine-backdrop'), { clipPath: 'inset(49.6% 0 49.6% 0)', filter: 'brightness(2.2)' }, { clipPath: 'inset(0% 0 0% 0)', filter: 'brightness(1)', duration: d(1.8), ease: 'expo.inOut' })
-      .fromTo(q('.cine-top'), { opacity: 0 }, { opacity: 1, duration: d(1.2), ease: 'power1.out' }, '-=0.3')
-      .fromTo(q('.cine-feature > *'), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: d(1.2), ease: 'power3.out', stagger: 0.12 }, '<')
-      .fromTo(q('.cine-poster'), { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: d(1.2), ease: 'power3.out', stagger: 0.07, clearProps: 'opacity' }, '<0.2')
-      .fromTo(q('.cine-keys'), { opacity: 0 }, { opacity: 1, duration: d(1), ease: 'power1.out' }, '<0.5')
+    tl.fromTo(root.current, { opacity: 0 }, { opacity: 1, duration: d(0.8), ease: 'power1.out' })
+      .fromTo(q('.cine-backdrop'), { opacity: 0, scale: 1.06 }, { opacity: 1, scale: 1, duration: d(2.2), ease: 'power2.out' }, 0)
+      .fromTo(q('.cine-top'), { opacity: 0 }, { opacity: 1, duration: d(1.2), ease: 'power1.out' }, 0.5)
+      .fromTo(q('.cine-feature > *'), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: d(1.2), ease: 'power3.out', stagger: 0.12 }, 0.6)
+      .fromTo(q('.cine-poster'), { y: 40 }, { y: 0, duration: d(1.2), ease: 'power3.out', stagger: 0.07 }, 0.8)
+      .fromTo(q('.cine-poster img'), { opacity: 0 }, { opacity: 1, duration: d(1), ease: 'power1.out', stagger: 0.07 }, 0.8)
+      .fromTo(q('.cine-keys'), { opacity: 0 }, { opacity: 1, duration: d(1), ease: 'power1.out' }, 1.4)
     return () => {
       tl.kill()
     }
   }, [])
 
   // Back from a film: the lobby's own lights come up again.
+  const returned = useRef(false)
   useEffect(() => {
     if (!active || !root.current) return
     busy.current = false
+    // The first arrival belongs to the entrance above; only a return from a film lifts the lights here.
+    if (!returned.current) return void (returned.current = true)
     if (Number(gsap.getProperty(root.current, 'opacity')) < 1) gsap.to(root.current, { opacity: 1, duration: d(1.4), ease: 'power1.out' })
   }, [active])
 
-  const pick = (i: number): void => {
+  /** Choosing a film: the poster gives under the press, springs up into place and catches a sweep of light. */
+  const pick = (i: number, pressed = false): void => {
     if (i === index) return
+    const q = gsap.utils.selector(root)
+    const poster = q('.cine-poster')[i]
+    if (poster) {
+      gsap
+        .timeline()
+        .to(poster, { scale: pressed ? 0.92 : 1.03, duration: pressed ? 0.12 : 0.18, ease: 'power2.out' })
+        .to(poster, { scale: 1, duration: 0.9, ease: 'elastic.out(1, 0.5)' })
+      cinemaSound.switchFilm()
+      gsap.fromTo(poster.querySelector('.cine-sheen'), { xPercent: -140, opacity: 0.7 }, { xPercent: 140, opacity: 0, duration: 0.9, ease: 'power2.out', delay: pressed ? 0.1 : 0 })
+    }
     setIndex(i)
     setLayers((l) => [...l.slice(-1), { key: (l.at(-1)?.key ?? 0) + 1, item: items[i] }])
   }
@@ -99,7 +126,16 @@ function Lobby({ items }: { items: MediaItem[] }) {
     busy.current = true
     gsap.to(root.current, { opacity: 0, duration: d(1), ease: 'power1.inOut', onComplete: then })
   }
-  const start = (): void => fadeOut(() => push({ name: 'player', itemId: item.id, cinema: true }))
+  const start = (): void => {
+    if (busy.current) return
+    cinemaSound.startShow()
+    fadeOut(() => push({ name: 'player', itemId: item.id, cinema: true }))
+  }
+  const leave = (): void => {
+    if (busy.current) return
+    cinemaSound.leave()
+    fadeOut(back)
+  }
 
   useEffect(() => {
     if (!active || sound) return
@@ -107,7 +143,7 @@ function Lobby({ items }: { items: MediaItem[] }) {
       if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') pick((index + (e.key === 'ArrowRight' ? 1 : -1) + items.length) % items.length)
       else if (e.key === 'Enter') start()
       else if (e.key.toLowerCase() === 's') setSound(true)
-      else if (e.key === 'Escape' || e.key === 'Backspace') fadeOut(back)
+      else if (e.key === 'Escape' || e.key === 'Backspace') leave()
       else return
       e.preventDefault()
       e.stopImmediatePropagation()
@@ -151,8 +187,9 @@ function Lobby({ items }: { items: MediaItem[] }) {
       </section>
       <div className="cine-strip">
         {items.map((it, i) => (
-          <button key={it.id} className={`cine-poster ${i === index ? 'is-current' : ''}`} onClick={() => pick(i)}>
+          <button key={it.id} className={`cine-poster ${i === index ? 'is-current' : ''}`} onClick={() => pick(i, true)}>
             <img src={img(it.poster, 'w342') ?? undefined} alt={it.title} />
+            <span className="cine-sheen" />
           </button>
         ))}
       </div>

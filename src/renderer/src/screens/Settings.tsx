@@ -61,7 +61,7 @@ interface PaneProps {
 }
 
 // ---------- Cinema Mode ----------
-const CINEMA_KEYS = ['cinemaMode', 'ambientLight', 'spatialHeadphones', 'downmix', 'dialogueLift', 'nightListening'] as const
+const CINEMA_KEYS = ['cinemaMode', 'cinemaIntro', 'cinemaSounds', 'ambientLight', 'spatialHeadphones', 'downmix', 'dialogueLift', 'nightListening'] as const
 type Sound = 'theatre' | 'spatial' | 'stereo'
 
 function CinemaPane({ s, set, update }: PaneProps) {
@@ -71,6 +71,8 @@ function CinemaPane({ s, set, update }: PaneProps) {
     <>
       <Section title="Cinema Mode">
         <Toggle label="Show in Sidebar" hint="The big-screen lobby, opened from the sidebar." value={s.cinemaMode} onChange={set('cinemaMode')} />
+        <Toggle label="Opening Animation" hint="A few seconds of light as you step into Cinema Mode." value={s.cinemaIntro} onChange={set('cinemaIntro')} />
+        <Toggle label="Sounds" hint="Music for the opening, and soft sounds as you move between films." value={s.cinemaSounds} onChange={set('cinemaSounds')} />
         <Toggle label="Ambient Light" hint="The film's own light fills the black bars around the picture." value={s.ambientLight} onChange={set('ambientLight')} />
       </Section>
       <Section title="Sound Stage" footer="Sound Stage applies to every film from your drives, in Cinema Mode or not.">

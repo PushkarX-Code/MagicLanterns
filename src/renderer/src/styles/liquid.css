@@ -1,0 +1,190 @@
+/* ---------- Liquid glass (trial on Settings) ----------
+ * Solid page, solid panels, no drop shadows, no gradients, no frost. Depth comes from brightness steps and a
+ * hairline edge. Glass is kept for the moments that move: a switch knob or a selector bead turns to clear glass
+ * while it travels, stretching like a drop of water, then settles back to solid. */
+.settings {
+  --lg-page: #0a0a0b;
+  --lg-panel: #161618;
+  --lg-edge: inset 0 0 0 1px rgb(255 255 255 / 0.07), inset 0 1px 0 rgb(255 255 255 / 0.05);
+  --lg-divider: rgb(255 255 255 / 0.07);
+  --lg-focus: #212124;
+  --lg-focus-edge: inset 0 0 0 1px rgb(255 255 255 / 0.14);
+  --lg-channel: #2a2a2e;
+  --lg-bead: #3b3b40;
+  --lg-bead-text: #fff;
+  --lg-knob: #fff;
+  --lg-knob-edge: inset 0 0 0 0.5px rgb(0 0 0 / 0.08);
+  --lg-lens: rgb(255 255 255 / 0.1);
+  --lg-lens-edge: inset 0 0 0 1.5px rgb(255 255 255 / 0.85), inset 0 0 9px rgb(255 255 255 / 0.32);
+  --lg-ease: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+:root[data-theme='light'] .settings {
+  --lg-page: #f2f2f6;
+  --lg-panel: #fff;
+  --lg-edge: inset 0 0 0 1px rgb(0 0 0 / 0.05);
+  --lg-divider: rgb(0 0 0 / 0.07);
+  --lg-focus: #f5f5f8;
+  --lg-focus-edge: inset 0 0 0 1px rgb(0 0 0 / 0.09);
+  --lg-channel: #e4e4e9;
+  --lg-bead: #fff;
+  --lg-bead-text: #16161a;
+  --lg-knob: #fff;
+  --lg-knob-edge: inset 0 0 0 0.5px rgb(0 0 0 / 0.1);
+  --lg-lens: rgb(255 255 255 / 0.32);
+  --lg-lens-edge: inset 0 0 0 1.5px rgb(255 255 255 / 0.95), inset 0 0 0 2.5px rgb(0 0 0 / 0.06), inset 0 0 9px rgb(255 255 255 / 0.6);
+}
+
+/* A solid page under the settings, in place of the film-coloured ambience. */
+.settings::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--lg-page);
+  pointer-events: none;
+}
+.settings > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Panels: one step brighter than the page, a hairline edge, nothing else. */
+.settings .set-group.glass {
+  border-radius: 26px;
+  background: var(--lg-panel);
+  background-image: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: var(--lg-edge);
+}
+.settings .set-row {
+  border-radius: 20px;
+  transition:
+    background 0.35s ease,
+    box-shadow 0.35s ease;
+}
+.settings .set-row + .set-row {
+  box-shadow: 0 -1px 0 var(--lg-divider);
+}
+.settings .set-row.is-focused {
+  background: var(--lg-focus);
+  box-shadow: var(--lg-focus-edge);
+}
+
+/* Tabs: the chosen one is a panel of its own; focus is a brighter one. */
+.settings .set-tab {
+  border-radius: 18px;
+  transition:
+    background 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+.settings .set-tab.is-selected {
+  color: var(--text);
+  background: var(--lg-panel);
+  box-shadow: var(--lg-edge);
+}
+.settings .set-tab.is-focused,
+:root[data-theme='light'] .settings .set-tab.is-focused {
+  color: var(--text);
+  background: var(--lg-focus);
+  box-shadow: var(--lg-focus-edge);
+}
+.settings .set-tab.is-focused svg {
+  color: var(--amber);
+}
+
+/* Selector: a channel with a bead that slides to the choice and turns to glass on the way. */
+.settings .seg {
+  position: relative;
+  background: var(--lg-channel);
+  box-shadow: none;
+}
+.settings .seg-btn {
+  position: relative;
+  z-index: 1;
+  transition: color 0.35s ease;
+}
+.settings .seg-btn.is-active,
+:root[data-theme='light'] .settings .seg-btn.is-active {
+  background: none;
+  box-shadow: none;
+  color: var(--lg-bead-text);
+}
+.settings .seg-bead {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: var(--r-pill);
+  background: var(--lg-bead);
+  box-shadow: var(--lg-knob-edge);
+  transition:
+    left 0.55s var(--lg-ease),
+    width 0.55s var(--lg-ease),
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.3s ease;
+}
+.settings .seg.is-moving .seg-bead {
+  background: var(--lg-lens);
+  box-shadow: var(--lg-lens-edge);
+  -webkit-backdrop-filter: brightness(1.06);
+  backdrop-filter: brightness(1.06);
+  transform: scaleY(1.22);
+}
+
+/* Switch: solid track, solid knob at rest. Flipping it, the knob stretches into a lens of clear glass that
+ * shows the track through it, travels, and settles back to solid on the other side. */
+.settings .switch {
+  background: var(--lg-channel);
+  box-shadow: none;
+  transition: background 0.45s ease;
+}
+.settings .switch.is-on {
+  background: var(--amber);
+}
+.settings .switch span {
+  top: 3px;
+  width: 25px;
+  height: 25px;
+  border-radius: 999px;
+  background: var(--lg-knob);
+  box-shadow: var(--lg-knob-edge);
+  transition:
+    transform 0.55s var(--lg-ease),
+    width 0.3s var(--lg-ease),
+    height 0.3s var(--lg-ease),
+    top 0.3s var(--lg-ease),
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.settings .switch.is-on span {
+  transform: translateX(21px);
+}
+.settings .switch.is-moving span {
+  top: -1px;
+  width: 36px;
+  height: 33px;
+  background: var(--lg-lens);
+  box-shadow: var(--lg-lens-edge);
+  -webkit-backdrop-filter: brightness(1.06);
+  backdrop-filter: brightness(1.06);
+}
+.settings .switch.is-on.is-moving span {
+  transform: translateX(13px);
+}
+
+/* Buttons: flat fills told apart by brightness, a hairline edge, no shadow. */
+.settings .pill-solid {
+  box-shadow: none;
+}
+.settings .pill-glass {
+  background: var(--lg-channel);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: var(--lg-edge);
+}
+:root[data-theme='light'] .settings .pill-solid {
+  background: #16161a;
+  color: #fff;
+}
