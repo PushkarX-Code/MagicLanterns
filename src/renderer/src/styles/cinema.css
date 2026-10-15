@@ -471,7 +471,7 @@
   background: #000;
 }
 .ci-svg {
-  width: min(460px, 42vw);
+  width: min(560px, 48vw);
   overflow: visible;
 }
 .ci-wave {
