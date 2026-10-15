@@ -57,23 +57,25 @@ export function AboutScreen() {
             <strong>$1</strong> genuinely helps: it pays for the tools, the testing, and the late nights that turn your ideas into the next
             update.
           </p>
-          <div className="info-actions">
-            <PillButton focusKey="INFO-SUPPORT" icon={Coffee} onPress={support}>
-              Support on Ko-fi
-            </PillButton>
-            <a
-              className="info-link"
-              href={KOFI}
-              onClick={(e) => {
-                e.preventDefault()
-                support()
-              }}
-            >
-              ko-fi.com/buymeacofi
-            </a>
-          </div>
-          <div className="info-thanks">
-            <Heart size={14} strokeWidth={0} fill="currentColor" /> Thank you for watching, and for keeping the lantern lit.
+          <div className="info-foot">
+            <div className="info-actions">
+              <PillButton focusKey="INFO-SUPPORT" icon={Coffee} onPress={support}>
+                Support on Ko-fi
+              </PillButton>
+              <a
+                className="info-link"
+                href={KOFI}
+                onClick={(e) => {
+                  e.preventDefault()
+                  support()
+                }}
+              >
+                ko-fi.com/buymeacofi
+              </a>
+            </div>
+            <div className="info-thanks">
+              <Heart size={14} strokeWidth={0} fill="currentColor" /> Thank you for watching, and for keeping the lantern lit.
+            </div>
           </div>
         </section>
 
@@ -87,30 +89,28 @@ export function AboutScreen() {
             The magic lantern was the first projector: a light, a painted glass slide, and a dark room turned into a story. Magic Lanterns does
             the same to a folder of files. Every film in your library becomes a lit glass slide waiting to be projected.
           </p>
-        </section>
-
-        <section className="info-card glass">
-          <div className="info-kicker">Updates</div>
-          <h2 className="info-title">Always getting better</h2>
-          <p>
-            New versions arrive on their own. When one is ready you'll see what's new the next time you open the app, never in the middle of a
-            film, and you choose when to install it.
-          </p>
-          <div className="info-actions">
-            <PillButton variant="glass" icon={RefreshCw} onPress={check} disabled={checking}>
-              {checking ? 'Checking…' : 'Check for Updates'}
-            </PillButton>
+          <div className="info-credits">
+            <p className="info-small">
+              This product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability from JustWatch via TMDB. Includes
+              FFmpeg, licensed under the GPL (source at ffmpeg.org). Preview film: Sintel © Blender Foundation, CC BY 3.0.
+            </p>
+            <p className="info-small">Made by Pushkar.</p>
           </div>
-          {status && <div className="info-status">{status}</div>}
         </section>
 
-        <section className="info-card glass">
-          <div className="info-kicker">Credits</div>
-          <p className="info-small">
-            This product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability from JustWatch via TMDB. Includes
-            FFmpeg, licensed under the GPL (source at ffmpeg.org). Preview film: Sintel © Blender Foundation, CC BY 3.0.
-          </p>
-          <p className="info-small">Made by Pushkar.</p>
+        <section className="info-card info-updates glass">
+          <div className="info-updates-text">
+            <div className="info-kicker">Updates</div>
+            <h2 className="info-title">Always getting better</h2>
+            <p>
+              New versions arrive on their own. When one is ready you'll see what's new the next time you open the app, never in the middle of
+              a film, and you choose when to install it.
+            </p>
+            {status && <div className="info-status">{status}</div>}
+          </div>
+          <PillButton variant="glass" icon={RefreshCw} onPress={check} disabled={checking}>
+            {checking ? 'Checking…' : 'Check for Updates'}
+          </PillButton>
         </section>
       </div>
     </Screen>
