@@ -227,6 +227,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
   const [cues, setCues] = useState<Cue[] | null>(null)
   const [subClock, setSubClock] = useState(0)
   const [thumb, setThumb] = useState<{ t: number; src: string } | null>(null)
+  const [catchingUp, setCatchingUp] = useState(false)
   const [visible, setVisible] = useState(true)
   const [menu, setMenu] = useState<Menu>(null)
   const [scrub, setScrub] = useState<{ x: number; t: number; dragging: boolean } | null>(null)
@@ -840,7 +841,11 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
     if (!v || !src) return
     setDuration(isStream() ? engine.current!.plan.duration : Number.isFinite(v.duration) ? v.duration : Infinity)
     setReady(true)
-    v.playbackRate = speed
+    // A stream that began on an earlier keyframe races, unseen and silent, to the moment that was asked for.
+    const racing = pendingSkip.current != null
+    setCatchingUp(racing)
+    v.muted = racing || muted
+    v.playbackRate = racing ? 16 : speed
     // Always pick up where you left off; scrub back to the start if you want it. Fresh plays (next episode) start at 0.
     // Streams already start at the right spot.
     const f = src.resumeFraction
@@ -1099,7 +1104,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
             <video
               ref={video}
               className="pl-video"
-              style={videoStyle(cfg)}
+              style={{ ...videoStyle(cfg), opacity: catchingUp ? 0 : undefined }}
               crossOrigin={/^ml-file:|^http:\/\/127\.0\.0\.1:/.test(url) ? 'anonymous' : undefined}
               src={url}
               preload="auto"
@@ -1117,9 +1122,12 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
               onTimeUpdate={(e) => {
                 const v = e.currentTarget
                 const skip = pendingSkip.current
-                if (skip != null && v.buffered.length && v.buffered.end(v.buffered.length - 1) > skip + 0.3) {
+                if (skip != null && (v.currentTime >= skip - 0.05 || (v.buffered.length && v.buffered.end(v.buffered.length - 1) > skip + 0.3))) {
                   pendingSkip.current = null
-                  v.currentTime = skip
+                  if (v.currentTime < skip) v.currentTime = skip
+                  v.playbackRate = speed
+                  v.muted = muted
+                  setCatchingUp(false)
                 }
                 setTime(position())
                 if (v.buffered.length) setBuffered((isStream() ? engine.current!.offset : 0) + v.buffered.end(v.buffered.length - 1))
@@ -1127,7 +1135,7 @@ export function Player({ itemId, episodeId, fileId, url: streamUrl, title: strea
               }}
               onVolumeChange={(e) => {
                 setVolume(e.currentTarget.volume)
-                setMuted(e.currentTarget.muted)
+                if (pendingSkip.current == null) setMuted(e.currentTarget.muted) // silenced while catching up isn't the viewer's mute
               }}
               onEnded={onFinished}
               onClick={toggle}
