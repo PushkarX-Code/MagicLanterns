@@ -1,8 +1,15 @@
-# Builds the Windows installer and publishes it as a GitHub Release.
-# Installers go to the public MagicLanterns-Releases repo (installers only, no code), so this repo stays private
-# while downloads and in-app updates work for everyone. That needs the RELEASES_TOKEN secret: a fine-grained
-# token with Contents: Read and write on MagicLanterns-Releases. Without it the release stays in this repo.
-# Run it from the Actions tab (Release → Run workflow) or by pushing a tag like v0.1.0.
+# Builds Magic Lanterns for Windows: the installer (direct download, updates itself) and the Microsoft Store
+# package (updated by the Store). Pushing a tag like v1.0.0 builds and publishes; running it by hand from the
+# Actions tab can build only, to check a release before it goes out.
+#
+# Publishing: installers go to the public MagicLanterns-Releases repo (installers only, no code) when the
+# RELEASES_TOKEN secret exists (a fine-grained token with Contents: Read and write on that repo); otherwise
+# the release stays in this repo. The Store package is never published here: download it from the run's
+# artifacts and upload it in Partner Center.
+#
+# Store identity: set the repository variables STORE_IDENTITY_NAME, STORE_PUBLISHER and STORE_PUBLISHER_NAME
+# to the values in Partner Center → Product identity. Without them the package uses placeholders that the
+# Store will reject (fine for a test build).
 name: Release
 
 on:
@@ -11,13 +18,17 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag to publish, e.g. v0.2.0 (must be higher than the last release for updates to reach people)'
+        description: 'Version, e.g. v1.0.1 (must be higher than the last release for updates to reach people)'
         required: true
-        default: 'v0.1.0'
+        default: 'v1.0.0'
       notes:
-        description: 'What this update brings (shown in the in-app update prompt). Leave empty to list merged changes.'
+        description: 'What this update brings (shown in the in-app update prompt)'
         required: false
         default: ''
+      publish:
+        description: 'Publish the release (untick to only build and download the files)'
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -26,55 +37,84 @@ jobs:
   windows:
     runs-on: windows-latest
     env:
+      VERSION: ${{ github.event.inputs.version || github.ref_name }}
+      PUBLISH: ${{ github.event_name == 'push' || github.event.inputs.publish == 'true' }}
       # With META_PROXY_URL set (the deployed worker/), no key is built into the app at all.
       # Without it, the keys are built in scrambled. Both are optional; the library works without them.
       MAIN_VITE_META_PROXY_URL: ${{ secrets.META_PROXY_URL }}
       MAIN_VITE_TMDB_API_KEY: ${{ secrets.META_PROXY_URL == '' && secrets.TMDB_API_KEY || '' }}
       MAIN_VITE_OMDB_API_KEY: ${{ secrets.META_PROXY_URL == '' && secrets.OMDB_API_KEY || '' }}
+      RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
       - run: npm ci
-      # The installer, the in-app version and the update feed all take their version from the tag.
+
+      # The installer, the Store package, the in-app version and the update feed all take the tag's version.
       - name: Stamp version
         shell: bash
-        run: |
-          TAG="${{ github.event.inputs.version || github.ref_name }}"
-          npm version "${TAG#v}" --no-git-tag-version --allow-same-version
+        run: npm version "${VERSION#v}" --no-git-tag-version --allow-same-version
+
       - run: npm run typecheck
+      - run: npm test
       - run: npx electron-vite build
-      - run: npx electron-builder --win --publish never
-      - name: Pick where the release goes
-        id: target
+
+      - name: Build installer and Store package
         shell: bash
         env:
-          RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+          STORE_IDENTITY_NAME: ${{ vars.STORE_IDENTITY_NAME }}
+          STORE_PUBLISHER: ${{ vars.STORE_PUBLISHER }}
+          STORE_PUBLISHER_NAME: ${{ vars.STORE_PUBLISHER_NAME }}
         run: |
-          if [ -n "$RELEASES_TOKEN" ]; then echo "public=true" >> "$GITHUB_OUTPUT"; else echo "public=false" >> "$GITHUB_OUTPUT"; fi
+          args=()
+          [ -n "$STORE_IDENTITY_NAME" ] && args+=("-c.appx.identityName=$STORE_IDENTITY_NAME")
+          [ -n "$STORE_PUBLISHER" ] && args+=("-c.appx.publisher=$STORE_PUBLISHER")
+          [ -n "$STORE_PUBLISHER_NAME" ] && args+=("-c.appx.publisherDisplayName=$STORE_PUBLISHER_NAME")
+          npx electron-builder --win --publish never "${args[@]}"
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: magic-lanterns-${{ env.VERSION }}
+          path: |
+            release/MagicLanterns-Setup.exe
+            release/MagicLanterns-Store.appx
+          if-no-files-found: error
+
       # latest.yml and the blockmap let installed copies find, verify and download only what changed.
       - name: Publish to MagicLanterns-Releases
-        if: steps.target.outputs.public == 'true'
+        if: env.PUBLISH == 'true' && env.RELEASES_TOKEN != ''
         uses: softprops/action-gh-release@v2
         with:
           repository: PushkarX-Code/MagicLanterns-Releases
           token: ${{ secrets.RELEASES_TOKEN }}
-          tag_name: ${{ github.event.inputs.version || github.ref_name }}
-          name: Magic Lanterns ${{ github.event.inputs.version || github.ref_name }}
+          tag_name: ${{ env.VERSION }}
+          name: Magic Lanterns ${{ env.VERSION }}
           body: ${{ github.event.inputs.notes || 'Bug fixes and improvements.' }}
           files: |
             release/MagicLanterns-Setup.exe
             release/MagicLanterns-Setup.exe.blockmap
             release/latest.yml
             docs/install.ps1
+
+      # The Store needs a public privacy policy page; it lives in the releases repo next to the downloads.
+      - name: Publish the privacy policy
+        if: env.PUBLISH == 'true' && env.RELEASES_TOKEN != ''
+        shell: bash
+        run: |
+          api=https://api.github.com/repos/PushkarX-Code/MagicLanterns-Releases/contents/PRIVACY.md
+          sha=$(curl -fsS -H "Authorization: Bearer $RELEASES_TOKEN" "$api" | node -pe "JSON.parse(require('fs').readFileSync(0)).sha" 2>/dev/null || true)
+          body=$(node -e "process.stdout.write(JSON.stringify({ message: 'Privacy policy', content: require('fs').readFileSync('docs/PRIVACY.md').toString('base64'), ...(process.argv[1] ? { sha: process.argv[1] } : {}) }))" "$sha")
+          curl -fsS -X PUT -H "Authorization: Bearer $RELEASES_TOKEN" "$api" -d "$body" > /dev/null
+
       - name: Publish here (no RELEASES_TOKEN yet)
-        if: steps.target.outputs.public != 'true'
+        if: env.PUBLISH == 'true' && env.RELEASES_TOKEN == ''
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event.inputs.version || github.ref_name }}
-          name: Magic Lanterns ${{ github.event.inputs.version || github.ref_name }}
+          tag_name: ${{ env.VERSION }}
+          name: Magic Lanterns ${{ env.VERSION }}
           target_commitish: ${{ github.sha }}
           body: ${{ github.event.inputs.notes }}
           generate_release_notes: ${{ github.event.inputs.notes == '' }}
