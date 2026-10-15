@@ -13,6 +13,7 @@
 .cine-lobby {
   position: absolute;
   inset: 0;
+  opacity: 0; /* the entrance raises it */
 }
 .cine-backdrop {
   position: absolute;

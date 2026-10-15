@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, AudioLines, CornerDownLeft, Play } from 'lucide-react'
 import type { MediaItem } from '@shared/types'
 import { Lantern } from '../components/Lantern'
@@ -67,8 +67,9 @@ function Lobby({ items }: { items: MediaItem[] }) {
   const item = items[index]
 
   // The lights come up: the picture develops out of black, then the lobby settles in around it.
+  // Set before the first paint (layout effect, and hidden in CSS), so nothing shows before its fade.
   // (Posters fade through their artwork, not their own opacity, which the strip animates on its own.)
-  useEffect(() => {
+  useLayoutEffect(() => {
     const q = gsap.utils.selector(root)
     const tl = gsap.timeline()
     tl.fromTo(root.current, { opacity: 0 }, { opacity: 1, duration: d(0.8), ease: 'power1.out' })
@@ -84,9 +85,12 @@ function Lobby({ items }: { items: MediaItem[] }) {
   }, [])
 
   // Back from a film: the lobby's own lights come up again.
+  const returned = useRef(false)
   useEffect(() => {
     if (!active || !root.current) return
     busy.current = false
+    // The first arrival belongs to the entrance above; only a return from a film lifts the lights here.
+    if (!returned.current) return void (returned.current = true)
     if (Number(gsap.getProperty(root.current, 'opacity')) < 1) gsap.to(root.current, { opacity: 1, duration: d(1.4), ease: 'power1.out' })
   }, [active])
 
