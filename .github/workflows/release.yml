@@ -1,4 +1,7 @@
 # Builds the Windows installer and publishes it as a GitHub Release.
+# Installers go to the public MagicLanterns-Releases repo (installers only, no code), so this repo stays private
+# while downloads and in-app updates work for everyone. That needs the RELEASES_TOKEN secret: a fine-grained
+# token with Contents: Read and write on MagicLanterns-Releases. Without it the release stays in this repo.
 # Run it from the Actions tab (Release → Run workflow) or by pushing a tag like v0.1.0.
 name: Release
 
@@ -44,14 +47,36 @@ jobs:
       - run: npm run typecheck
       - run: npx electron-vite build
       - run: npx electron-builder --win --publish never
-      - uses: softprops/action-gh-release@v2
+      - name: Pick where the release goes
+        id: target
+        shell: bash
+        env:
+          RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+        run: |
+          if [ -n "$RELEASES_TOKEN" ]; then echo "public=true" >> "$GITHUB_OUTPUT"; else echo "public=false" >> "$GITHUB_OUTPUT"; fi
+      # latest.yml and the blockmap let installed copies find, verify and download only what changed.
+      - name: Publish to MagicLanterns-Releases
+        if: steps.target.outputs.public == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          repository: PushkarX-Code/MagicLanterns-Releases
+          token: ${{ secrets.RELEASES_TOKEN }}
+          tag_name: ${{ github.event.inputs.version || github.ref_name }}
+          name: Magic Lanterns ${{ github.event.inputs.version || github.ref_name }}
+          body: ${{ github.event.inputs.notes || 'Bug fixes and improvements.' }}
+          files: |
+            release/MagicLanterns-Setup.exe
+            release/MagicLanterns-Setup.exe.blockmap
+            release/latest.yml
+      - name: Publish here (no RELEASES_TOKEN yet)
+        if: steps.target.outputs.public != 'true'
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.version || github.ref_name }}
           name: Magic Lanterns ${{ github.event.inputs.version || github.ref_name }}
           target_commitish: ${{ github.sha }}
           body: ${{ github.event.inputs.notes }}
           generate_release_notes: ${{ github.event.inputs.notes == '' }}
-          # latest.yml and the blockmap let installed copies find and verify the update.
           files: |
             release/MagicLanterns-Setup.exe
             release/MagicLanterns-Setup.exe.blockmap

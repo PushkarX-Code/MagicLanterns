@@ -3,7 +3,7 @@
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue' # the progress bar makes Invoke-WebRequest very slow
 
-$url = 'https://github.com/PushkarX-Code/MagicLanterns/releases/latest/download/MagicLanterns-Setup.exe'
+$url = 'https://github.com/PushkarX-Code/MagicLanterns-Releases/releases/latest/download/MagicLanterns-Setup.exe'
 $installer = Join-Path $env:TEMP 'MagicLanterns-Setup.exe'
 
 Write-Host 'Downloading Magic Lanterns...' -ForegroundColor Yellow
