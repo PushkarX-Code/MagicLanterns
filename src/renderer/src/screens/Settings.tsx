@@ -350,12 +350,11 @@ function SubtitlesPane({ s, set }: PaneProps) {
           options={[{ id: 'off', label: 'Off' }, { id: 'forced', label: 'Forced Only', hint: 'Signs and foreign dialogue' }, ...LANGUAGES]}
           onChange={set('subtitleLanguage')}
         />
-        <Toggle label="Load Matching Subtitle Files" hint="Picks up .srt and .ass files next to the film." note={SOON} value={s.autoLoadSubs} onChange={set('autoLoadSubs')} />
-        <Picker label="Text Encoding" hint="For older subtitle files that show garbled letters." note={SOON} value={s.subtitleEncoding} options={ENCODINGS} onChange={set('subtitleEncoding')} />
+        <Toggle label="Load Matching Subtitle Files" hint="Picks up .srt and .ass files next to the film." value={s.autoLoadSubs} onChange={set('autoLoadSubs')} />
+        <Picker label="Text Encoding" hint="For older subtitle files that show garbled letters." value={s.subtitleEncoding} options={ENCODINGS} onChange={set('subtitleEncoding')} />
         <Slider
           label="Subtitle Delay"
           hint="Shift subtitles earlier or later."
-          note={SOON}
           value={s.subtitleDelay}
           min={-5000}
           max={5000}

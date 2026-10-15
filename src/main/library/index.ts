@@ -17,6 +17,7 @@ import { fixMatch, matchPending, searchCandidates } from '../meta/index.ts'
 import { download, processImage } from '../meta/native.ts'
 import { refreshRatings } from '../meta/ratings.ts'
 import { personDetails } from '../meta/person.ts'
+import { detectIntros } from './intro.ts'
 
 // The library lives in %APPDATA%/Magic Lanterns/library.db. Folders are scanned when added, at every launch
 // and whenever files arrive or leave while the app is open; only new or changed files are read again.
@@ -137,6 +138,8 @@ async function drain(): Promise<void> {
   broadcast()
   // Then fetch artwork and details for anything new; each title appears as soon as it's done.
   if (hasMetadata()) await enrich()
+  // Last, and slowest: listen for each season's opening titles so Skip Intro can offer itself.
+  await detectIntros(open(), FFMPEG, FFPROBE, changed).catch((e) => console.error('Intro detection failed', e))
   running = false
   // Folders that changed while titles were being looked up.
   if (queue.length) void drain()

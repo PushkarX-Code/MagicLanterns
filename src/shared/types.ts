@@ -37,6 +37,8 @@ export interface SubtitleTrack {
   title: string
   forced: boolean
   external: boolean
+  /** Stored as pictures (Blu-ray, DVD): can't be shown as text. */
+  picture?: boolean
 }
 
 export interface FileInfo {
@@ -53,6 +55,8 @@ export interface FileInfo {
   bitrate: number // bits per second
   audio: AudioTrack[]
   subtitles: SubtitleTrack[]
+  /** Where the opening titles run, found by comparing episodes (or from the file's chapters). */
+  intro?: { start: number; end: number }
 }
 
 export interface Progress {

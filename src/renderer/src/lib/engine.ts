@@ -490,7 +490,7 @@ export function createLibraryApi(src: LibrarySource): LanternApi {
         backdrop: ep.still ?? item.backdrop,
         resumeFraction: ep.progress && !ep.progress.watched ? ep.progress.position / ep.progress.duration : 0,
         file: ep.file,
-        intro: src.demoIntro ? { start: 4, end: 22 } : undefined,
+        intro: ep.file?.intro ?? (src.demoIntro ? { start: 4, end: 22 } : undefined),
         next: next && { itemId, episodeId: next.id, title: next.title, label: code(next), still: next.still }
       } satisfies PlaybackSource
     },

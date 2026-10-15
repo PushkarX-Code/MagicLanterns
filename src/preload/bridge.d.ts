@@ -1,4 +1,5 @@
-import type { DiscoverDetails, DiscoverList, LibraryFolder, MatchCandidate, MediaItem, PlaybackPlan, PersonDetails, PlayerCaps, ScanStatus, TrendingTitle, UpdateState } from '../shared/types'
+import type { Cue } from '../shared/subs'
+import type { DiscoverDetails, DiscoverList, LibraryFolder, MatchCandidate, MediaItem, PlaybackPlan, SubtitleTrack, PersonDetails, PlayerCaps, ScanStatus, TrendingTitle, UpdateState } from '../shared/types'
 
 export interface PickedFile {
   path: string
@@ -37,6 +38,14 @@ export interface LanternBridge {
     opts: { audio?: number; caps: PlayerCaps; settings: { downmix: boolean; deinterlace: 'off' | 'auto' | 'on'; toneMapping: 'auto' | 'off' }; session?: string; forceStream?: boolean }
   ): Promise<PlaybackPlan>
   closePlayback(session: string): Promise<void>
+  /** Where a repackaged stream can actually start for a moment (its keyframe), in seconds. */
+  snapPlayback(session: string, at: number): Promise<number>
+  /** Subtitle files sitting beside the film. */
+  listSubtitleFiles(target: { fileId?: string; path?: string }): Promise<SubtitleTrack[]>
+  /** One subtitle track as timed lines; null if it can't be read. */
+  loadSubtitles(target: { fileId?: string; path?: string }, track: { index: number; codec: string }, encoding: string): Promise<Cue[] | null>
+  /** A small still at a moment in the film, for the scrub bar while streaming. */
+  scrubFrame(target: { fileId?: string; path?: string }, at: number): Promise<string | null>
   /** Every film and show found in the library folders. */
   getLibrary(): Promise<MediaItem[]>
   /** The library changed on disk (a scan found something, a folder was removed). */

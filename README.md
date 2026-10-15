@@ -130,7 +130,7 @@ The mouse works everywhere: hover focuses, click selects, the scrubber shows fra
 | 1.5 | Home, Favorites, Files, full player controls, Settings, themes | Done |
 | 2 | Library engine: database, scanning, file details, name parsing, folder watching, screens on your real library | Done |
 | 3 | Metadata: live lookups, saved artwork, colour glow, ratings, Fix Match | Done |
-| 4 | Playback engine: every format ✓, sound tracks ✓, subtitles, scrub previews, Skip Intro, Up Next | In progress |
+| 4 | Playback engine: every format ✓, sound tracks ✓, subtitles ✓, scrub previews ✓, Skip Intro ✓, Up Next ✓ | Done |
 | 4.5 | Casting to TVs and speakers on your network | |
 | 5 | Polish: onboarding, installer | |
 
@@ -142,6 +142,8 @@ The mouse works everywhere: hover focuses, click selects, the scrubber shows fra
 - Before any folder is added, Home shows a single "Add Folder" welcome.
 
 **Every format plays.** Files your computer decodes play straight from disk. Everything else goes through the built-in engine as it plays: MKV, AVI and TS are repackaged on the fly (no quality lost, no waiting), sound the system can't decode (DTS, TrueHD, Dolby Digital) is converted keeping 5.1, and pictures it can't (10-bit anime releases, HEVC without a decoder, MPEG-2, VC-1, Dolby Vision profile 5) are converted using your graphics card when it has an encoder, with HDR tone-mapped and interlaced video cleaned up. Seeking anywhere is instant; switching to another sound track restarts at the same moment. The demo library you see in screenshots is what the app shows in a browser preview.
+
+**Subtitles, Skip Intro and Up Next.** Subtitle tracks inside the file, and .srt, .ass and .vtt files beside it (or in a Subs folder), are picked up by name and language and drawn in your chosen size, style and colour, with a delay setting and the right character set for older files. Skip Intro finds each show's opening titles by listening: the first minutes of neighbouring episodes are compared by sound, so no one has to mark them. Up Next counts down to the following episode, and the scrub bar shows a still from wherever you point.
 
 See [PLAN.md](docs/PLAN.md) for the architecture.
 
