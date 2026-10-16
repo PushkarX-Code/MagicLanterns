@@ -11,7 +11,7 @@ Everything needed to list Magic Lanterns, ready to paste into Partner Center.
    - `STORE_PUBLISHER` ← *Package/Identity/Publisher* (starts with `CN=`)
    - `STORE_PUBLISHER_NAME` ← *Package/Properties/PublisherDisplayName*
 4. Run **Actions → Release** with the next version. Download `MagicLanterns-Store.appx` from the run's artifacts and upload it under **Packages**.
-5. **Privacy policy URL**: https://github.com/PushkarX-Code/MagicLanterns-Releases/blob/main/PRIVACY.md (published by the release workflow).
+5. **Privacy policy URL**: https://magiclanterns.netlify.app/privacy.html
 6. Complete the age rating questionnaire (no user interaction, no data sharing, no purchases yet → rated for everyone).
 
 The Store signs the package, so Store installs never show the "Windows protected your PC" warning. Store copies are updated by the Store; the app's own updater switches itself off there.

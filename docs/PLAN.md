@@ -225,20 +225,9 @@ Mac version waits until everything else is done and fixed.
 
 ### A. Remote updates for users
 
-Goal: installed copies find new versions and update in one click, while the code repo stays private.
+Goal: installed copies find new versions and update in one click.
 
-How: a second, **public** repo `PushkarX-Code/MagicLanterns-Releases` that holds only installers (no code, no keys). The app's update check and the download links read from it.
-
-**You do (5 min, once):**
-1. Create an empty public repo named `MagicLanterns-Releases`.
-2. Create a fine-grained token with *Contents: Read and write* on that one repo only.
-3. Add it to this private repo as the Actions secret `RELEASES_TOKEN`.
-
-**I do:**
-1. `electron-builder.yml`: point `publish` at `MagicLanterns-Releases`.
-2. `release.yml`: on a version tag, build, then publish the installer, `latest.yml` and blockmap to the releases repo using `RELEASES_TOKEN`. Smaller "only what changed" downloads come free from the blockmap.
-3. README and `install.ps1`: download links point at the releases repo; the releases repo gets a one-paragraph README.
-4. Test the whole loop: install v1.0.0, publish v1.0.1, confirm the app offers it, downloads, restarts on the new version.
+How (changed 16 Oct): the repo is public by Pushkar's choice, so releases live in its own GitHub Releases (the separate `MagicLanterns-Releases` repo was never needed). `package.json` → `publish` points at this repo; `release.yml` publishes the installer, `latest.yml`, the blockmap and `install.ps1`; the README, `install.ps1` and the website's "Get it free" buttons download `releases/latest/download/MagicLanterns-Setup.exe`.
 
 Cost: free. Flag: without paid code signing, Windows SmartScreen still warns on the first install (updates afterwards don't).
 

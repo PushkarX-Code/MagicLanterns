@@ -87,7 +87,7 @@
     "publish": {
       "provider": "github",
       "owner": "PushkarX-Code",
-      "repo": "MagicLanterns-Releases"
+      "repo": "MagicLanterns"
     },
     "appx": {
       "applicationId": "MagicLanterns",

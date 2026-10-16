@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import type { UpdateState } from '@shared/types'
 
-// Updates come from the public MagicLanterns-Releases repo, which holds installers only. Nothing downloads or installs on its own:
+// Updates come from this repo's public GitHub Releases. Nothing downloads or installs on its own:
 // the app checks once at launch, asks, and only restarts when the person chooses to.
 
 /** Release notes arrive as HTML from GitHub; the prompt shows plain sentences. */

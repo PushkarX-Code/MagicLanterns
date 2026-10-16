@@ -6,8 +6,9 @@
 ;(() => {
   'use strict'
 
-  // Where "Get it free" goes once the Store listing is live. Until then it scrolls to the last section.
+  // Where "Get it free" goes once the Store listing is live. Until then it downloads the installer.
   const STORE_URL = ''
+  const DOWNLOAD_URL = 'https://github.com/PushkarX-Code/MagicLanterns/releases/latest/download/MagicLanterns-Setup.exe'
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
   const $ = (s, r = document) => r.querySelector(s)
@@ -248,7 +249,7 @@
       a.href = STORE_URL
       a.target = '_blank'
       a.rel = 'noopener'
-    } else a.dataset.go = '#get'
+    } else a.href = DOWNLOAD_URL
   })
 
   // The launch list: posted to the host's form handler, answered in place.
