@@ -29,6 +29,10 @@ Pushkar is a self-taught video producer (AI ads, UGC, batch videos, podcast-styl
 - Open a draft PR, then squash-merge it when approved (he authorised squash-merging my own PRs). After a merge, reset the branch: `git fetch origin main && git checkout -B <branch> origin/main && git push --force-with-lease`.
 - Never put a model name in code, commit messages, PRs or docs (beyond the required attribution lines).
 
+## Signature motion: Silk (`silk/`)
+
+All motion in every project (apps, sites, banners, films) uses Silk, Pushkar's motion engine: "things lift, glow and settle". Read `silk/MOTION.md` before animating anything. When he approves new or changed motion, update Silk in the same change (tokens/moves in `silk/silk.js`, `node silk/build.mjs`, demo, version bump, changelog). Skill: `.claude/skills/silk`.
+
 ## The app
 
 Premium Windows media player: Electron, React, Zustand, GSAP (with DrawSVG, MorphSVG, ScrollTrigger, ScrollSmoother, all free), electron-vite, `node:sqlite`, bundled FFmpeg. See `docs/PLAN.md` for architecture and the business plan.
