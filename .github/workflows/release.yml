@@ -2,10 +2,9 @@
 # package (updated by the Store). Pushing a tag like v1.0.0 builds and publishes; running it by hand from the
 # Actions tab can build only, to check a release before it goes out.
 #
-# Publishing: installers go to the public MagicLanterns-Releases repo (installers only, no code) when the
-# RELEASES_TOKEN secret exists (a fine-grained token with Contents: Read and write on that repo); otherwise
-# the release stays in this repo. The Store package is never published here: download it from the run's
-# artifacts and upload it in Partner Center.
+# Publishing: the installer, latest.yml (the update feed) and install.ps1 go to this repo's public Releases,
+# where the download links and the in-app updater read them. The Store package is never published here:
+# download it from the run's artifacts and upload it in Partner Center.
 #
 # Store identity: set the repository variables STORE_IDENTITY_NAME, STORE_PUBLISHER and STORE_PUBLISHER_NAME
 # to the values in Partner Center → Product identity. Without them the package uses placeholders that the
@@ -44,7 +43,6 @@ jobs:
       MAIN_VITE_META_PROXY_URL: ${{ secrets.META_PROXY_URL }}
       MAIN_VITE_TMDB_API_KEY: ${{ secrets.META_PROXY_URL == '' && secrets.TMDB_API_KEY || '' }}
       MAIN_VITE_OMDB_API_KEY: ${{ secrets.META_PROXY_URL == '' && secrets.OMDB_API_KEY || '' }}
-      RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -84,33 +82,8 @@ jobs:
           if-no-files-found: error
 
       # latest.yml and the blockmap let installed copies find, verify and download only what changed.
-      - name: Publish to MagicLanterns-Releases
-        if: env.PUBLISH == 'true' && env.RELEASES_TOKEN != ''
-        uses: softprops/action-gh-release@v2
-        with:
-          repository: PushkarX-Code/MagicLanterns-Releases
-          token: ${{ secrets.RELEASES_TOKEN }}
-          tag_name: ${{ env.VERSION }}
-          name: Magic Lanterns ${{ env.VERSION }}
-          body: ${{ github.event.inputs.notes || 'Bug fixes and improvements.' }}
-          files: |
-            release/MagicLanterns-Setup.exe
-            release/MagicLanterns-Setup.exe.blockmap
-            release/latest.yml
-            docs/install.ps1
-
-      # The Store needs a public privacy policy page; it lives in the releases repo next to the downloads.
-      - name: Publish the privacy policy
-        if: env.PUBLISH == 'true' && env.RELEASES_TOKEN != ''
-        shell: bash
-        run: |
-          api=https://api.github.com/repos/PushkarX-Code/MagicLanterns-Releases/contents/PRIVACY.md
-          sha=$(curl -fsS -H "Authorization: Bearer $RELEASES_TOKEN" "$api" | node -pe "JSON.parse(require('fs').readFileSync(0)).sha" 2>/dev/null || true)
-          body=$(node -e "process.stdout.write(JSON.stringify({ message: 'Privacy policy', content: require('fs').readFileSync('docs/PRIVACY.md').toString('base64'), ...(process.argv[1] ? { sha: process.argv[1] } : {}) }))" "$sha")
-          curl -fsS -X PUT -H "Authorization: Bearer $RELEASES_TOKEN" "$api" -d "$body" > /dev/null
-
-      - name: Publish here (no RELEASES_TOKEN yet)
-        if: env.PUBLISH == 'true' && env.RELEASES_TOKEN == ''
+      - name: Publish the release
+        if: env.PUBLISH == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.VERSION }}

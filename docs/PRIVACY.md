@@ -28,4 +28,4 @@ Magic Lanterns does not collect personal information from anyone, including chil
 
 ## Changes and contact
 
-If this policy changes, the new version will appear here with a new date. Questions: open an issue at https://github.com/PushkarX-Code/MagicLanterns-Releases/issues.
+If this policy changes, the new version will appear here with a new date. Questions: open an issue at https://github.com/PushkarX-Code/MagicLanterns/issues.

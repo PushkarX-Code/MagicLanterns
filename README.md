@@ -9,12 +9,12 @@ A premium local media player for Windows. Point it at your folders and it turns 
 
 ## Download (Windows 10 / 11)
 
-**[⬇ Download MagicLanterns-Setup.exe](https://github.com/PushkarX-Code/MagicLanterns-Releases/releases/latest/download/MagicLanterns-Setup.exe)**, then run it.
+**[⬇ Download MagicLanterns-Setup.exe](https://github.com/PushkarX-Code/MagicLanterns/releases/latest/download/MagicLanterns-Setup.exe)**, then run it.
 
 Or install from PowerShell in one line:
 
 ```powershell
-irm https://github.com/PushkarX-Code/MagicLanterns-Releases/releases/latest/download/install.ps1 | iex
+irm https://github.com/PushkarX-Code/MagicLanterns/releases/latest/download/install.ps1 | iex
 ```
 
 This downloads the latest release and opens the installer. The app isn't code-signed yet, so Windows SmartScreen may say *"Windows protected your PC"*: click **More info → Run anyway**.

@@ -17,7 +17,7 @@ Pushkar is a self-taught video producer (AI ads, UGC, batch videos, podcast-styl
 - Free tools only. Flag anything paid before using it.
 - "Do NOT scrape Google."
 - "don't add any exposed API key settings, Hide them and use the API as default." Keys live in the hidden key service (`worker/`), never in the app, the site or chat.
-- "keep the code and API hidden from everyone." The app repo stays private.
+- API keys stay hidden (never in code, the site or chat). The app repo is public by his choice (16 Oct: "we're building stuffs"); downloads and updates come from its GitHub Releases.
 - "don't add any words related to VLC or any other media player… never mention any corporation names." Required attributions stay: TMDB, JustWatch via TMDB, FFmpeg (GPL), Sintel (CC BY). The "Dolby Vision" / "Dolby Atmos" badges stay (his decision, 16 Oct).
 - README images: full-frame, rounded corners, no background, one per row, never grouped.
 - Keep the repo lean; merge files smartly.
@@ -35,7 +35,7 @@ Premium Windows media player: Electron, React, Zustand, GSAP (with DrawSVG, Morp
 
 - Brand: the Beacon (three nested arches, amber→orange→red). Solid black UI, Inter + Instrument Serif italic accents, no drop shadows, no frosted glass, no gradients in panels.
 - Cinema Mode: intro (Beacon morphs into headphones), lobby, Sound Stage (up to 7.1 lossless, 8 live meters), Ambient Light. Sounds are synthesised in `src/renderer/src/lib/cinemaSound.ts`.
-- Release: `Actions → Release` builds `MagicLanterns-Setup.exe` and `MagicLanterns-Store.appx` (v1.1.0 built, unsigned).
+- Release: `Actions → Release` builds `MagicLanterns-Setup.exe` and `MagicLanterns-Store.appx` (unsigned) and, with publish ticked, publishes the installer to this repo's Releases. Download: `https://github.com/PushkarX-Code/MagicLanterns/releases/latest/download/MagicLanterns-Setup.exe`.
 
 ## The website (`site/`)
 
