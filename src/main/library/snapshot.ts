@@ -3,8 +3,8 @@ import { PICTURE_SUBS } from '../player/subtitles.ts'
 import type { Db } from '../db/index.ts'
 
 // The library as the screens see it, built from the database. Films and shows found on disk, with every
-// file's real details and watch state. Until metadata arrives (Phase 3) titles come from file names and
-// artwork is a frame from the video itself.
+// file's real details and watch state. Until metadata arrives titles come from file names; artwork only ever
+// comes from the film's own pictures (never a frame from the video).
 
 export const fileUrl = (path: string): string => `ml-file://local/${encodeURIComponent(path)}`
 
@@ -45,7 +45,6 @@ interface FileRow {
   bitrate: number | null
   added_at: number
   item_id: number | null
-  frame: string | null
   intro: string | null
   position: number | null
   pduration: number | null
@@ -124,15 +123,13 @@ function progressOf(f: FileRow): Progress | undefined {
 const better = (a: FileRow, b: FileRow): FileRow =>
   Number(b.height ?? 0) > Number(a.height ?? 0) || (b.height === a.height && Number(b.size) > Number(a.size)) ? b : a
 
-const frameUrl = (f: FileRow | undefined): string | null => (f?.frame ? fileUrl(f.frame) : null)
 
 export function buildSnapshot(db: Db): MediaItem[] {
   const files = db
     .prepare(
       `SELECT f.id, f.path, f.size, f.duration, f.container, f.video_codec, f.width, f.height, f.hdr, f.bitrate, f.added_at, f.item_id,
-              g.local_path AS frame, gi.meta_json AS intro, p.position, p.duration AS pduration, p.watched, p.play_count, p.last_played_at
+              gi.meta_json AS intro, p.position, p.duration AS pduration, p.watched, p.play_count, p.last_played_at
        FROM files f
-       LEFT JOIN generated g ON g.file_id = f.id AND g.type = 'frame'
        LEFT JOIN generated gi ON gi.file_id = f.id AND gi.type = 'intro'
        LEFT JOIN playback p ON p.file_id = f.id
        WHERE f.missing = 0 AND f.hidden = 0 AND f.video_codec IS NOT NULL AND f.item_id IS NOT NULL`
@@ -226,8 +223,8 @@ export function buildSnapshot(db: Db): MediaItem[] {
     item.runtime ||= Math.round(Number(f.duration ?? 0) / 60)
     item.progress = progressOf(f)
     item.playCount = Number(f.play_count ?? 0)
-    // Before a match, the film's own frame stands in for its artwork.
-    item.backdrop ??= frameUrl(f)
+    // No wide picture: the poster stands in. Frames from the video are never used as artwork.
+    item.backdrop ??= item.poster
     // Newest copy decides when the film "arrived".
     item.addedAt = Math.max(item.addedAt, ...files.filter((x) => Number(x.item_id) === Number(r.id)).map((x) => Number(x.added_at)))
     items.push(item)
@@ -259,7 +256,7 @@ export function buildSnapshot(db: Db): MediaItem[] {
           number: Number(e.number),
           title: e.title ? String(e.title) : `Episode ${e.number}`,
           overview: String(e.overview ?? ''),
-          still: image(e.still_img) ?? frameUrl(f),
+          still: image(e.still_img) ?? image(r.backdrop_img) ?? image(r.poster_img),
           runtime: Number(e.runtime ?? 0) || Math.round(Number(f.duration ?? 0) / 60),
           file: fileInfo(f, streams),
           progress: progressOf(f)
@@ -274,7 +271,7 @@ export function buildSnapshot(db: Db): MediaItem[] {
     seasons.sort((a, b) => (a.number === 0 ? 1 : b.number === 0 ? -1 : a.number - b.number))
     item.seasons = seasons
     const first = seasons[0].episodes[0]
-    item.backdrop ??= first.still
+    item.backdrop ??= first.still ?? item.poster
     item.runtime ||= first.runtime
     items.push(item)
   }

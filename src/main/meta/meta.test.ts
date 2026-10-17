@@ -19,8 +19,8 @@ test('title similarity', () => {
 
 test('the year decides between a film and its remake or original', () => {
   const dunes = [
-    { id: 841, title: 'Dune', release_date: '1984-12-14', vote_count: 3000 },
-    { id: 438631, title: 'Dune', release_date: '2021-09-15', vote_count: 12000 }
+    { id: 841, title: 'Dune', release_date: '1984-12-14', poster_path: '/p.jpg', vote_count: 3000 },
+    { id: 438631, title: 'Dune', release_date: '2021-09-15', poster_path: '/p.jpg', vote_count: 12000 }
   ]
   assert.equal(pickBest(dunes, 'Dune', 1984)!.id, 841)
   assert.equal(pickBest(dunes, 'Dune', 2021)!.id, 438631)
@@ -29,13 +29,13 @@ test('the year decides between a film and its remake or original', () => {
 })
 
 test('punctuation, original titles, near misses and no match', () => {
-  const r = [{ id: 693134, title: 'Dune: Part Two', release_date: '2024-02-27', vote_count: 5000 }]
+  const r = [{ id: 693134, title: 'Dune: Part Two', release_date: '2024-02-27', poster_path: '/p.jpg', vote_count: 5000 }]
   assert.deepEqual([pickBest(r, 'Dune Part Two', 2024)!.id, pickBest(r, 'Dune Part Two', 2024)!.state], [693134, 'matched'])
-  const anime = [{ id: 1429, name: 'Attack on Titan', original_name: '進撃の巨人', first_air_date: '2013-04-07' }]
+  const anime = [{ id: 1429, name: 'Attack on Titan', original_name: '進撃の巨人', first_air_date: '2013-04-07', poster_path: '/p.jpg' }]
   assert.equal(pickBest(anime, 'Attack on Titan', null)!.id, 1429)
   // A wrong year with the right title is a weaker, flagged match.
   assert.equal(pickBest(r, 'Dune Part Two', 2019)!.state, 'low_confidence')
-  assert.equal(pickBest([{ id: 1, title: 'Arrival', release_date: '2016-01-01' }], 'My Holiday Video', 2019), null)
+  assert.equal(pickBest([{ id: 1, title: 'Arrival', release_date: '2016-01-01', poster_path: '/p.jpg' }], 'My Holiday Video', 2019), null)
 })
 
 // ---------- Details ----------
@@ -73,10 +73,10 @@ test('genres are split and Japanese animation is Anime; certification from the U
 
 const RESPONSES: Record<string, unknown> = {
   '/search/movie?query=Dune%20Part%20Two&include_adult=false&language=en-US&year=2024': {
-    results: [{ id: 693134, title: 'Dune: Part Two', release_date: '2024-02-27', vote_count: 6000 }, { id: 438631, title: 'Dune', release_date: '2021-09-15' }]
+    results: [{ id: 693134, title: 'Dune: Part Two', release_date: '2024-02-27', poster_path: '/p.jpg', vote_count: 6000 }, { id: 438631, title: 'Dune', release_date: '2021-09-15', poster_path: '/p.jpg' }]
   },
   '/search/movie?query=Dune%3A%20Part%20Two&include_adult=false&language=en-US': {
-    results: [{ id: 693134, title: 'Dune: Part Two', release_date: '2024-02-27', vote_count: 6000 }]
+    results: [{ id: 693134, title: 'Dune: Part Two', release_date: '2024-02-27', poster_path: '/p.jpg', vote_count: 6000 }]
   },
   '/search/movie?query=Holiday%202019&include_adult=false&language=en-US': { results: [] },
   '/movie/693134?language=en-US&append_to_response=images,credits,release_dates,videos&include_image_language=en,null': {
@@ -90,7 +90,7 @@ const RESPONSES: Record<string, unknown> = {
     videos: { results: [{ key: 'Way9Dexny3w', site: 'YouTube', type: 'Trailer', official: true }] }
   },
   '/search/tv?query=Attack%20on%20Titan&include_adult=false&language=en-US': {
-    results: [{ id: 1429, name: 'Attack on Titan', original_name: '進撃の巨人', first_air_date: '2013-04-07', vote_count: 7000 }]
+    results: [{ id: 1429, name: 'Attack on Titan', original_name: '進撃の巨人', first_air_date: '2013-04-07', poster_path: '/p.jpg', vote_count: 7000 }]
   },
   '/tv/1429?language=en-US&append_to_response=images,aggregate_credits,content_ratings,videos,external_ids&include_image_language=en,null': {
     id: 1429, name: 'Attack on Titan', original_name: '進撃の巨人', first_air_date: '2013-04-07', overview: 'Humanity behind walls.', episode_run_time: [24],
@@ -319,4 +319,74 @@ test('person pages are cached for a week and survive going offline', async () =>
   assert.equal(calls, 2)
   db.close()
   rmSync(dir, { recursive: true })
+})
+
+// ---------- Posters first: every name a film goes by, and never a frame as artwork ----------
+
+import { applyMatch } from './apply.ts'
+import { findMatch } from './match.ts'
+import { namesFor } from './index.ts'
+
+const spiderMen = [
+  { id: 557, title: 'Spider-Man', release_date: '2002-05-01', vote_count: 19000, poster_path: '/sm.jpg' },
+  // A fan film under the same name: no poster, and it must never win.
+  { id: 9001, title: 'Spider-Man', release_date: '2002-01-01', vote_count: 40, poster_path: null }
+]
+
+test('"Spiderman" is "Spider-Man", and the release with a poster beats a stub of the same name', () => {
+  assert.deepEqual(pickBest(spiderMen, 'Spiderman', 2002), { id: 557, score: pickBest(spiderMen, 'Spiderman', 2002)!.score, state: 'matched' })
+  assert.equal(pickBest(spiderMen, 'Spider Man', null)!.id, 557)
+  assert.equal(pickBest([spiderMen[1]], 'Spider-Man', null)!.state, 'low_confidence', 'without a year, a poster-less entry alone is only a weak match')
+})
+
+test('a cryptic file name is rescued by its folder, then by the title stored inside the file', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'ml-names-'))
+  const db = openDb(join(dir, 'library.db'))
+  db.prepare('INSERT INTO folders (path, added_at) VALUES (?, 0)').run('/lib')
+  const item = Number(db.prepare("INSERT INTO items (kind, title, year, match_key, added_at, updated_at) VALUES ('movie', 'sm', 2002, 'sm', 0, 0)").run().lastInsertRowid)
+  const file = (path: string, inside: string | null) =>
+    db.prepare("INSERT INTO files (folder_id, path, size, mtime, added_at, item_id, kind, embedded_title) VALUES (1, ?, 1, 0, 0, ?, 'movie', ?)").run(path, item, inside)
+  file('/lib/Spider-Man (2002)/sm.2002.1080p.mkv', 'Spider-Man')
+  file('/lib/sm.2002.720p.mkv', 'www.YTS.MX')
+  file('/lib/Movies/sm.mkv', 'Spider Man Theatrical Cut')
+  // File name first, then the folder; the library root, generic folders and release-group tags are skipped.
+  assert.deepEqual(namesFor(db, item, 'movie', 'sm'), ['sm', 'Spider-Man', 'Spider Man Theatrical Cut'])
+  assert.deepEqual(namesFor(db, item, 'show', 'sm'), ['sm'], 'shows already take their name from their folders')
+
+  const calls: string[] = []
+  const tmdb: Tmdb = async <T,>(path: string): Promise<T> => {
+    calls.push(path)
+    return { results: path.includes('query=Spider-Man') ? spiderMen : [] } as T
+  }
+  const m = await findMatch(tmdb, 'movie', namesFor(db, item, 'movie', 'sm'), 2002)
+  assert.deepEqual([m!.id, m!.state], [557, 'matched'])
+  assert.ok(!calls.some((c) => c.includes('Theatrical')), 'stops searching once a confident match with a poster is found')
+  db.close()
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('no English poster: one in any language rather than none; no artwork at all is never a video frame', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'ml-art-'))
+  const db = openDb(join(dir, 'library.db'))
+  db.prepare('INSERT INTO folders (path, added_at) VALUES (?, 0)').run('/lib')
+  const add = (title: string) => {
+    const id = Number(db.prepare("INSERT INTO items (kind, title, match_key, added_at, updated_at) VALUES ('movie', ?, ?, 0, 0)").run(title, title).lastInsertRowid)
+    const f = Number(db.prepare("INSERT INTO files (folder_id, path, size, mtime, added_at, item_id, kind, video_codec, duration, probed_at) VALUES (1, ?, 1, 0, 0, ?, 'movie', 'h264', 600, 1)").run(`/lib/${title}.mkv`, id).lastInsertRowid)
+    db.prepare("INSERT INTO generated (file_id, type, local_path, created_at) VALUES (?, 'frame', '/cache/frame.jpg', 0)").run(f)
+    return id
+  }
+  const amelie = add('Amelie')
+  add('Home Video')
+  const tmdb: Tmdb = async <T,>(path: string): Promise<T> =>
+    (path.startsWith('/movie/194/images')
+      ? { posters: [{ file_path: '/fr-poster.jpg', iso_639_1: 'fr', vote_average: 5 }], backdrops: [] }
+      : { id: 194, title: 'Amélie', poster_path: null, images: { posters: [], backdrops: [] } }) as T
+  await applyMatch(db, tmdb, amelie, 'movie', { id: 194, score: 1, state: 'matched' })
+  const items = buildSnapshot(db)
+  const a = items.find((i) => i.title === 'Amélie')!
+  assert.deepEqual([a.poster, a.backdrop], ['/fr-poster.jpg', '/fr-poster.jpg'], 'the poster also stands in for the missing wide picture')
+  const home = items.find((i) => i.title === 'Home Video')!
+  assert.deepEqual([home.poster, home.backdrop], [null, null], 'a frame from the video is never used as artwork')
+  db.close()
+  rmSync(dir, { recursive: true, force: true })
 })

@@ -177,6 +177,11 @@ export const MIGRATIONS: string[] = [
   /* 5: films that belong to a series ("Dune Collection") are grouped by TMDB's collection id */ `
   ALTER TABLE collections ADD COLUMN tmdb_id INTEGER;
   CREATE UNIQUE INDEX collections_tmdb ON collections(tmdb_id);
+  `,
+  /* 6: smarter matching (folder and embedded titles, posters first): look again at every film or show that has
+     no confident match or no poster. Matches picked by hand stay as they are. */ `
+  UPDATE items SET match_state = 'pending'
+   WHERE match_state IN ('low_confidence', 'unmatched') OR (match_state = 'matched' AND poster_img IS NULL);
   `
 ]
 
