@@ -2,6 +2,8 @@ import type { Db } from '../db/index.ts'
 import { applyMatch } from './apply.ts'
 import type { MatchCandidate } from '../../shared/types.ts'
 import { findMatch, type Candidate, type Tmdb } from './match.ts'
+import { basename, dirname } from 'node:path'
+import { titleAndYear, titleKey } from '../library/parse.ts'
 
 // Looks up every film and show that hasn't been looked up yet. A few at a time, well inside TMDB's limits.
 
@@ -9,6 +11,29 @@ export interface MatchResult {
   matched: number
   unmatched: number
   failed: number
+}
+
+// Folders that say where a film is kept, not what it is.
+const GENERIC = /^(movies?|films?|videos?|downloads?|media|library|new folder|complete|torrents?|[a-z]|my videos|desktop|documents)$/
+// Container titles that name the release group or a site, not the film.
+const RELEASE_TAG = /www\.|\.(com|org|net|to|mx)\b|\b(yts|yify|rarbg|encoded|ripped|torrent)\b/i
+
+/**
+ * Every name a film goes by, best first: the title from its file name, then its folder, then the title stored
+ * inside the file. Shows already take their name from their folders, so they search under that alone.
+ */
+export function namesFor(db: Db, id: number, kind: 'movie' | 'show', title: string): string[] {
+  if (kind !== 'movie') return [title]
+  const names = [title]
+  const roots = new Set(db.prepare('SELECT path FROM folders').all().map((r) => String(r.path)))
+  for (const f of db.prepare('SELECT path, embedded_title FROM files WHERE item_id = ?').all(id)) {
+    const dir = dirname(String(f.path))
+    const folder = roots.has(dir) ? '' : titleAndYear(basename(dir)).title
+    if (folder && !GENERIC.test(titleKey(folder))) names.push(folder)
+    const inside = f.embedded_title ? String(f.embedded_title) : ''
+    if (inside && !RELEASE_TAG.test(inside)) names.push(titleAndYear(inside).title)
+  }
+  return names.filter((n, i) => titleKey(n).length > 1 && names.findIndex((m) => titleKey(m) === titleKey(n)) === i)
 }
 
 export async function matchPending(db: Db, tmdb: Tmdb, onItem: () => void = () => {}, { concurrency = 3, now = Date.now } = {}): Promise<MatchResult> {
@@ -24,7 +49,7 @@ export async function matchPending(db: Db, tmdb: Tmdb, onItem: () => void = () =
       // Merged away by an earlier match in this run.
       if (!db.prepare('SELECT 1 FROM items WHERE id = ?').get(it.id)) continue
       try {
-        const match = await findMatch(tmdb, it.kind, it.title, it.year)
+        const match = await findMatch(tmdb, it.kind, namesFor(db, it.id, it.kind, it.title), it.year)
         if (match) {
           await applyMatch(db, tmdb, it.id, it.kind, match, now())
           result.matched++

@@ -5,7 +5,6 @@ import ffmpegPath from 'ffmpeg-static'
 import { app, BrowserWindow, ipcMain } from 'electron'
 import type { LibraryFolder, MediaItem, ScanStatus } from '@shared/types'
 import { addFolder, folderRows, listFolders, openDb, removeFolder, type Db } from '../db/index.ts'
-import { frameFor } from './frames.ts'
 import { pruneOrphans } from './identify.ts'
 import { probeFile } from './probe.ts'
 import { countVideos, scanFolder } from './scan.ts'
@@ -30,7 +29,6 @@ const unpacked = (p: string): string => p.replace(`app.asar${sep}`, `app.asar.un
 const FFPROBE = unpacked(ffprobePath.path)
 const FFMPEG = unpacked(ffmpegPath ?? 'ffmpeg')
 const cacheDir = (): string => join(app.getPath('userData'), 'cache')
-const framesDir = (): string => join(cacheDir(), 'frames')
 const imagesDir = (): string => join(cacheDir(), 'images')
 
 function checkedFolder(path: unknown): string {
@@ -80,21 +78,6 @@ const queue: string[] = []
 let status: ScanStatus = { scanning: false, folder: null, found: 0, toRead: 0, read: 0, current: null, queued: 0 }
 const broadcast = (): void => send('scan:progress', status)
 
-/** Files read before artwork frames existed get theirs now. */
-async function backfillFrames(folderId: number): Promise<void> {
-  const rows = open()
-    .prepare(
-      `SELECT f.id, f.path, f.duration FROM files f
-       WHERE f.folder_id = ? AND f.missing = 0 AND f.video_codec IS NOT NULL
-         AND NOT EXISTS (SELECT 1 FROM generated g WHERE g.file_id = f.id AND g.type = 'frame')`
-    )
-    .all(folderId)
-  for (const r of rows) {
-    await frameFor(open(), FFMPEG, framesDir(), Number(r.id), String(r.path), Number(r.duration)).catch(() => undefined)
-    changed()
-  }
-}
-
 let running = false
 async function drain(): Promise<void> {
   if (running) return
@@ -121,14 +104,12 @@ async function drain(): Promise<void> {
           }
         },
         {
-          afterRead: async (fileId, file, info) => {
-            await frameFor(open(), FFMPEG, framesDir(), fileId, file, info.duration)
+          afterRead: async () => {
             // A long first scan shows films as they're read, not all at the end.
             if (++readSince % 10 === 0) changed()
           }
         }
       )
-      await backfillFrames(folder.id)
     } catch (e) {
       console.error('Scan failed', path, e)
     }

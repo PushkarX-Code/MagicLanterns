@@ -163,6 +163,13 @@ export async function applyMatch(db: Db, tmdb: Tmdb, itemId: number, kind: 'movi
       seasons.push({ number: n, data: await tmdb<SeasonDetails>(`/tv/${match.id}/season/${n}?language=en-US`).catch(() => null) })
     }
 
+  // No poster among the English and textless pictures: take one in any language rather than none.
+  let art = pickArtwork(d)
+  if (!art.poster || !art.backdrop) {
+    const all = await tmdb<{ posters?: Img[]; backdrops?: Img[] }>(`/${kind === 'movie' ? 'movie' : 'tv'}/${match.id}/images`).catch(() => null)
+    if (all) art = { ...art, poster: art.poster ?? best(all.posters, () => true), backdrop: art.backdrop ?? best(all.backdrops, textless) ?? best(all.backdrops, () => true) }
+  }
+
   let id = itemId
   tx(db, () => {
     const already = db.prepare('SELECT id FROM items WHERE kind = ? AND tmdb_id = ? AND id != ?').get(kind, d.id, itemId) as { id: number } | undefined
@@ -170,7 +177,6 @@ export async function applyMatch(db: Db, tmdb: Tmdb, itemId: number, kind: 'movi
       mergeInto(db, itemId, Number(already.id))
       id = Number(already.id)
     }
-    const art = pickArtwork(d)
     const title = d.title ?? d.name ?? ''
     const date = d.release_date || d.first_air_date || ''
     db.prepare(

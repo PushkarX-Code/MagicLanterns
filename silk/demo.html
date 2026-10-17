@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Silk — motion engine</title>
+    <link rel="stylesheet" href="silk.css" />
+    <style>
+      @font-face {
+        font-family: 'Inter';
+        src: url('../site/assets/fonts/inter.woff2') format('woff2');
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: 'Lantern Serif';
+        src: url('../site/assets/fonts/serif-italic.woff2') format('woff2');
+        font-style: italic;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #050505;
+        color: #f5f5f7;
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        opacity: 0;
+      }
+      .serif {
+        font-family: 'Lantern Serif', Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+      }
+      .kicker {
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: 0.42em;
+        text-transform: uppercase;
+        color: rgb(245 245 247 / 0.5);
+        margin: 0 0 22px 0.42em;
+        text-align: center;
+      }
+      .big {
+        font-size: 220px;
+        line-height: 1;
+        margin: 0;
+        text-align: center;
+      }
+      /* The caption naming each move and its tokens. */
+      .cap {
+        position: fixed;
+        left: 64px;
+        bottom: 56px;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        color: rgb(245 245 247 / 0.42);
+      }
+      .cap b {
+        color: #f5f5f7;
+        font-weight: 600;
+        letter-spacing: 0;
+        font-size: 17px;
+        margin-right: 14px;
+      }
+      .cap i {
+        font-style: normal;
+        color: #ffb45a;
+        opacity: 0.85;
+      }
+      .version {
+        position: fixed;
+        right: 64px;
+        bottom: 56px;
+        font-size: 13px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: rgb(245 245 247 / 0.3);
+      }
+      svg.beacon {
+        width: 220px;
+        height: 220px;
+        overflow: visible;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 220px);
+        gap: 28px;
+      }
+      .card {
+        position: relative;
+        height: 300px;
+        border-radius: 22px;
+        overflow: hidden;
+        background: linear-gradient(160deg, var(--a), var(--b));
+        box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+        will-change: transform;
+      }
+      .card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(60% 50% at var(--glare-x, 50%) var(--glare-y, 30%), rgb(255 255 255 / 0.16), transparent 70%);
+        opacity: var(--glare-o, 0);
+      }
+      .card .sheen {
+        position: absolute;
+        inset: -20% -40%;
+        background: linear-gradient(105deg, transparent 40%, rgb(255 255 255 / 0.22) 50%, transparent 60%);
+        opacity: 0;
+      }
+      .btn {
+        margin-top: 64px;
+        padding: 18px 36px;
+        border-radius: 999px;
+        border: 0;
+        background: #f5f5f7;
+        color: #050505;
+        font: 600 18px 'Inter', sans-serif;
+        justify-self: center;
+      }
+      .stack {
+        display: grid;
+        justify-items: center;
+      }
+      .lines .line {
+        display: block;
+        font-size: 150px;
+        line-height: 1.02;
+        text-align: center;
+        margin: 0;
+      }
+      .reel {
+        display: flex;
+        gap: 28px;
+        will-change: transform;
+      }
+      .reel .card {
+        flex: 0 0 300px;
+        height: 400px;
+      }
+      .stats {
+        display: flex;
+        gap: 140px;
+        text-align: center;
+      }
+      .stats .n {
+        font-size: 150px;
+        line-height: 1;
+        font-weight: 200;
+        letter-spacing: -0.03em;
+      }
+      .stats .l {
+        margin-top: 18px;
+        font-size: 16px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: rgb(245 245 247 / 0.5);
+      }
+      .panes {
+        position: relative;
+        width: 900px;
+        height: 500px;
+      }
+      .pane {
+        position: absolute;
+        inset: 0;
+        border-radius: 28px;
+        display: grid;
+        place-items: center;
+        font-size: 64px;
+        box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+      }
+      .replay {
+        position: fixed;
+        top: 28px;
+        right: 32px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        border: 1px solid rgb(255 255 255 / 0.15);
+        background: transparent;
+        color: rgb(245 245 247 / 0.7);
+        font: 500 13px 'Inter', sans-serif;
+        cursor: pointer;
+      }
+      .rec .replay {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute">
+      <defs>
+        <linearGradient id="r1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF1D2" /><stop offset="1" stop-color="#FFB45A" /></linearGradient>
+        <linearGradient id="r2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB45A" /><stop offset="1" stop-color="#FF7A2E" /></linearGradient>
+        <linearGradient id="r3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF7A2E" /><stop offset="1" stop-color="#E0452B" /></linearGradient>
+      </defs>
+    </svg>
+
+    <section class="scene" id="s-title">
+      <div><p class="kicker">Motion engine</p><h1 class="big serif">Silk</h1></div>
+    </section>
+    <section class="scene" id="s-draw">
+      <svg class="beacon" viewBox="200 200 624 624">
+        <path class="arch" d="M232 800 L232 512 A280 280 0 0 1 792 512 L792 800" fill="none" stroke="url(#r3)" stroke-width="56" stroke-linecap="round" />
+        <path class="arch" d="M342 800 L342 512 A170 170 0 0 1 682 512 L682 800" fill="none" stroke="url(#r2)" stroke-width="56" stroke-linecap="round" />
+        <path class="core" d="M452 800 L452 520 A60 60 0 0 1 572 520 L572 800 Z" fill="url(#r1)" />
+      </svg>
+    </section>
+    <section class="scene" id="s-settle">
+      <div class="stack">
+        <div class="grid" id="grid"></div>
+        <button class="btn" id="btn">Press me</button>
+      </div>
+    </section>
+    <section class="scene" id="s-focus">
+      <div class="lines serif"><span class="line">Things lift,</span><span class="line">glow,</span><span class="line">and settle.</span></div>
+    </section>
+    <section class="scene" id="s-cross">
+      <div class="panes">
+        <div class="pane serif" id="pa" style="background: linear-gradient(160deg, #2a1608, #120a05)">Before</div>
+        <div class="pane serif" id="pb" style="background: linear-gradient(160deg, #0d1626, #070a12); opacity: 0">After</div>
+      </div>
+    </section>
+    <section class="scene" id="s-blur">
+      <div class="reel silk-mb" id="reel"></div>
+    </section>
+    <section class="scene" id="s-count">
+      <div class="stats">
+        <div><div class="n" data-to="60">0</div><div class="l">Frames a second</div></div>
+        <div><div class="n" data-to="0" data-from="100">100</div><div class="l">Snaps</div></div>
+        <div><div class="n" data-to="1" data-from="0">0</div><div class="l">Vocabulary</div></div>
+      </div>
+    </section>
+
+    <p class="cap" id="cap"></p>
+    <p class="version" id="ver"></p>
+    <button class="replay" id="replay">Replay</button>
+
+    <script src="../site/assets/js/gsap.min.js"></script>
+    <script src="../site/assets/js/DrawSVGPlugin.min.js"></script>
+    <script type="module">
+      import * as silk from './silk.js'
+      const gsap = silk.use(window.gsap, { DrawSVGPlugin: window.DrawSVGPlugin })
+      if (window.__REC) document.documentElement.classList.add('rec')
+      document.getElementById('ver').textContent = 'Silk ' + silk.VERSION
+      silk.initPress('.btn')
+
+      const palette = [
+        ['#3a1d0b', '#120805'],
+        ['#20140f', '#0b0807'],
+        ['#4a220c', '#160a04'],
+        ['#16182a', '#08090f'],
+        ['#2b120c', '#0e0605'],
+        ['#1e1a12', '#0a0906'],
+        ['#3d1a10', '#130806'],
+        ['#141c1c', '#070a0a'],
+      ]
+      const card = ([a, b]) => `<div class="card" style="--a:${a};--b:${b}"><div class="sheen"></div></div>`
+      document.getElementById('grid').innerHTML = palette.map(card).join('')
+      document.getElementById('reel').innerHTML = [...palette, ...palette].map(card).join('')
+
+      const cap = document.getElementById('cap')
+      const caption = (html) => () => {
+        cap.innerHTML = html
+        gsap.fromTo(cap, { opacity: 0, filter: 'blur(8px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.6, ease: silk.EASE.settle })
+      }
+      const T = (name, ease, dur) => `<b>${name}</b><i>${ease}</i> · ${dur}`
+      const show = (id) => gsap.set('#' + id, { opacity: 1 })
+      const hide = (id) => silk.crossfade('#' + id, null)
+
+      function build() {
+        const tl = gsap.timeline()
+        gsap.set('.scene', { opacity: 0 })
+
+        // 1. Title
+        tl.call(() => show('s-title'), null, 0.2)
+          .call(caption(T('title', silk.EASE.settle, silk.DUR.title + 's · blur ' + silk.BLUR.title)), null, 0.4)
+          .add(silk.title('#s-title .big', '#s-title .kicker'), 0.3)
+          .add(hide('s-title'), 3.6)
+
+        // 2. Draw on + pop
+        tl.call(() => show('s-draw'), null, 4.2)
+          .call(caption(T('drawOn + pop', silk.EASE.draw + ' / ' + silk.EASE.pop, silk.DUR.draw + 's · stagger ' + silk.STAGGER.draw)), null, 4.2)
+          .add(silk.drawOn('#s-draw .arch'), 4.3)
+          .add(silk.pop('#s-draw .core'), 5.1)
+          .add(hide('s-draw'), 7.4)
+
+        // 3. Settle, lift, press
+        const cards = gsap.utils.toArray('#grid .card')
+        const hero = cards[5]
+        const lifted = silk.lift(hero, { hover: false, sheen: hero.querySelector('.sheen') })
+        tl.call(() => show('s-settle'), null, 8)
+          .call(caption(T('settle', silk.EASE.settle, silk.DUR.settle + 's · stagger ' + silk.STAGGER.list)), null, 8)
+          .add(silk.settle(cards), 8.1)
+          .add(silk.settle('#btn', { delay: 0.25 }), 8.1)
+          .call(caption(T('lift', silk.EASE.lift, silk.DUR.focus + 's · scale ' + silk.LIFT.scale + ' · tilt ' + silk.LIFT.tilt + '°')), null, 9.8)
+          .call(() => lifted.on(), null, 9.9)
+          .to(hero, { rotationY: 6, rotationX: -4, '--glare-x': '78%', '--glare-y': '20%', duration: 0.9, ease: silk.EASE.glide }, 10.4)
+          .to(hero, { rotationY: -6, rotationX: 3, '--glare-x': '20%', '--glare-y': '70%', duration: 1.1, ease: silk.EASE.glide }, 11.3)
+          .call(() => lifted.off(), null, 12.5)
+          .call(caption(T('press', silk.EASE.sink + ' → ' + silk.EASE.spring, silk.DUR.press + 's / ' + silk.DUR.spring + 's')), null, 12.8)
+          .call(() => silk.pressOnce(document.getElementById('btn')), null, 13.2)
+          .call(() => silk.pressOnce(document.getElementById('btn')), null, 14.3)
+          .add(hide('s-settle'), 15.5)
+
+        // 4. Focus pull
+        tl.call(() => show('s-focus'), null, 16.1)
+          .call(caption(T('focusPull', silk.EASE.settle, silk.DUR.reveal + 's · blur ' + silk.BLUR.reveal + ' · stagger ' + silk.STAGGER.hero)), null, 16.1)
+          .add(silk.focusPull('#s-focus .line', { stagger: 0.28 }), 16.2)
+          .call(caption(T('exit', silk.EASE.exit, '0.65× entrance · blur ' + silk.BLUR.exit)), null, 19.4)
+          .add(silk.exit('#s-focus .line', { stagger: 0.06 }), 19.6)
+
+        // 5. Crossfade
+        tl.call(() => show('s-cross'), null, 20.4)
+          .call(caption(T('crossfade', silk.EASE.glide, silk.DUR.fade + 's · overlap 0.12s')), null, 20.4)
+          .add(silk.settle('#s-cross .panes', { y: 30 }), 20.4)
+          .add(silk.crossfade('#pa', '#pb'), 21.8)
+          .call(() => silk.crossfade('#pb', '#pa'), null, 23.2)
+          .add(hide('s-cross'), 24.4)
+
+        // 6. Motion blur from speed
+        const reel = document.getElementById('reel')
+        let last = 0, vel = 0
+        const track = () => {
+          const x = gsap.getProperty(reel, 'x')
+          vel = (x - last) * 60
+          last = x
+        }
+        tl.call(() => (show('s-blur'), gsap.set(reel, { x: 700 }), (last = 700), gsap.ticker.add(track)), null, 25)
+          .call(caption(T('motionBlur', 'speed → blur', 'up to ' + silk.BLUR.motionMax + 'px')), null, 25)
+          .to(reel, { x: -2300, duration: 2.6, ease: silk.EASE.glide }, 25.3)
+          .to(reel, { x: -1150, duration: 1.6, ease: silk.EASE.settle }, 28.1)
+          .add(hide('s-blur'), 30.2)
+          .call(() => gsap.ticker.remove(track), null, 30.8)
+        silk.motionBlur(() => vel * 0.75)
+
+        // 7. Count
+        tl.call(() => show('s-count'), null, 31)
+          .call(caption(T('count', silk.EASE.settle, silk.DUR.reveal + 's')), null, 31)
+          .add(silk.settle('#s-count .stats > div', { stagger: silk.STAGGER.group }), 31)
+        gsap.utils.toArray('#s-count .n').forEach((el, i) => tl.add(silk.count(el, +el.dataset.to, { from: +(el.dataset.from || 0) }), 31.2 + i * 0.08))
+        tl.add(hide('s-count'), 34.4).call(() => gsap.to(cap, { opacity: 0, duration: 0.5 }), null, 34.4)
+        return tl
+      }
+
+      let tl = build()
+      document.getElementById('replay').onclick = () => {
+        tl.kill()
+        gsap.set('.scene, .scene *', { clearProps: 'all' })
+        tl = build()
+      }
+      window.__dur = tl.duration()
+    </script>
+  </body>
+</html>
