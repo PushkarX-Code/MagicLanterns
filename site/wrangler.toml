@@ -1,0 +1,15 @@
+# The website, on Cloudflare Workers static assets (free: unlimited static bandwidth).
+# Deployed by .github/workflows/site.yml. worker.js only handles the launch-list form.
+name = "magiclanterns"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+[assets]
+directory = "."
+binding = "ASSETS"
+html_handling = "auto-trailing-slash"
+
+[[kv_namespaces]]
+binding = "LAUNCH_LIST"
+id = "54ea4455fe2344b1b9ce85134b382eb7"

@@ -1,0 +1,21 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Pictures, sound, film and fonts never change in place; scripts and styles are checked every hour.
+/assets/site.*
+  Cache-Control: public, max-age=3600, must-revalidate
+/assets/doc.css
+  Cache-Control: public, max-age=3600, must-revalidate
+/assets/js/*
+  Cache-Control: public, max-age=3600, must-revalidate
+/assets/img/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/sfx/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/video/*
+  Cache-Control: public, max-age=31536000, immutable
