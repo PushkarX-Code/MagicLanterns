@@ -151,4 +151,4 @@ vite.config.ts.timestamp-*
 out/
 dist/
 release/
-.netlify
+.wrangler

@@ -252,7 +252,7 @@
     } else a.href = DOWNLOAD_URL
   })
 
-  // The launch list: posted to the host's form handler, answered in place.
+  // The launch list: saved by the site worker, answered in place.
   const form = $('.notify')
   form.addEventListener('submit', async (e) => {
     e.preventDefault()

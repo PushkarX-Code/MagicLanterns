@@ -39,7 +39,7 @@ Premium Windows media player: Electron, React, Zustand, GSAP (with DrawSVG, Morp
 
 ## The website (`site/`)
 
-Static, one long cinematic page plus Privacy, Terms and Credits pages. Hosted on Netlify, project `magiclanterns`, base directory `site`, auto-deploys from `main` (pushes that don't touch `site/` skip the deploy). Live: https://magiclanterns.netlify.app
+Static, one long cinematic page plus Privacy, Terms and Credits pages. Hosted on Cloudflare Workers static assets (worker `magiclanterns`, `site/wrangler.toml`), deployed by `.github/workflows/site.yml` on pushes to `main` that touch `site/`. Headers live in `site/_headers`. The launch-list form posts to `site/worker.js`, which stores emails in the KV namespace `magiclanterns-launch-list`. Moved from Netlify to save credits. Live: https://magiclanterns.<account>.workers.dev (set once the first deploy prints it)
 
 - Opens muted (his call). The nav Sound button turns on the room tone, a chord-per-chapter score and four ElevenLabs effects (`site/assets/sfx`).
 - Screens are 2x captures with 1x/2x `srcset`. Every `<img>` declares its size; keep it that way or the smooth scroller can cut the page short.
@@ -51,7 +51,7 @@ Launch plan, story, channels and the asset list. Showcase film: `docs/showcase/s
 
 ## Environment notes
 
-- Cloud sessions block most hosts unless allowed in the environment's Network access settings; new settings apply to new sessions. Hosts we need: `image.tmdb.org` (full-size art), `api.netlify.com`, `netlify-mcp.netlify.app`, `mcp.figma.com`, `api.elevenlabs.io`, and for posting `api.x.com`, `upload.twitter.com`, `oauth.reddit.com`, `www.reddit.com`.
+- Cloud sessions block most hosts unless allowed in the environment's Network access settings; new settings apply to new sessions. Hosts we need: `image.tmdb.org` (full-size art), `mcp.figma.com`, `api.elevenlabs.io`, and for posting `api.x.com`, `upload.twitter.com`, `oauth.reddit.com`, `www.reddit.com`.
 - Secrets go in the environment settings, never in chat. Posting keys, if set: `X_API_KEY`, `X_API_SECRET`, `X_ACCESS_TOKEN`, `X_ACCESS_SECRET`, `REDDIT_CLIENT_ID`, `REDDIT_SECRET`, `REDDIT_USERNAME`, `REDDIT_PASSWORD`.
 - Previously connected: ElevenLabs (the restricted connector does voice and sound effects, no music; the full one is `https://api.elevenlabs.io/v1/mcp`), Higgsfield (the connected one could only browse and import, not generate). Check what each can do at the start of a session before promising output.
 

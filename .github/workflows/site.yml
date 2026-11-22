@@ -1,0 +1,19 @@
+# Deploys the website (site/) to Cloudflare. Uses the same CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets as the proxy.
+name: Website
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['site/**']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: site
